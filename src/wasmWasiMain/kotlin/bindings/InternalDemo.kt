@@ -23,6 +23,761 @@ internal external fun __wasm_import_createHtmlTextArea(p0: Int, p1: Int): Unit
 @WasmImport("component-model:example/markdown", "convert-markdown-to-html")
 internal external fun __wasm_import_convertMarkdownToHtml(p0: Int, p1: Int, p2: Int): Unit
 
+@WasmImport("wasi:cli/environment@0.2.0", "get-environment")
+internal external fun __wasm_import_getEnvironment(p0: Int): Unit
+
+@WasmImport("wasi:cli/environment@0.2.0", "get-arguments")
+internal external fun __wasm_import_getArguments(p0: Int): Unit
+
+@WasmImport("wasi:cli/environment@0.2.0", "initial-cwd")
+internal external fun __wasm_import_initialCwd(p0: Int): Unit
+
+@WasmImport("wasi:cli/exit@0.2.0", "exit") internal external fun __wasm_import_exit(p0: Int): Unit
+
+@WasmImport("wasi:cli/exit@0.2.0", "exit-with-code")
+internal external fun __wasm_import_exitWithCode(p0: Int): Unit
+
+@WasmImport("wasi:io/error@0.2.0", "[resource-drop]error")
+internal external fun __cm_resource_abi_import_Error_Error_drop(handle: Int): Unit
+
+@WasmImport("wasi:io/error@0.2.0", "[method]error.to-debug-string")
+internal external fun __wasm_import_toDebugString(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:io/poll@0.2.0", "[resource-drop]pollable")
+internal external fun __cm_resource_abi_import_Poll_Pollable_drop(handle: Int): Unit
+
+@WasmImport("wasi:io/poll@0.2.0", "[method]pollable.ready")
+internal external fun __wasm_import_ready(p0: Int): Int
+
+@WasmImport("wasi:io/poll@0.2.0", "[method]pollable.block")
+internal external fun __wasm_import_block(p0: Int): Unit
+
+@WasmImport("wasi:io/poll@0.2.0", "poll")
+internal external fun __wasm_import_poll(p0: Int, p1: Int, p2: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[resource-drop]input-stream")
+internal external fun __cm_resource_abi_import_Streams_InputStream_drop(handle: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]input-stream.read")
+internal external fun __wasm_import_read(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]input-stream.blocking-read")
+internal external fun __wasm_import_blockingRead(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]input-stream.skip")
+internal external fun __wasm_import_skip(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]input-stream.blocking-skip")
+internal external fun __wasm_import_blockingSkip(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]input-stream.subscribe")
+internal external fun __wasm_import_subscribe(p0: Int): Int
+
+@WasmImport("wasi:io/streams@0.2.0", "[resource-drop]output-stream")
+internal external fun __cm_resource_abi_import_Streams_OutputStream_drop(handle: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]output-stream.check-write")
+internal external fun __wasm_import_checkWrite(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]output-stream.write")
+internal external fun __wasm_import_write(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]output-stream.blocking-write-and-flush")
+internal external fun __wasm_import_blockingWriteAndFlush(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]output-stream.flush")
+internal external fun __wasm_import_flush(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]output-stream.blocking-flush")
+internal external fun __wasm_import_blockingFlush(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]output-stream.subscribe")
+internal external fun __wasm_import_subscribe0(p0: Int): Int
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]output-stream.write-zeroes")
+internal external fun __wasm_import_writeZeroes(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]output-stream.blocking-write-zeroes-and-flush")
+internal external fun __wasm_import_blockingWriteZeroesAndFlush(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]output-stream.splice")
+internal external fun __wasm_import_splice(p0: Int, p1: Int, p2: Long, p3: Int): Unit
+
+@WasmImport("wasi:io/streams@0.2.0", "[method]output-stream.blocking-splice")
+internal external fun __wasm_import_blockingSplice(p0: Int, p1: Int, p2: Long, p3: Int): Unit
+
+@WasmImport("wasi:cli/stdin@0.2.0", "get-stdin") internal external fun __wasm_import_getStdin(): Int
+
+@WasmImport("wasi:cli/stdout@0.2.0", "get-stdout")
+internal external fun __wasm_import_getStdout(): Int
+
+@WasmImport("wasi:cli/stderr@0.2.0", "get-stderr")
+internal external fun __wasm_import_getStderr(): Int
+
+@WasmImport("wasi:cli/terminal-input@0.2.0", "[resource-drop]terminal-input")
+internal external fun __cm_resource_abi_import_TerminalInput_TerminalInput_drop(handle: Int): Unit
+
+@WasmImport("wasi:cli/terminal-output@0.2.0", "[resource-drop]terminal-output")
+internal external fun __cm_resource_abi_import_TerminalOutput_TerminalOutput_drop(handle: Int): Unit
+
+@WasmImport("wasi:cli/terminal-stdin@0.2.0", "get-terminal-stdin")
+internal external fun __wasm_import_getTerminalStdin(p0: Int): Unit
+
+@WasmImport("wasi:cli/terminal-stdout@0.2.0", "get-terminal-stdout")
+internal external fun __wasm_import_getTerminalStdout(p0: Int): Unit
+
+@WasmImport("wasi:cli/terminal-stderr@0.2.0", "get-terminal-stderr")
+internal external fun __wasm_import_getTerminalStderr(p0: Int): Unit
+
+@WasmImport("wasi:clocks/monotonic-clock@0.2.0", "now")
+internal external fun __wasm_import_now(): Long
+
+@WasmImport("wasi:clocks/monotonic-clock@0.2.0", "resolution")
+internal external fun __wasm_import_resolution(): Long
+
+@WasmImport("wasi:clocks/monotonic-clock@0.2.0", "subscribe-instant")
+internal external fun __wasm_import_subscribeInstant(p0: Long): Int
+
+@WasmImport("wasi:clocks/monotonic-clock@0.2.0", "subscribe-duration")
+internal external fun __wasm_import_subscribeDuration(p0: Long): Int
+
+@WasmImport("wasi:clocks/wall-clock@0.2.0", "now")
+internal external fun __wasm_import_now1(p0: Int): Unit
+
+@WasmImport("wasi:clocks/wall-clock@0.2.0", "resolution")
+internal external fun __wasm_import_resolution2(p0: Int): Unit
+
+@WasmImport("wasi:clocks/timezone@0.2.0", "display")
+internal external fun __wasm_import_display(p0: Long, p1: Int, p2: Int): Unit
+
+@WasmImport("wasi:clocks/timezone@0.2.0", "utc-offset")
+internal external fun __wasm_import_utcOffset(p0: Long, p1: Int): Int
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[resource-drop]descriptor")
+internal external fun __cm_resource_abi_import_Types_Descriptor_drop(handle: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.read-via-stream")
+internal external fun __wasm_import_readViaStream(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.write-via-stream")
+internal external fun __wasm_import_writeViaStream(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.append-via-stream")
+internal external fun __wasm_import_appendViaStream(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.advise")
+internal external fun __wasm_import_advise(p0: Int, p1: Long, p2: Long, p3: Int, p4: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.sync-data")
+internal external fun __wasm_import_syncData(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.get-flags")
+internal external fun __wasm_import_getFlags(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.get-type")
+internal external fun __wasm_import_getType(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.set-size")
+internal external fun __wasm_import_setSize(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.set-times")
+internal external fun __wasm_import_setTimes(
+    p0: Int,
+    p1: Int,
+    p2: Long,
+    p3: Int,
+    p4: Int,
+    p5: Long,
+    p6: Int,
+    p7: Int
+): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.read")
+internal external fun __wasm_import_read3(p0: Int, p1: Long, p2: Long, p3: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.write")
+internal external fun __wasm_import_write4(p0: Int, p1: Int, p2: Int, p3: Long, p4: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.read-directory")
+internal external fun __wasm_import_readDirectory(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.sync")
+internal external fun __wasm_import_sync(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.create-directory-at")
+internal external fun __wasm_import_createDirectoryAt(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.stat")
+internal external fun __wasm_import_stat(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.stat-at")
+internal external fun __wasm_import_statAt(p0: Int, p1: Int, p2: Int, p3: Int, p4: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.set-times-at")
+internal external fun __wasm_import_setTimesAt(
+    p0: Int,
+    p1: Int,
+    p2: Int,
+    p3: Int,
+    p4: Int,
+    p5: Long,
+    p6: Int,
+    p7: Int,
+    p8: Long,
+    p9: Int,
+    p10: Int
+): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.link-at")
+internal external fun __wasm_import_linkAt(
+    p0: Int,
+    p1: Int,
+    p2: Int,
+    p3: Int,
+    p4: Int,
+    p5: Int,
+    p6: Int,
+    p7: Int
+): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.open-at")
+internal external fun __wasm_import_openAt(
+    p0: Int,
+    p1: Int,
+    p2: Int,
+    p3: Int,
+    p4: Int,
+    p5: Int,
+    p6: Int
+): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.readlink-at")
+internal external fun __wasm_import_readlinkAt(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.remove-directory-at")
+internal external fun __wasm_import_removeDirectoryAt(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.rename-at")
+internal external fun __wasm_import_renameAt(
+    p0: Int,
+    p1: Int,
+    p2: Int,
+    p3: Int,
+    p4: Int,
+    p5: Int,
+    p6: Int
+): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.symlink-at")
+internal external fun __wasm_import_symlinkAt(
+    p0: Int,
+    p1: Int,
+    p2: Int,
+    p3: Int,
+    p4: Int,
+    p5: Int
+): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.unlink-file-at")
+internal external fun __wasm_import_unlinkFileAt(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.is-same-object")
+internal external fun __wasm_import_isSameObject(p0: Int, p1: Int): Int
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.metadata-hash")
+internal external fun __wasm_import_metadataHash(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]descriptor.metadata-hash-at")
+internal external fun __wasm_import_metadataHashAt(
+    p0: Int,
+    p1: Int,
+    p2: Int,
+    p3: Int,
+    p4: Int
+): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[resource-drop]directory-entry-stream")
+internal external fun __cm_resource_abi_import_Types_DirectoryEntryStream_drop(handle: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "[method]directory-entry-stream.read-directory-entry")
+internal external fun __wasm_import_readDirectoryEntry(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:filesystem/types@0.2.0", "filesystem-error-code")
+internal external fun __wasm_import_filesystemErrorCode(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:filesystem/preopens@0.2.0", "get-directories")
+internal external fun __wasm_import_getDirectories(p0: Int): Unit
+
+@WasmImport("wasi:sockets/network@0.2.0", "[resource-drop]network")
+internal external fun __cm_resource_abi_import_Network_Network_drop(handle: Int): Unit
+
+@WasmImport("wasi:sockets/instance-network@0.2.0", "instance-network")
+internal external fun __wasm_import_instanceNetwork(): Int
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[resource-drop]udp-socket")
+internal external fun __cm_resource_abi_import_Udp_UdpSocket_drop(handle: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.start-bind")
+internal external fun __wasm_import_startBind(
+    p0: Int,
+    p1: Int,
+    p2: Int,
+    p3: Int,
+    p4: Int,
+    p5: Int,
+    p6: Int,
+    p7: Int,
+    p8: Int,
+    p9: Int,
+    p10: Int,
+    p11: Int,
+    p12: Int,
+    p13: Int,
+    p14: Int
+): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.finish-bind")
+internal external fun __wasm_import_finishBind(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.stream")
+internal external fun __wasm_import_stream(
+    p0: Int,
+    p1: Int,
+    p2: Int,
+    p3: Int,
+    p4: Int,
+    p5: Int,
+    p6: Int,
+    p7: Int,
+    p8: Int,
+    p9: Int,
+    p10: Int,
+    p11: Int,
+    p12: Int,
+    p13: Int,
+    p14: Int
+): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.local-address")
+internal external fun __wasm_import_localAddress(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.remote-address")
+internal external fun __wasm_import_remoteAddress(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.address-family")
+internal external fun __wasm_import_addressFamily(p0: Int): Int
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.unicast-hop-limit")
+internal external fun __wasm_import_unicastHopLimit(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.set-unicast-hop-limit")
+internal external fun __wasm_import_setUnicastHopLimit(p0: Int, p1: Int, p2: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.receive-buffer-size")
+internal external fun __wasm_import_receiveBufferSize(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.set-receive-buffer-size")
+internal external fun __wasm_import_setReceiveBufferSize(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.send-buffer-size")
+internal external fun __wasm_import_sendBufferSize(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.set-send-buffer-size")
+internal external fun __wasm_import_setSendBufferSize(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]udp-socket.subscribe")
+internal external fun __wasm_import_subscribe5(p0: Int): Int
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[resource-drop]incoming-datagram-stream")
+internal external fun __cm_resource_abi_import_Udp_IncomingDatagramStream_drop(handle: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]incoming-datagram-stream.receive")
+internal external fun __wasm_import_receive(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]incoming-datagram-stream.subscribe")
+internal external fun __wasm_import_subscribe6(p0: Int): Int
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[resource-drop]outgoing-datagram-stream")
+internal external fun __cm_resource_abi_import_Udp_OutgoingDatagramStream_drop(handle: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]outgoing-datagram-stream.check-send")
+internal external fun __wasm_import_checkSend(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]outgoing-datagram-stream.send")
+internal external fun __wasm_import_send(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:sockets/udp@0.2.0", "[method]outgoing-datagram-stream.subscribe")
+internal external fun __wasm_import_subscribe7(p0: Int): Int
+
+@WasmImport("wasi:sockets/udp-create-socket@0.2.0", "create-udp-socket")
+internal external fun __wasm_import_createUdpSocket(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[resource-drop]tcp-socket")
+internal external fun __cm_resource_abi_import_Tcp_TcpSocket_drop(handle: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.start-bind")
+internal external fun __wasm_import_startBind8(
+    p0: Int,
+    p1: Int,
+    p2: Int,
+    p3: Int,
+    p4: Int,
+    p5: Int,
+    p6: Int,
+    p7: Int,
+    p8: Int,
+    p9: Int,
+    p10: Int,
+    p11: Int,
+    p12: Int,
+    p13: Int,
+    p14: Int
+): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.finish-bind")
+internal external fun __wasm_import_finishBind9(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.start-connect")
+internal external fun __wasm_import_startConnect(
+    p0: Int,
+    p1: Int,
+    p2: Int,
+    p3: Int,
+    p4: Int,
+    p5: Int,
+    p6: Int,
+    p7: Int,
+    p8: Int,
+    p9: Int,
+    p10: Int,
+    p11: Int,
+    p12: Int,
+    p13: Int,
+    p14: Int
+): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.finish-connect")
+internal external fun __wasm_import_finishConnect(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.start-listen")
+internal external fun __wasm_import_startListen(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.finish-listen")
+internal external fun __wasm_import_finishListen(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.accept")
+internal external fun __wasm_import_accept(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.local-address")
+internal external fun __wasm_import_localAddress10(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.remote-address")
+internal external fun __wasm_import_remoteAddress11(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.is-listening")
+internal external fun __wasm_import_isListening(p0: Int): Int
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.address-family")
+internal external fun __wasm_import_addressFamily12(p0: Int): Int
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.set-listen-backlog-size")
+internal external fun __wasm_import_setListenBacklogSize(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.keep-alive-enabled")
+internal external fun __wasm_import_keepAliveEnabled(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.set-keep-alive-enabled")
+internal external fun __wasm_import_setKeepAliveEnabled(p0: Int, p1: Int, p2: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.keep-alive-idle-time")
+internal external fun __wasm_import_keepAliveIdleTime(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.set-keep-alive-idle-time")
+internal external fun __wasm_import_setKeepAliveIdleTime(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.keep-alive-interval")
+internal external fun __wasm_import_keepAliveInterval(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.set-keep-alive-interval")
+internal external fun __wasm_import_setKeepAliveInterval(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.keep-alive-count")
+internal external fun __wasm_import_keepAliveCount(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.set-keep-alive-count")
+internal external fun __wasm_import_setKeepAliveCount(p0: Int, p1: Int, p2: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.hop-limit")
+internal external fun __wasm_import_hopLimit(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.set-hop-limit")
+internal external fun __wasm_import_setHopLimit(p0: Int, p1: Int, p2: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.receive-buffer-size")
+internal external fun __wasm_import_receiveBufferSize13(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.set-receive-buffer-size")
+internal external fun __wasm_import_setReceiveBufferSize14(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.send-buffer-size")
+internal external fun __wasm_import_sendBufferSize15(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.set-send-buffer-size")
+internal external fun __wasm_import_setSendBufferSize16(p0: Int, p1: Long, p2: Int): Unit
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.subscribe")
+internal external fun __wasm_import_subscribe17(p0: Int): Int
+
+@WasmImport("wasi:sockets/tcp@0.2.0", "[method]tcp-socket.shutdown")
+internal external fun __wasm_import_shutdown(p0: Int, p1: Int, p2: Int): Unit
+
+@WasmImport("wasi:sockets/tcp-create-socket@0.2.0", "create-tcp-socket")
+internal external fun __wasm_import_createTcpSocket(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/ip-name-lookup@0.2.0", "[resource-drop]resolve-address-stream")
+internal external fun __cm_resource_abi_import_IpNameLookup_ResolveAddressStream_drop(
+    handle: Int
+): Unit
+
+@WasmImport(
+    "wasi:sockets/ip-name-lookup@0.2.0", "[method]resolve-address-stream.resolve-next-address")
+internal external fun __wasm_import_resolveNextAddress(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:sockets/ip-name-lookup@0.2.0", "[method]resolve-address-stream.subscribe")
+internal external fun __wasm_import_subscribe18(p0: Int): Int
+
+@WasmImport("wasi:sockets/ip-name-lookup@0.2.0", "resolve-addresses")
+internal external fun __wasm_import_resolveAddresses(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:random/random@0.2.0", "get-random-bytes")
+internal external fun __wasm_import_getRandomBytes(p0: Long, p1: Int): Unit
+
+@WasmImport("wasi:random/random@0.2.0", "get-random-u64")
+internal external fun __wasm_import_getRandomU64(): Long
+
+@WasmImport("wasi:random/insecure@0.2.0", "get-insecure-random-bytes")
+internal external fun __wasm_import_getInsecureRandomBytes(p0: Long, p1: Int): Unit
+
+@WasmImport("wasi:random/insecure@0.2.0", "get-insecure-random-u64")
+internal external fun __wasm_import_getInsecureRandomU64(): Long
+
+@WasmImport("wasi:random/insecure-seed@0.2.0", "insecure-seed")
+internal external fun __wasm_import_insecureSeed(p0: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[resource-drop]fields")
+internal external fun __cm_resource_abi_import_HttpTypes_Fields_drop(handle: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[constructor]fields")
+internal external fun __wasm_import_constructor(): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]fields.get")
+internal external fun __wasm_import_get(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]fields.has")
+internal external fun __wasm_import_has(p0: Int, p1: Int, p2: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]fields.set")
+internal external fun __wasm_import_set(p0: Int, p1: Int, p2: Int, p3: Int, p4: Int, p5: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]fields.delete")
+internal external fun __wasm_import_delete(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]fields.append")
+internal external fun __wasm_import_append(
+    p0: Int,
+    p1: Int,
+    p2: Int,
+    p3: Int,
+    p4: Int,
+    p5: Int
+): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]fields.entries")
+internal external fun __wasm_import_entries(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]fields.clone")
+internal external fun __wasm_import_clone(p0: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[static]fields.from-list")
+internal external fun __wasm_import_fromList(p0: Int, p1: Int, p2: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[resource-drop]incoming-request")
+internal external fun __cm_resource_abi_import_HttpTypes_IncomingRequest_drop(handle: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]incoming-request.method")
+internal external fun __wasm_import_method(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]incoming-request.path-with-query")
+internal external fun __wasm_import_pathWithQuery(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]incoming-request.scheme")
+internal external fun __wasm_import_scheme(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]incoming-request.authority")
+internal external fun __wasm_import_authority(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]incoming-request.headers")
+internal external fun __wasm_import_headers(p0: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]incoming-request.consume")
+internal external fun __wasm_import_consume(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[resource-drop]outgoing-request")
+internal external fun __cm_resource_abi_import_HttpTypes_OutgoingRequest_drop(handle: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[constructor]outgoing-request")
+internal external fun __wasm_import_constructor19(p0: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-request.body")
+internal external fun __wasm_import_body(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-request.method")
+internal external fun __wasm_import_method20(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-request.set-method")
+internal external fun __wasm_import_setMethod(p0: Int, p1: Int, p2: Int, p3: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-request.path-with-query")
+internal external fun __wasm_import_pathWithQuery21(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-request.set-path-with-query")
+internal external fun __wasm_import_setPathWithQuery(p0: Int, p1: Int, p2: Int, p3: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-request.scheme")
+internal external fun __wasm_import_scheme22(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-request.set-scheme")
+internal external fun __wasm_import_setScheme(p0: Int, p1: Int, p2: Int, p3: Int, p4: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-request.authority")
+internal external fun __wasm_import_authority23(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-request.set-authority")
+internal external fun __wasm_import_setAuthority(p0: Int, p1: Int, p2: Int, p3: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-request.headers")
+internal external fun __wasm_import_headers24(p0: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[resource-drop]request-options")
+internal external fun __cm_resource_abi_import_HttpTypes_RequestOptions_drop(handle: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[constructor]request-options")
+internal external fun __wasm_import_constructor25(): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]request-options.connect-timeout")
+internal external fun __wasm_import_connectTimeout(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]request-options.set-connect-timeout")
+internal external fun __wasm_import_setConnectTimeout(p0: Int, p1: Int, p2: Long): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]request-options.first-byte-timeout")
+internal external fun __wasm_import_firstByteTimeout(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]request-options.set-first-byte-timeout")
+internal external fun __wasm_import_setFirstByteTimeout(p0: Int, p1: Int, p2: Long): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]request-options.between-bytes-timeout")
+internal external fun __wasm_import_betweenBytesTimeout(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]request-options.set-between-bytes-timeout")
+internal external fun __wasm_import_setBetweenBytesTimeout(p0: Int, p1: Int, p2: Long): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[resource-drop]response-outparam")
+internal external fun __cm_resource_abi_import_HttpTypes_ResponseOutparam_drop(handle: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]response-outparam.send-informational")
+internal external fun __wasm_import_sendInformational(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[static]response-outparam.set")
+internal external fun __wasm_import_set26(
+    p0: Int,
+    p1: Int,
+    p2: Int,
+    p3: Int,
+    p4: Long,
+    p5: Int,
+    p6: Int,
+    p7: Int,
+    p8: Int
+): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[resource-drop]incoming-response")
+internal external fun __cm_resource_abi_import_HttpTypes_IncomingResponse_drop(handle: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]incoming-response.status")
+internal external fun __wasm_import_status(p0: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]incoming-response.headers")
+internal external fun __wasm_import_headers27(p0: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]incoming-response.consume")
+internal external fun __wasm_import_consume28(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[resource-drop]incoming-body")
+internal external fun __cm_resource_abi_import_HttpTypes_IncomingBody_drop(handle: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]incoming-body.stream")
+internal external fun __wasm_import_stream29(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[static]incoming-body.finish")
+internal external fun __wasm_import_finish(p0: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[resource-drop]future-trailers")
+internal external fun __cm_resource_abi_import_HttpTypes_FutureTrailers_drop(handle: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]future-trailers.subscribe")
+internal external fun __wasm_import_subscribe30(p0: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]future-trailers.get")
+internal external fun __wasm_import_get31(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[resource-drop]outgoing-response")
+internal external fun __cm_resource_abi_import_HttpTypes_OutgoingResponse_drop(handle: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[constructor]outgoing-response")
+internal external fun __wasm_import_constructor32(p0: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-response.status-code")
+internal external fun __wasm_import_statusCode(p0: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-response.set-status-code")
+internal external fun __wasm_import_setStatusCode(p0: Int, p1: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-response.headers")
+internal external fun __wasm_import_headers33(p0: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-response.body")
+internal external fun __wasm_import_body34(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[resource-drop]outgoing-body")
+internal external fun __cm_resource_abi_import_HttpTypes_OutgoingBody_drop(handle: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]outgoing-body.write")
+internal external fun __wasm_import_write35(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[static]outgoing-body.finish")
+internal external fun __wasm_import_finish36(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[resource-drop]future-incoming-response")
+internal external fun __cm_resource_abi_import_HttpTypes_FutureIncomingResponse_drop(
+    handle: Int
+): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]future-incoming-response.subscribe")
+internal external fun __wasm_import_subscribe37(p0: Int): Int
+
+@WasmImport("wasi:http/http-types@0.2.0", "[method]future-incoming-response.get")
+internal external fun __wasm_import_get38(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/http-types@0.2.0", "http-error-code")
+internal external fun __wasm_import_httpErrorCode(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/outgoing-handler@0.2.0", "handle")
+internal external fun __wasm_import_handle(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("wasi:http/incoming-handler@0.2.0", "handle")
+internal external fun __wasm_import_handle39(p0: Int, p1: Int): Unit
+
 @WasmExport("component-model:example/run#run")
 fun __wasm_export_run(): Unit {
   freeAllComponentModelReallocAllocatedMemory()

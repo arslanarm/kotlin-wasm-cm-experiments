@@ -1,0 +1,17 @@
+package wasi:http@0.2.0;
+
+/// The `wasi:http/imports` world imports all the APIs for HTTP proxies.
+/// It is intended to be `include`d in other worlds.
+world imports {
+  import wasi:clocks/monotonic-clock@0.2.0;
+  import wasi:clocks/wall-clock@0.2.0;
+  import wasi:random/random@0.2.0;
+
+  import wasi:cli/stdout@0.2.0;
+  import wasi:cli/stderr@0.2.0;
+  import wasi:cli/stdin@0.2.0;
+
+  import http-types;
+  import outgoing-handler;
+  import incoming-handler;
+}

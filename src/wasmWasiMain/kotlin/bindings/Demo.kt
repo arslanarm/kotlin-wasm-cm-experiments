@@ -137,6 +137,10165 @@ object Markdown {
   }
 }
 
+object Environment {
+  /**
+   * Get the POSIX-style environment variables.
+   *
+   * Each environment variable is provided as a pair of string variable names and string value.
+   *
+   * Morally, these are a value import, but until value imports are available in the component
+   * model, this import function should return the same values each time it is called.
+   */
+  public fun getEnvironment(): List<Pair<String, String>> {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+      __wasm_import_getEnvironment(ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+
+      val list = ArrayList<Pair<String, String>>((ptr + 4).ptr.loadInt())
+      for (i in 0 until (ptr + 4).ptr.loadInt()) {
+        val base = ((ptr + 0).ptr.loadInt()) + (i * 16)
+
+        list.add(
+            Pair<String, String>(
+                STRING_FROM_MEM((base + 0).ptr.loadInt(), (base + 4).ptr.loadInt()),
+                STRING_FROM_MEM((base + 8).ptr.loadInt(), (base + 12).ptr.loadInt()),
+            ))
+      }
+      return list
+    }
+    // </editor-fold>
+  }
+  /** Get the POSIX-style arguments to the program. */
+  public fun getArguments(): List<String> {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+      __wasm_import_getArguments(ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+
+      val list = ArrayList<String>((ptr + 4).ptr.loadInt())
+      for (i in 0 until (ptr + 4).ptr.loadInt()) {
+        val base = ((ptr + 0).ptr.loadInt()) + (i * 8)
+
+        list.add(STRING_FROM_MEM((base + 0).ptr.loadInt(), (base + 4).ptr.loadInt()))
+      }
+      return list
+    }
+    // </editor-fold>
+  }
+  /**
+   * Return a path that programs should use as their initial current working directory, interpreting
+   * `.` as shorthand for this.
+   */
+  public fun initialCwd(): String? {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+      __wasm_import_initialCwd(ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      // OptionLift start
+      val option =
+          if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+            STRING_FROM_MEM((ptr + 4).ptr.loadInt(), (ptr + 8).ptr.loadInt())
+          } else {
+            null
+          }
+      // OptionLift end
+      return option
+    }
+    // </editor-fold>
+  }
+}
+
+object Exit {
+  /** Exit the current instance and any linked instances. */
+  public fun exit(status: Result<Unit>): Unit {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val result: Int
+      if (status.isFailure) {
+        result = 1
+      } else {
+        result = 0
+      }
+      __wasm_import_exit(result)
+      freeAllComponentModelReallocAllocatedMemory()
+    }
+    // </editor-fold>
+  }
+  /**
+   * Exit the current instance and any linked instances, reporting the specified status code to the
+   * host.
+   *
+   * The meaning of the code depends on the context, with 0 usually meaning "success", and other
+   * values indicating various types of failure.
+   *
+   * This function does not return; the effect is analogous to a trap, but without the connotation
+   * that something bad has happened.
+   */
+  public fun exitWithCode(statusCode: UByte): Unit {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      __wasm_import_exitWithCode(statusCode.toInt())
+      freeAllComponentModelReallocAllocatedMemory()
+    }
+    // </editor-fold>
+  }
+}
+
+object Error {
+  /**
+   * A resource which represents some error information.
+   *
+   * The only method provided by this resource is `to-debug-string`, which provides some
+   * human-readable information about the error.
+   *
+   * In the `wasi:io` package, this resource is returned through the `wasi:io/streams/stream-error`
+   * type.
+   *
+   * To provide more specific error information, other interfaces may offer functions to "downcast"
+   * this error into more specific types. For example, errors returned from streams derived from
+   * filesystem types can be described using the filesystem's own error-code type. This is done
+   * using the function `wasi:filesystem/types/filesystem-error-code`, which takes a `borrow<error>`
+   * parameter and returns an `option<wasi:filesystem/types/error-code>`.
+   *
+   * The set of functions which can "downcast" an `error` into a more concrete type is open.
+   */
+  class Error : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_Error_Error_drop(__handle.value)
+    }
+    /**
+     * Returns a string that is suitable to assist humans in debugging this error.
+     *
+     * WARNING: The returned string should not be consumed mechanically! It may change across
+     * platforms, hosts, or other implementation details. Parsing this string is a major
+     * platform-compatibility hazard.
+     */
+    public fun toDebugString(): String {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_toDebugString(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        return STRING_FROM_MEM((ptr + 0).ptr.loadInt(), (ptr + 4).ptr.loadInt())
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+}
+
+object Poll {
+  /** `pollable` represents a single I/O event which may be ready, or not. */
+  class Pollable : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_Poll_Pollable_drop(__handle.value)
+    }
+    /**
+     * Return the readiness of a pollable. This function never blocks.
+     *
+     * Returns `true` when the pollable is ready, and `false` otherwise.
+     */
+    public fun ready(): Boolean {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_ready(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        return (ret != 0)
+      }
+      // </editor-fold>
+    }
+    /**
+     * `block` returns immediately if the pollable is ready, and otherwise blocks until ready.
+     *
+     * This function is equivalent to calling `poll.poll` on a list containing only this pollable.
+     */
+    public fun block(): Unit {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        __wasm_import_block(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+  /**
+   * Poll for completion on a set of pollables.
+   *
+   * This function takes a list of pollables, which identify I/O sources of interest, and waits
+   * until one or more of the events is ready for I/O.
+   *
+   * The result `list<u32>` contains one or more indices of handles in the argument list that is
+   * ready for I/O.
+   *
+   * This function traps if either:
+   * - the list is empty, or:
+   * - the list contains more elements than can be indexed with a `u32` value.
+   *
+   * A timeout can be implemented by adding a pollable from the wasi-clocks API to the list.
+   *
+   * This function does not return a `result`; polling in itself does not do any I/O so it doesn't
+   * fail. If any of the I/O sources identified by the pollables has an error, it is indicated by
+   * marking the source as being ready for I/O.
+   */
+
+  public fun poll(in_: List<Poll.Pollable>): List<UInt> {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val address = allocator.allocate(in_.size * 4 /*, align=4*/).address.toInt()
+      for ((index, el) in in_.withIndex()) {
+        val base = address + (index * 4)
+        var handle = el.__handle.value
+        (base + 0).ptr.storeInt(handle)
+      }
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+      __wasm_import_poll(address, in_.size, ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+
+      val list = ArrayList<UInt>((ptr + 4).ptr.loadInt())
+      for (i in 0 until (ptr + 4).ptr.loadInt()) {
+        val base = ((ptr + 0).ptr.loadInt()) + (i * 4)
+
+        list.add((base + 0).ptr.loadInt().toUInt())
+      }
+      return list
+    }
+    // </editor-fold>
+  }
+}
+
+object Streams {
+
+  /** An error for input-stream and output-stream operations. */
+  sealed interface StreamError {
+    data class LastOperationFailed(val value: Error.Error) : StreamError
+
+    data object Closed : StreamError
+  }
+  /**
+   * An input bytestream.
+   *
+   * `input-stream`s are *non-blocking* to the extent practical on underlying platforms. I/O
+   * operations always return promptly; if fewer bytes are promptly available than requested, they
+   * return the number of bytes promptly available, which could even be zero. To wait for data to be
+   * available, use the `subscribe` function to obtain a `pollable` which can be polled for using
+   * `wasi:io/poll`.
+   */
+
+  class InputStream : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_Streams_InputStream_drop(__handle.value)
+    }
+    /**
+     * Perform a non-blocking read from the stream.
+     *
+     * When the source of a `read` is binary data, the bytes from the source are returned verbatim.
+     * When the source of a `read` is known to the implementation to be text, bytes containing the
+     * UTF-8 encoding of the text are returned.
+     *
+     * This function returns a list of bytes containing the read data, when successful. The returned
+     * list will contain up to `len` bytes; it may return fewer than requested, but not more. The
+     * list is empty when no bytes are available for reading at this time. The pollable given by
+     * `subscribe` will be ready when more bytes are available.
+     *
+     * This function fails with a `stream-error` when the operation encounters an error, giving
+     * `last-operation-failed`, or when the stream is closed, giving `closed`.
+     *
+     * When the caller gives a `len` of 0, it represents a request to read 0 bytes. If the stream is
+     * still open, this call should succeed and return an empty list, or otherwise fail with
+     * `closed`.
+     *
+     * The `len` parameter is a `u64`, which could represent a list of u8 which is not possible to
+     * allocate in wasm32, or not desirable to allocate as as a return value by the callee. The
+     * callee may return a list of bytes less than `len` in size while more bytes are available for
+     * reading.
+     */
+    public fun read(len: ULong): Result<List<UByte>> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_read(handle, len.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+
+              val list = ArrayList<UByte>((ptr + 8).ptr.loadInt())
+              for (i in 0 until (ptr + 8).ptr.loadInt()) {
+                val base = ((ptr + 4).ptr.loadInt()) + (i * 1)
+
+                list.add((base + 0).ptr.loadUByte().toInt().toUByte())
+              }
+
+              Result<List<UByte>>.success(list)
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 8).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<List<UByte>>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Read bytes from a stream, after blocking until at least one byte can be read. Except for
+     * blocking, behavior is identical to `read`.
+     */
+    public fun blockingRead(len: ULong): Result<List<UByte>> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_blockingRead(handle, len.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+
+              val list = ArrayList<UByte>((ptr + 8).ptr.loadInt())
+              for (i in 0 until (ptr + 8).ptr.loadInt()) {
+                val base = ((ptr + 4).ptr.loadInt()) + (i * 1)
+
+                list.add((base + 0).ptr.loadUByte().toInt().toUByte())
+              }
+
+              Result<List<UByte>>.success(list)
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 8).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<List<UByte>>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Skip bytes from a stream. Returns number of bytes skipped.
+     *
+     * Behaves identical to `read`, except instead of returning a list of bytes, returns the number
+     * of bytes consumed from the stream.
+     */
+    public fun skip(len: ULong): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_skip(handle, len.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 8).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 12).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<ULong>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Skip bytes from a stream, after blocking until at least one byte can be skipped. Except for
+     * blocking behavior, identical to `skip`.
+     */
+    public fun blockingSkip(len: ULong): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_blockingSkip(handle, len.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 8).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 12).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<ULong>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Create a `pollable` which will resolve once either the specified stream has bytes available
+     * to read or the other end of the stream has been closed. The created `pollable` is a child
+     * resource of the `input-stream`. Implementations may trap if the `input-stream` is dropped
+     * before all derived `pollable`s created with this function are dropped.
+     */
+    public fun subscribe(): Poll.Pollable {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_subscribe(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = Poll.Pollable(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+  /**
+   * An output bytestream.
+   *
+   * `output-stream`s are *non-blocking* to the extent practical on underlying platforms. Except
+   * where specified otherwise, I/O operations also always return promptly, after the number of
+   * bytes that can be written promptly, which could even be zero. To wait for the stream to be
+   * ready to accept data, the `subscribe` function to obtain a `pollable` which can be polled for
+   * using `wasi:io/poll`.
+   *
+   * Dropping an `output-stream` while there's still an active write in progress may result in the
+   * data being lost. Before dropping the stream, be sure to fully flush your writes.
+   */
+
+  class OutputStream : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_Streams_OutputStream_drop(__handle.value)
+    }
+    /**
+     * Check readiness for writing. This function never blocks.
+     *
+     * Returns the number of bytes permitted for the next call to `write`, or an error. Calling
+     * `write` with more bytes than this function has permitted will trap.
+     *
+     * When this function returns 0 bytes, the `subscribe` pollable will become ready when this
+     * function will report at least 1 byte, or an error.
+     */
+    public fun checkWrite(): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_checkWrite(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 8).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 12).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<ULong>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Perform a write. This function never blocks.
+     *
+     * When the destination of a `write` is binary data, the bytes from `contents` are written
+     * verbatim. When the destination of a `write` is known to the implementation to be text, the
+     * bytes of `contents` are transcoded from UTF-8 into the encoding of the destination and then
+     * written.
+     *
+     * Precondition: check-write gave permit of Ok(n) and contents has a length of less than or
+     * equal to n. Otherwise, this function will trap.
+     *
+     * returns Err(closed) without writing if the stream has closed since the last call to
+     * check-write provided a permit.
+     */
+    public fun write(contents: List<UByte>): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val address = allocator.allocate(contents.size * 1 /*, align=1*/).address.toInt()
+        for ((index, el) in contents.withIndex()) {
+          val base = address + (index * 1)
+          (base + 0).ptr.storeByte(el.toInt().toByte())
+        }
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_write(handle, address, contents.size, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 8).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Unit>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Perform a write of up to 4096 bytes, and then flush the stream. Block until all of these
+     * operations are complete, or an error occurs.
+     *
+     * This is a convenience wrapper around the use of `check-write`, `subscribe`, `write`, and
+     * `flush`, and is implemented with the following pseudo-code:
+     * ```text
+     * let pollable = this.subscribe();
+     * while !contents.is_empty() {
+     * // Wait for the stream to become writable
+     * pollable.block();
+     * let Ok(n) = this.check-write(); // eliding error handling
+     * let len = min(n, contents.len());
+     * let (chunk, rest) = contents.split_at(len);
+     * this.write(chunk  );            // eliding error handling
+     * contents = rest;
+     * }
+     * this.flush();
+     * // Wait for completion of `flush`
+     * pollable.block();
+     * // Check for any errors that arose during `flush`
+     * let _ = this.check-write();         // eliding error handling
+     * ```
+     */
+    public fun blockingWriteAndFlush(contents: List<UByte>): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val address = allocator.allocate(contents.size * 1 /*, align=1*/).address.toInt()
+        for ((index, el) in contents.withIndex()) {
+          val base = address + (index * 1)
+          (base + 0).ptr.storeByte(el.toInt().toByte())
+        }
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_blockingWriteAndFlush(handle, address, contents.size, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 8).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Unit>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Request to flush buffered output. This function never blocks.
+     *
+     * This tells the output-stream that the caller intends any buffered output to be flushed. the
+     * output which is expected to be flushed is all that has been passed to `write` prior to this
+     * call.
+     *
+     * Upon calling this function, the `output-stream` will not accept any writes (`check-write`
+     * will return `ok(0)`) until the flush has completed. The `subscribe` pollable will become
+     * ready when the flush has completed and the stream can accept more writes.
+     */
+    public fun flush(): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_flush(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 8).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Unit>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Request to flush buffered output, and block until flush completes and stream is ready for
+     * writing again.
+     */
+    public fun blockingFlush(): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_blockingFlush(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 8).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Unit>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Create a `pollable` which will resolve once the output-stream is ready for more writing, or
+     * an error has occurred. When this pollable is ready, `check-write` will return `ok(n)` with
+     * n>0, or an error.
+     *
+     * If the stream is closed, this pollable is always ready immediately.
+     *
+     * The created `pollable` is a child resource of the `output-stream`. Implementations may trap
+     * if the `output-stream` is dropped before all derived `pollable`s created with this function
+     * are dropped.
+     */
+    public fun subscribe(): Poll.Pollable {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_subscribe0(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = Poll.Pollable(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+    /**
+     * Write zeroes to a stream.
+     *
+     * This should be used precisely like `write` with the exact same preconditions (must use
+     * check-write first), but instead of passing a list of bytes, you simply pass the number of
+     * zero-bytes that should be written.
+     */
+    public fun writeZeroes(len: ULong): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_writeZeroes(handle, len.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 8).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Unit>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Perform a write of up to 4096 zeroes, and then flush the stream. Block until all of these
+     * operations are complete, or an error occurs.
+     *
+     * This is a convenience wrapper around the use of `check-write`, `subscribe`, `write-zeroes`,
+     * and `flush`, and is implemented with the following pseudo-code:
+     * ```text
+     * let pollable = this.subscribe();
+     * while num_zeroes != 0 {
+     * // Wait for the stream to become writable
+     * pollable.block();
+     * let Ok(n) = this.check-write(); // eliding error handling
+     * let len = min(n, num_zeroes);
+     * this.write-zeroes(len);         // eliding error handling
+     * num_zeroes -= len;
+     * }
+     * this.flush();
+     * // Wait for completion of `flush`
+     * pollable.block();
+     * // Check for any errors that arose during `flush`
+     * let _ = this.check-write();         // eliding error handling
+     * ```
+     */
+    public fun blockingWriteZeroesAndFlush(len: ULong): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_blockingWriteZeroesAndFlush(handle, len.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 8).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Unit>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Read from one stream and write to another.
+     *
+     * The behavior of splice is equivalent to:
+     * 1. calling `check-write` on the `output-stream`
+     * 2. calling `read` on the `input-stream` with the smaller of the `check-write` permitted
+     *    length and the `len` provided to `splice`
+     * 3. calling `write` on the `output-stream` with that read data.
+     *
+     * Any error reported by the call to `check-write`, `read`, or `write` ends the splice and
+     * reports that error.
+     *
+     * This function returns the number of bytes transferred; it may be less than `len`.
+     */
+    public fun splice(src: Streams.InputStream, len: ULong): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        var handle0 = src.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_splice(handle, handle0, len.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 8).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 12).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<ULong>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Read from one stream and write to another, with blocking.
+     *
+     * This is similar to `splice`, except that it blocks until the `output-stream` is ready for
+     * writing, and the `input-stream` is ready for reading, before performing the `splice`.
+     */
+    public fun blockingSplice(src: Streams.InputStream, len: ULong): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        var handle0 = src.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_blockingSplice(handle, handle0, len.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 8).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 12).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<ULong>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+}
+
+object Stdin {
+  public fun getStdin(): Streams.InputStream {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ret: Int = __wasm_import_getStdin()
+      freeAllComponentModelReallocAllocatedMemory()
+      val resource = Streams.InputStream(ResourceHandle(ret))
+      return resource
+    }
+    // </editor-fold>
+  }
+}
+
+object Stdout {
+  public fun getStdout(): Streams.OutputStream {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ret: Int = __wasm_import_getStdout()
+      freeAllComponentModelReallocAllocatedMemory()
+      val resource = Streams.OutputStream(ResourceHandle(ret))
+      return resource
+    }
+    // </editor-fold>
+  }
+}
+
+object Stderr {
+  public fun getStderr(): Streams.OutputStream {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ret: Int = __wasm_import_getStderr()
+      freeAllComponentModelReallocAllocatedMemory()
+      val resource = Streams.OutputStream(ResourceHandle(ret))
+      return resource
+    }
+    // </editor-fold>
+  }
+}
+
+object TerminalInput {
+  /** The input side of a terminal. */
+  class TerminalInput : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_TerminalInput_TerminalInput_drop(__handle.value)
+    }
+
+    companion object {}
+  }
+}
+
+object TerminalOutput {
+  /** The output side of a terminal. */
+  class TerminalOutput : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_TerminalOutput_TerminalOutput_drop(__handle.value)
+    }
+
+    companion object {}
+  }
+}
+
+object TerminalStdin {
+  /**
+   * If stdin is connected to a terminal, return a `terminal-input` handle allowing further
+   * interaction with it.
+   */
+  public fun getTerminalStdin(): TerminalInput.TerminalInput? {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+      __wasm_import_getTerminalStdin(ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      // OptionLift start
+      val option =
+          if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+            val resource = TerminalInput.TerminalInput(ResourceHandle((ptr + 4).ptr.loadInt()))
+            resource
+          } else {
+            null
+          }
+      // OptionLift end
+      return option
+    }
+    // </editor-fold>
+  }
+}
+
+object TerminalStdout {
+  /**
+   * If stdout is connected to a terminal, return a `terminal-output` handle allowing further
+   * interaction with it.
+   */
+  public fun getTerminalStdout(): TerminalOutput.TerminalOutput? {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+      __wasm_import_getTerminalStdout(ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      // OptionLift start
+      val option =
+          if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+            val resource = TerminalOutput.TerminalOutput(ResourceHandle((ptr + 4).ptr.loadInt()))
+            resource
+          } else {
+            null
+          }
+      // OptionLift end
+      return option
+    }
+    // </editor-fold>
+  }
+}
+
+object TerminalStderr {
+  /**
+   * If stderr is connected to a terminal, return a `terminal-output` handle allowing further
+   * interaction with it.
+   */
+  public fun getTerminalStderr(): TerminalOutput.TerminalOutput? {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+      __wasm_import_getTerminalStderr(ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      // OptionLift start
+      val option =
+          if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+            val resource = TerminalOutput.TerminalOutput(ResourceHandle((ptr + 4).ptr.loadInt()))
+            resource
+          } else {
+            null
+          }
+      // OptionLift end
+      return option
+    }
+    // </editor-fold>
+  }
+}
+
+object MonotonicClock {
+  /**
+   * Read the current value of the clock.
+   *
+   * The clock is monotonic, therefore calling this function repeatedly will produce a sequence of
+   * non-decreasing values.
+   */
+  public fun now(): ULong {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ret: Long = __wasm_import_now()
+      freeAllComponentModelReallocAllocatedMemory()
+      return ret.toULong()
+    }
+    // </editor-fold>
+  }
+  /**
+   * Query the resolution of the clock. Returns the duration of time corresponding to a clock tick.
+   */
+  public fun resolution(): ULong {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ret: Long = __wasm_import_resolution()
+      freeAllComponentModelReallocAllocatedMemory()
+      return ret.toULong()
+    }
+    // </editor-fold>
+  }
+  /** Create a `pollable` which will resolve once the specified instant has occurred. */
+  public fun subscribeInstant(when_: ULong): Poll.Pollable {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ret: Int = __wasm_import_subscribeInstant(when_.toLong())
+      freeAllComponentModelReallocAllocatedMemory()
+      val resource = Poll.Pollable(ResourceHandle(ret))
+      return resource
+    }
+    // </editor-fold>
+  }
+  /**
+   * Create a `pollable` that will resolve after the specified duration has elapsed from the time
+   * this function is invoked.
+   */
+  public fun subscribeDuration(when_: ULong): Poll.Pollable {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ret: Int = __wasm_import_subscribeDuration(when_.toLong())
+      freeAllComponentModelReallocAllocatedMemory()
+      val resource = Poll.Pollable(ResourceHandle(ret))
+      return resource
+    }
+    // </editor-fold>
+  }
+}
+
+object WallClock {
+
+  /** A time and date in seconds plus nanoseconds. */
+  data class Datetime(
+      var seconds: ULong,
+      var nanoseconds: UInt,
+  )
+  /**
+   * Read the current value of the clock.
+   *
+   * This clock is not monotonic, therefore calling this function repeatedly will not necessarily
+   * produce a sequence of non-decreasing values.
+   *
+   * The returned timestamps represent the number of seconds since 1970-01-01T00:00:00Z, also known
+   * as [POSIX's Seconds Since the Epoch], also known as [Unix Time].
+   *
+   * The nanoseconds field of the output is always less than 1000000000.
+   *
+   * [POSIX's Seconds Since the Epoch]:
+   * https://pubs.opengroup.org/onlinepubs/9699919799/xrat/V4_xbd_chap04.html#tag_21_04_16
+   * [Unix Time]: https://en.wikipedia.org/wiki/Unix_time
+   */
+  public fun now(): WallClock.Datetime {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+      __wasm_import_now1(ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      return WallClock.Datetime(
+          (ptr + 0).ptr.loadLong().toULong(),
+          (ptr + 8).ptr.loadInt().toUInt(),
+      )
+    }
+    // </editor-fold>
+  }
+  /**
+   * Query the resolution of the clock.
+   *
+   * The nanoseconds field of the output is always less than 1000000000.
+   */
+  public fun resolution(): WallClock.Datetime {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+      __wasm_import_resolution2(ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      return WallClock.Datetime(
+          (ptr + 0).ptr.loadLong().toULong(),
+          (ptr + 8).ptr.loadInt().toUInt(),
+      )
+    }
+    // </editor-fold>
+  }
+}
+
+object Timezone {
+
+  /**
+   * Information useful for displaying the timezone of a specific `datetime`.
+   *
+   * This information may vary within a single `timezone` to reflect daylight saving time
+   * adjustments.
+   */
+  data class TimezoneDisplay(
+      /**
+       * The number of seconds difference between UTC time and the local time of the timezone.
+       *
+       * The returned value will always be less than 86400 which is the number of seconds in a day
+       * (24*60*60).
+       *
+       * In implementations that do not expose an actual time zone, this should return 0.
+       */
+      var utcOffset: Int,
+      /**
+       * The abbreviated name of the timezone to display to a user. The name `UTC` indicates
+       * Coordinated Universal Time. Otherwise, this should reference local standards for the name
+       * of the time zone.
+       *
+       * In implementations that do not expose an actual time zone, this should be the string `UTC`.
+       *
+       * In time zones that do not have an applicable name, a formatted representation of the UTC
+       * offset may be returned, such as `-04:00`.
+       */
+      var name: String,
+      /**
+       * Whether daylight saving time is active.
+       *
+       * In implementations that do not expose an actual time zone, this should return false.
+       */
+      var inDaylightSavingTime: Boolean,
+  )
+  /**
+   * Return information needed to display the given `datetime`. This includes the UTC offset, the
+   * time zone name, and a flag indicating whether daylight saving time is active.
+   *
+   * If the timezone cannot be determined for the given `datetime`, return a `timezone-display` for
+   * `UTC` with a `utc-offset` of 0 and no daylight saving time.
+   */
+  public fun display(when_: WallClock.Datetime): Timezone.TimezoneDisplay {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=4)*/ allocator.allocate(16).address.toInt()
+      __wasm_import_display(when_.seconds.toLong(), when_.nanoseconds.toInt(), ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      return Timezone.TimezoneDisplay(
+          (ptr + 0).ptr.loadInt(),
+          STRING_FROM_MEM((ptr + 4).ptr.loadInt(), (ptr + 8).ptr.loadInt()),
+          ((ptr + 12).ptr.loadUByte().toInt() != 0),
+      )
+    }
+    // </editor-fold>
+  }
+  /** The same as `display`, but only return the UTC offset. */
+  public fun utcOffset(when_: WallClock.Datetime): Int {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ret: Int = __wasm_import_utcOffset(when_.seconds.toLong(), when_.nanoseconds.toInt())
+      freeAllComponentModelReallocAllocatedMemory()
+      return ret
+    }
+    // </editor-fold>
+  }
+}
+
+object Types {
+
+  /**
+   * The type of a filesystem object referenced by a descriptor.
+   *
+   * Note: This was called `filetype` in earlier versions of WASI.
+   */
+  enum class DescriptorType {
+    /**
+     * The type of the descriptor or file is unknown or is different from any of the other types
+     * specified.
+     */
+    UNKNOWN,
+    /** The descriptor refers to a block device inode. */
+    BLOCK_DEVICE,
+    /** The descriptor refers to a character device inode. */
+    CHARACTER_DEVICE,
+    /** The descriptor refers to a directory inode. */
+    DIRECTORY,
+    /** The descriptor refers to a named pipe. */
+    FIFO,
+    /** The file refers to a symbolic link inode. */
+    SYMBOLIC_LINK,
+    /** The descriptor refers to a regular file inode. */
+    REGULAR_FILE,
+    /** The descriptor refers to a socket. */
+    SOCKET,
+  }
+
+  /**
+   * Descriptor flags.
+   *
+   * Note: This was called `fdflags` in earlier versions of WASI.
+   */
+  value class DescriptorFlags internal constructor(val _value: Long) {
+    constructor(
+        read: Boolean = false,
+        write: Boolean = false,
+        fileIntegritySync: Boolean = false,
+        dataIntegritySync: Boolean = false,
+        requestedWriteSync: Boolean = false,
+        mutateDirectory: Boolean = false,
+    ) : this(
+        0L or
+            (if (read) (1L shl 0) else 0L) or
+            (if (write) (1L shl 1) else 0L) or
+            (if (fileIntegritySync) (1L shl 2) else 0L) or
+            (if (dataIntegritySync) (1L shl 3) else 0L) or
+            (if (requestedWriteSync) (1L shl 4) else 0L) or
+            (if (mutateDirectory) (1L shl 5) else 0L))
+
+    val read: Boolean
+      get() = (_value and (1L shl 0)) != 0L
+
+    val write: Boolean
+      get() = (_value and (1L shl 1)) != 0L
+
+    val fileIntegritySync: Boolean
+      get() = (_value and (1L shl 2)) != 0L
+
+    val dataIntegritySync: Boolean
+      get() = (_value and (1L shl 3)) != 0L
+
+    val requestedWriteSync: Boolean
+      get() = (_value and (1L shl 4)) != 0L
+
+    val mutateDirectory: Boolean
+      get() = (_value and (1L shl 5)) != 0L
+  }
+
+  /** Flags determining the method of how paths are resolved. */
+  value class PathFlags internal constructor(val _value: Long) {
+    constructor(
+        symlinkFollow: Boolean = false,
+    ) : this(0L or (if (symlinkFollow) (1L shl 0) else 0L))
+
+    val symlinkFollow: Boolean
+      get() = (_value and (1L shl 0)) != 0L
+  }
+
+  /** Open flags used by `open-at`. */
+  value class OpenFlags internal constructor(val _value: Long) {
+    constructor(
+        create: Boolean = false,
+        directory: Boolean = false,
+        exclusive: Boolean = false,
+        truncate: Boolean = false,
+    ) : this(
+        0L or
+            (if (create) (1L shl 0) else 0L) or
+            (if (directory) (1L shl 1) else 0L) or
+            (if (exclusive) (1L shl 2) else 0L) or
+            (if (truncate) (1L shl 3) else 0L))
+
+    val create: Boolean
+      get() = (_value and (1L shl 0)) != 0L
+
+    val directory: Boolean
+      get() = (_value and (1L shl 1)) != 0L
+
+    val exclusive: Boolean
+      get() = (_value and (1L shl 2)) != 0L
+
+    val truncate: Boolean
+      get() = (_value and (1L shl 3)) != 0L
+  }
+
+  /**
+   * File attributes.
+   *
+   * Note: This was called `filestat` in earlier versions of WASI.
+   */
+  data class DescriptorStat(
+      /** File type. */
+      var type: Types.DescriptorType,
+      /** Number of hard links to the file. */
+      var linkCount: ULong,
+      /**
+       * For regular files, the file size in bytes. For symbolic links, the length in bytes of the
+       * pathname contained in the symbolic link.
+       */
+      var size: ULong,
+      /**
+       * Last data access timestamp.
+       *
+       * If the `option` is none, the platform doesn't maintain an access timestamp for this file.
+       */
+      var dataAccessTimestamp: WallClock.Datetime?,
+      /**
+       * Last data modification timestamp.
+       *
+       * If the `option` is none, the platform doesn't maintain a modification timestamp for this
+       * file.
+       */
+      var dataModificationTimestamp: WallClock.Datetime?,
+      /**
+       * Last file status-change timestamp.
+       *
+       * If the `option` is none, the platform doesn't maintain a status-change timestamp for this
+       * file.
+       */
+      var statusChangeTimestamp: WallClock.Datetime?,
+  )
+
+  /** When setting a timestamp, this gives the value to set it to. */
+  sealed interface NewTimestamp {
+    data object NoChange : NewTimestamp
+
+    data object Now : NewTimestamp
+
+    data class Timestamp(val value: WallClock.Datetime) : NewTimestamp
+  }
+  /** A directory entry. */
+  data class DirectoryEntry(
+      /** The type of the file referred to by this directory entry. */
+      var type: Types.DescriptorType,
+      /** The name of the object. */
+      var name: String,
+  )
+
+  /**
+   * Error codes returned by functions, similar to `errno` in POSIX. Not all of these error codes
+   * are returned by the functions provided by this API; some are used in higher-level library
+   * layers, and others are provided merely for alignment with POSIX.
+   */
+  enum class ErrorCode {
+    /** Permission denied, similar to `EACCES` in POSIX. */
+    ACCESS,
+    /**
+     * Resource unavailable, or operation would block, similar to `EAGAIN` and `EWOULDBLOCK` in
+     * POSIX.
+     */
+    WOULD_BLOCK,
+    /** Connection already in progress, similar to `EALREADY` in POSIX. */
+    ALREADY,
+    /** Bad descriptor, similar to `EBADF` in POSIX. */
+    BAD_DESCRIPTOR,
+    /** Device or resource busy, similar to `EBUSY` in POSIX. */
+    BUSY,
+    /** Resource deadlock would occur, similar to `EDEADLK` in POSIX. */
+    DEADLOCK,
+    /** Storage quota exceeded, similar to `EDQUOT` in POSIX. */
+    QUOTA,
+    /** File exists, similar to `EEXIST` in POSIX. */
+    EXIST,
+    /** File too large, similar to `EFBIG` in POSIX. */
+    FILE_TOO_LARGE,
+    /** Illegal byte sequence, similar to `EILSEQ` in POSIX. */
+    ILLEGAL_BYTE_SEQUENCE,
+    /** Operation in progress, similar to `EINPROGRESS` in POSIX. */
+    IN_PROGRESS,
+    /** Interrupted function, similar to `EINTR` in POSIX. */
+    INTERRUPTED,
+    /** Invalid argument, similar to `EINVAL` in POSIX. */
+    INVALID,
+    /** I/O error, similar to `EIO` in POSIX. */
+    IO,
+    /** Is a directory, similar to `EISDIR` in POSIX. */
+    IS_DIRECTORY,
+    /** Too many levels of symbolic links, similar to `ELOOP` in POSIX. */
+    LOOP,
+    /** Too many links, similar to `EMLINK` in POSIX. */
+    TOO_MANY_LINKS,
+    /** Message too large, similar to `EMSGSIZE` in POSIX. */
+    MESSAGE_SIZE,
+    /** Filename too long, similar to `ENAMETOOLONG` in POSIX. */
+    NAME_TOO_LONG,
+    /** No such device, similar to `ENODEV` in POSIX. */
+    NO_DEVICE,
+    /** No such file or directory, similar to `ENOENT` in POSIX. */
+    NO_ENTRY,
+    /** No locks available, similar to `ENOLCK` in POSIX. */
+    NO_LOCK,
+    /** Not enough space, similar to `ENOMEM` in POSIX. */
+    INSUFFICIENT_MEMORY,
+    /** No space left on device, similar to `ENOSPC` in POSIX. */
+    INSUFFICIENT_SPACE,
+    /** Not a directory or a symbolic link to a directory, similar to `ENOTDIR` in POSIX. */
+    NOT_DIRECTORY,
+    /** Directory not empty, similar to `ENOTEMPTY` in POSIX. */
+    NOT_EMPTY,
+    /** State not recoverable, similar to `ENOTRECOVERABLE` in POSIX. */
+    NOT_RECOVERABLE,
+    /** Not supported, similar to `ENOTSUP` and `ENOSYS` in POSIX. */
+    UNSUPPORTED,
+    /** Inappropriate I/O control operation, similar to `ENOTTY` in POSIX. */
+    NO_TTY,
+    /** No such device or address, similar to `ENXIO` in POSIX. */
+    NO_SUCH_DEVICE,
+    /** Value too large to be stored in data type, similar to `EOVERFLOW` in POSIX. */
+    OVERFLOW,
+    /** Operation not permitted, similar to `EPERM` in POSIX. */
+    NOT_PERMITTED,
+    /** Broken pipe, similar to `EPIPE` in POSIX. */
+    PIPE,
+    /** Read-only file system, similar to `EROFS` in POSIX. */
+    READ_ONLY,
+    /** Invalid seek, similar to `ESPIPE` in POSIX. */
+    INVALID_SEEK,
+    /** Text file busy, similar to `ETXTBSY` in POSIX. */
+    TEXT_FILE_BUSY,
+    /** Cross-device link, similar to `EXDEV` in POSIX. */
+    CROSS_DEVICE,
+  }
+
+  /** File or memory access pattern advisory information. */
+  enum class Advice {
+    /** The application has no advice to give on its behavior with respect to the specified data. */
+    NORMAL,
+    /**
+     * The application expects to access the specified data sequentially from lower offsets to
+     * higher offsets.
+     */
+    SEQUENTIAL,
+    /** The application expects to access the specified data in a random order. */
+    RANDOM,
+    /** The application expects to access the specified data in the near future. */
+    WILL_NEED,
+    /** The application expects that it will not access the specified data in the near future. */
+    DONT_NEED,
+    /**
+     * The application expects to access the specified data once and then not reuse it thereafter.
+     */
+    NO_REUSE,
+  }
+
+  /** A 128-bit hash value, split into parts because wasm doesn't have a 128-bit integer type. */
+  data class MetadataHashValue(
+      /** 64 bits of a 128-bit hash value. */
+      var lower: ULong,
+      /** Another 64 bits of a 128-bit hash value. */
+      var upper: ULong,
+  )
+  /**
+   * A descriptor is a reference to a filesystem object, which may be a file, directory, named pipe,
+   * special file, or other object on which filesystem calls may be made.
+   */
+  class Descriptor : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_Types_Descriptor_drop(__handle.value)
+    }
+    /**
+     * Return a stream for reading from a file, if available.
+     *
+     * May fail with an error-code describing why the file cannot be read.
+     *
+     * Multiple read, write, and append streams may be active on the same open file and they do not
+     * interfere with each other.
+     *
+     * Note: This allows using `read-stream`, which is similar to `read` in POSIX.
+     */
+    public fun readViaStream(offset: ULong): Result<Streams.InputStream> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_readViaStream(handle, offset.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = Streams.InputStream(ResourceHandle((ptr + 4).ptr.loadInt()))
+
+              Result<Streams.InputStream>.success(resource)
+            } else {
+              Result<Streams.InputStream>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Return a stream for writing to a file, if available.
+     *
+     * May fail with an error-code describing why the file cannot be written.
+     *
+     * Note: This allows using `write-stream`, which is similar to `write` in POSIX.
+     */
+    public fun writeViaStream(offset: ULong): Result<Streams.OutputStream> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_writeViaStream(handle, offset.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = Streams.OutputStream(ResourceHandle((ptr + 4).ptr.loadInt()))
+
+              Result<Streams.OutputStream>.success(resource)
+            } else {
+              Result<Streams.OutputStream>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Return a stream for appending to a file, if available.
+     *
+     * May fail with an error-code describing why the file cannot be appended.
+     *
+     * Note: This allows using `write-stream`, which is similar to `write` with `O_APPEND` in POSIX.
+     */
+    public fun appendViaStream(): Result<Streams.OutputStream> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_appendViaStream(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = Streams.OutputStream(ResourceHandle((ptr + 4).ptr.loadInt()))
+
+              Result<Streams.OutputStream>.success(resource)
+            } else {
+              Result<Streams.OutputStream>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Provide file advisory information on a descriptor.
+     *
+     * This is similar to `posix_fadvise` in POSIX.
+     */
+    public fun advise(offset: ULong, length: ULong, advice: Types.Advice): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_advise(handle, offset.toLong(), length.toLong(), advice.ordinal, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Synchronize the data of a file to disk.
+     *
+     * This function succeeds with no effect if the file descriptor is not opened for writing.
+     *
+     * Note: This is similar to `fdatasync` in POSIX.
+     */
+    public fun syncData(): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_syncData(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Get flags associated with a descriptor.
+     *
+     * Note: This returns similar flags to `fcntl(fd, F_GETFL)` in POSIX.
+     *
+     * Note: This returns the value that was the `fs_flags` value returned from `fdstat_get` in
+     * earlier versions of WASI.
+     */
+    public fun getFlags(): Result<Types.DescriptorFlags> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_getFlags(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Types.DescriptorFlags>
+                  .success(Types.DescriptorFlags((ptr + 1).ptr.loadUByte().toInt().toLong()))
+            } else {
+              Result<Types.DescriptorFlags>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Get the dynamic type of a descriptor.
+     *
+     * Note: This returns the same value as the `type` field of the `fd-stat` returned by `stat`,
+     * `stat-at` and similar.
+     *
+     * Note: This returns similar flags to the `st_mode & S_IFMT` value provided by `fstat` in
+     * POSIX.
+     *
+     * Note: This returns the value that was the `fs_filetype` value returned from `fdstat_get` in
+     * earlier versions of WASI.
+     */
+    public fun getType(): Result<Types.DescriptorType> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_getType(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Types.DescriptorType>
+                  .success(Types.DescriptorType.values()[(ptr + 1).ptr.loadUByte().toInt()])
+            } else {
+              Result<Types.DescriptorType>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Adjust the size of an open file. If this increases the file's size, the extra bytes are
+     * filled with zeros.
+     *
+     * Note: This was called `fd_filestat_set_size` in earlier versions of WASI.
+     */
+    public fun setSize(size: ULong): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setSize(handle, size.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Adjust the timestamps of an open file or directory.
+     *
+     * Note: This is similar to `futimens` in POSIX.
+     *
+     * Note: This was called `fd_filestat_set_times` in earlier versions of WASI.
+     */
+    public fun setTimes(
+        dataAccessTimestamp: Types.NewTimestamp,
+        dataModificationTimestamp: Types.NewTimestamp
+    ): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        // VariantLower START
+        val variant: Int
+        val variant2: Long
+        val variant3: Int
+        when (val x = dataAccessTimestamp) {
+          is Types.NewTimestamp.NoChange -> {
+            variant = 0
+            variant2 = 0L
+            variant3 = 0
+          }
+          is Types.NewTimestamp.Now -> {
+            variant = 1
+            variant2 = 0L
+            variant3 = 0
+          }
+          is Types.NewTimestamp.Timestamp -> {
+            val payload1 = x.value
+            variant = 2
+            variant2 = payload1.seconds.toLong()
+            variant3 = payload1.nanoseconds.toInt()
+          }
+          else -> error("unreachable")
+        }
+        // VariantLower END
+        // VariantLower START
+        val variant7: Int
+        val variant8: Long
+        val variant9: Int
+        when (val x10 = dataModificationTimestamp) {
+          is Types.NewTimestamp.NoChange -> {
+            variant7 = 0
+            variant8 = 0L
+            variant9 = 0
+          }
+          is Types.NewTimestamp.Now -> {
+            variant7 = 1
+            variant8 = 0L
+            variant9 = 0
+          }
+          is Types.NewTimestamp.Timestamp -> {
+            val payload6 = x10.value
+            variant7 = 2
+            variant8 = payload6.seconds.toLong()
+            variant9 = payload6.nanoseconds.toInt()
+          }
+          else -> error("unreachable")
+        }
+        // VariantLower END
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setTimes(
+            handle, variant, variant2, variant3, variant7, variant8, variant9, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Read from a descriptor, without using and updating the descriptor's offset.
+     *
+     * This function returns a list of bytes containing the data that was read, along with a bool
+     * which, when true, indicates that the end of the file was reached. The returned list will
+     * contain up to `length` bytes; it may return fewer than requested, if the end of the file is
+     * reached or if the I/O operation is interrupted.
+     *
+     * In the future, this may change to return a `stream<u8, error-code>`.
+     *
+     * Note: This is similar to `pread` in POSIX.
+     */
+    public fun read(length: ULong, offset: ULong): Result<Pair<List<UByte>, Boolean>> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=4)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_read3(handle, length.toLong(), offset.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+
+              val list = ArrayList<UByte>((ptr + 8).ptr.loadInt())
+              for (i in 0 until (ptr + 8).ptr.loadInt()) {
+                val base = ((ptr + 4).ptr.loadInt()) + (i * 1)
+
+                list.add((base + 0).ptr.loadUByte().toInt().toUByte())
+              }
+
+              Result<Pair<List<UByte>, Boolean>>
+                  .success(
+                      Pair<List<UByte>, Boolean>(
+                          list,
+                          ((ptr + 12).ptr.loadUByte().toInt() != 0),
+                      ))
+            } else {
+              Result<Pair<List<UByte>, Boolean>>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Write to a descriptor, without using and updating the descriptor's offset.
+     *
+     * It is valid to write past the end of a file; the file is extended to the extent of the write,
+     * with bytes between the previous end and the start of the write set to zero.
+     *
+     * In the future, this may change to take a `stream<u8, error-code>`.
+     *
+     * Note: This is similar to `pwrite` in POSIX.
+     */
+    public fun write(buffer: List<UByte>, offset: ULong): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val address = allocator.allocate(buffer.size * 1 /*, align=1*/).address.toInt()
+        for ((index, el) in buffer.withIndex()) {
+          val base = address + (index * 1)
+          (base + 0).ptr.storeByte(el.toInt().toByte())
+        }
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_write4(handle, address, buffer.size, offset.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              Result<ULong>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Read directory entries from a directory.
+     *
+     * On filesystems where directories contain entries referring to themselves and their parents,
+     * often named `.` and `..` respectively, these entries are omitted.
+     *
+     * This always returns a new stream which starts at the beginning of the directory. Multiple
+     * streams may be active on the same directory, and they do not interfere with each other.
+     */
+    public fun readDirectory(): Result<Types.DirectoryEntryStream> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_readDirectory(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = Types.DirectoryEntryStream(ResourceHandle((ptr + 4).ptr.loadInt()))
+
+              Result<Types.DirectoryEntryStream>.success(resource)
+            } else {
+              Result<Types.DirectoryEntryStream>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Synchronize the data and metadata of a file to disk.
+     *
+     * This function succeeds with no effect if the file descriptor is not opened for writing.
+     *
+     * Note: This is similar to `fsync` in POSIX.
+     */
+    public fun sync(): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_sync(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Create a directory.
+     *
+     * Note: This is similar to `mkdirat` in POSIX.
+     */
+    public fun createDirectoryAt(path: String): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = path.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val ptr0 = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_createDirectoryAt(handle, ptr, len, ptr0)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr0 + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr0 + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Return the attributes of an open file or directory.
+     *
+     * Note: This is similar to `fstat` in POSIX, except that it does not return device and inode
+     * information. For testing whether two descriptors refer to the same underlying filesystem
+     * object, use `is-same-object`. To obtain additional data that can be used do determine whether
+     * a file has been modified, use `metadata-hash`.
+     *
+     * Note: This was called `fd_filestat_get` in earlier versions of WASI.
+     */
+    public fun stat(): Result<Types.DescriptorStat> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=104, align=8)*/
+            allocator.allocate(104).address.toInt()
+        __wasm_import_stat(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              // OptionLift start
+              val option =
+                  if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                    WallClock.Datetime(
+                        (ptr + 40).ptr.loadLong().toULong(),
+                        (ptr + 48).ptr.loadInt().toUInt(),
+                    )
+                  } else {
+                    null
+                  }
+              // OptionLift end
+              // OptionLift start
+              val option0 =
+                  if ((ptr + 56).ptr.loadUByte().toInt() == 1) {
+                    WallClock.Datetime(
+                        (ptr + 64).ptr.loadLong().toULong(),
+                        (ptr + 72).ptr.loadInt().toUInt(),
+                    )
+                  } else {
+                    null
+                  }
+              // OptionLift end
+              // OptionLift start
+              val option1 =
+                  if ((ptr + 80).ptr.loadUByte().toInt() == 1) {
+                    WallClock.Datetime(
+                        (ptr + 88).ptr.loadLong().toULong(),
+                        (ptr + 96).ptr.loadInt().toUInt(),
+                    )
+                  } else {
+                    null
+                  }
+              // OptionLift end
+
+              Result<Types.DescriptorStat>
+                  .success(
+                      Types.DescriptorStat(
+                          Types.DescriptorType.values()[(ptr + 8).ptr.loadUByte().toInt()],
+                          (ptr + 16).ptr.loadLong().toULong(),
+                          (ptr + 24).ptr.loadLong().toULong(),
+                          option,
+                          option0,
+                          option1,
+                      ))
+            } else {
+              Result<Types.DescriptorStat>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Return the attributes of a file or directory.
+     *
+     * Note: This is similar to `fstatat` in POSIX, except that it does not return device and inode
+     * information. See the `stat` description for a discussion of alternatives.
+     *
+     * Note: This was called `path_filestat_get` in earlier versions of WASI.
+     */
+    public fun statAt(pathFlags: Types.PathFlags, path: String): Result<Types.DescriptorStat> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = path.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val ptr0 = /* RETURN_ADDRESS_ALLOC(size=104, align=8)*/
+            allocator.allocate(104).address.toInt()
+        __wasm_import_statAt(handle, pathFlags._value.toInt(), ptr, len, ptr0)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr0 + 0).ptr.loadUByte().toInt() == 0) {
+              // OptionLift start
+              val option =
+                  if ((ptr0 + 32).ptr.loadUByte().toInt() == 1) {
+                    WallClock.Datetime(
+                        (ptr0 + 40).ptr.loadLong().toULong(),
+                        (ptr0 + 48).ptr.loadInt().toUInt(),
+                    )
+                  } else {
+                    null
+                  }
+              // OptionLift end
+              // OptionLift start
+              val option1 =
+                  if ((ptr0 + 56).ptr.loadUByte().toInt() == 1) {
+                    WallClock.Datetime(
+                        (ptr0 + 64).ptr.loadLong().toULong(),
+                        (ptr0 + 72).ptr.loadInt().toUInt(),
+                    )
+                  } else {
+                    null
+                  }
+              // OptionLift end
+              // OptionLift start
+              val option2 =
+                  if ((ptr0 + 80).ptr.loadUByte().toInt() == 1) {
+                    WallClock.Datetime(
+                        (ptr0 + 88).ptr.loadLong().toULong(),
+                        (ptr0 + 96).ptr.loadInt().toUInt(),
+                    )
+                  } else {
+                    null
+                  }
+              // OptionLift end
+
+              Result<Types.DescriptorStat>
+                  .success(
+                      Types.DescriptorStat(
+                          Types.DescriptorType.values()[(ptr0 + 8).ptr.loadUByte().toInt()],
+                          (ptr0 + 16).ptr.loadLong().toULong(),
+                          (ptr0 + 24).ptr.loadLong().toULong(),
+                          option,
+                          option1,
+                          option2,
+                      ))
+            } else {
+              Result<Types.DescriptorStat>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr0 + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Adjust the timestamps of a file or directory.
+     *
+     * Note: This is similar to `utimensat` in POSIX.
+     *
+     * Note: This was called `path_filestat_set_times` in earlier versions of WASI.
+     */
+    public fun setTimesAt(
+        pathFlags: Types.PathFlags,
+        path: String,
+        dataAccessTimestamp: Types.NewTimestamp,
+        dataModificationTimestamp: Types.NewTimestamp
+    ): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = path.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        // VariantLower START
+        val variant: Int
+        val variant2: Long
+        val variant3: Int
+        when (val x = dataAccessTimestamp) {
+          is Types.NewTimestamp.NoChange -> {
+            variant = 0
+            variant2 = 0L
+            variant3 = 0
+          }
+          is Types.NewTimestamp.Now -> {
+            variant = 1
+            variant2 = 0L
+            variant3 = 0
+          }
+          is Types.NewTimestamp.Timestamp -> {
+            val payload1 = x.value
+            variant = 2
+            variant2 = payload1.seconds.toLong()
+            variant3 = payload1.nanoseconds.toInt()
+          }
+          else -> error("unreachable")
+        }
+        // VariantLower END
+        // VariantLower START
+        val variant7: Int
+        val variant8: Long
+        val variant9: Int
+        when (val x10 = dataModificationTimestamp) {
+          is Types.NewTimestamp.NoChange -> {
+            variant7 = 0
+            variant8 = 0L
+            variant9 = 0
+          }
+          is Types.NewTimestamp.Now -> {
+            variant7 = 1
+            variant8 = 0L
+            variant9 = 0
+          }
+          is Types.NewTimestamp.Timestamp -> {
+            val payload6 = x10.value
+            variant7 = 2
+            variant8 = payload6.seconds.toLong()
+            variant9 = payload6.nanoseconds.toInt()
+          }
+          else -> error("unreachable")
+        }
+        // VariantLower END
+        val ptr11 = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setTimesAt(
+            handle,
+            pathFlags._value.toInt(),
+            ptr,
+            len,
+            variant,
+            variant2,
+            variant3,
+            variant7,
+            variant8,
+            variant9,
+            ptr11)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr11 + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr11 + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Create a hard link.
+     *
+     * Fails with `error-code::no-entry` if the old path does not exist, with `error-code::exist` if
+     * the new path already exists, and `error-code::not-permitted` if the old path is not a file.
+     *
+     * Note: This is similar to `linkat` in POSIX.
+     */
+    public fun linkAt(
+        oldPathFlags: Types.PathFlags,
+        oldPath: String,
+        newDescriptor: Types.Descriptor,
+        newPath: String
+    ): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = oldPath.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        var handle0 = newDescriptor.__handle.value
+
+        val bytearray3 = newPath.encodeToByteArray()
+        val len2 = bytearray3.size
+        val ptr1 = allocator.writeToLinearMemory(bytearray3).address.toInt()
+
+        val ptr4 = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_linkAt(
+            handle, oldPathFlags._value.toInt(), ptr, len, handle0, ptr1, len2, ptr4)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr4 + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr4 + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Open a file or directory.
+     *
+     * If `flags` contains `descriptor-flags::mutate-directory`, and the base descriptor doesn't
+     * have `descriptor-flags::mutate-directory` set, `open-at` fails with `error-code::read-only`.
+     *
+     * If `flags` contains `write` or `mutate-directory`, or `open-flags` contains `truncate` or
+     * `create`, and the base descriptor doesn't have `descriptor-flags::mutate-directory` set,
+     * `open-at` fails with `error-code::read-only`.
+     *
+     * Note: This is similar to `openat` in POSIX.
+     */
+    public fun openAt(
+        pathFlags: Types.PathFlags,
+        path: String,
+        openFlags: Types.OpenFlags,
+        flags: Types.DescriptorFlags
+    ): Result<Types.Descriptor> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = path.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val ptr0 = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_openAt(
+            handle,
+            pathFlags._value.toInt(),
+            ptr,
+            len,
+            openFlags._value.toInt(),
+            flags._value.toInt(),
+            ptr0)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr0 + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = Types.Descriptor(ResourceHandle((ptr0 + 4).ptr.loadInt()))
+
+              Result<Types.Descriptor>.success(resource)
+            } else {
+              Result<Types.Descriptor>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr0 + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Read the contents of a symbolic link.
+     *
+     * If the contents contain an absolute or rooted path in the underlying filesystem, this
+     * function fails with `error-code::not-permitted`.
+     *
+     * Note: This is similar to `readlinkat` in POSIX.
+     */
+    public fun readlinkAt(path: String): Result<String> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = path.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val ptr0 = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/
+            allocator.allocate(12).address.toInt()
+        __wasm_import_readlinkAt(handle, ptr, len, ptr0)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr0 + 0).ptr.loadUByte().toInt() == 0) {
+              Result<String>
+                  .success(STRING_FROM_MEM((ptr0 + 4).ptr.loadInt(), (ptr0 + 8).ptr.loadInt()))
+            } else {
+              Result<String>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr0 + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Remove a directory.
+     *
+     * Return `error-code::not-empty` if the directory is not empty.
+     *
+     * Note: This is similar to `unlinkat(fd, path, AT_REMOVEDIR)` in POSIX.
+     */
+    public fun removeDirectoryAt(path: String): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = path.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val ptr0 = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_removeDirectoryAt(handle, ptr, len, ptr0)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr0 + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr0 + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Rename a filesystem object.
+     *
+     * Note: This is similar to `renameat` in POSIX.
+     */
+    public fun renameAt(
+        oldPath: String,
+        newDescriptor: Types.Descriptor,
+        newPath: String
+    ): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = oldPath.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        var handle0 = newDescriptor.__handle.value
+
+        val bytearray3 = newPath.encodeToByteArray()
+        val len2 = bytearray3.size
+        val ptr1 = allocator.writeToLinearMemory(bytearray3).address.toInt()
+
+        val ptr4 = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_renameAt(handle, ptr, len, handle0, ptr1, len2, ptr4)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr4 + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr4 + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Create a symbolic link (also known as a "symlink").
+     *
+     * If `old-path` starts with `/`, the function fails with `error-code::not-permitted`.
+     *
+     * Note: This is similar to `symlinkat` in POSIX.
+     */
+    public fun symlinkAt(oldPath: String, newPath: String): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = oldPath.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val bytearray2 = newPath.encodeToByteArray()
+        val len1 = bytearray2.size
+        val ptr0 = allocator.writeToLinearMemory(bytearray2).address.toInt()
+
+        val ptr3 = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_symlinkAt(handle, ptr, len, ptr0, len1, ptr3)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr3 + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr3 + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Unlink a filesystem object that is not a directory.
+     *
+     * Return `error-code::is-directory` if the path refers to a directory. Note: This is similar to
+     * `unlinkat(fd, path, 0)` in POSIX.
+     */
+    public fun unlinkFileAt(path: String): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = path.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val ptr0 = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_unlinkFileAt(handle, ptr, len, ptr0)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr0 + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr0 + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Test whether two descriptors refer to the same filesystem object.
+     *
+     * In POSIX, this corresponds to testing whether the two descriptors have the same device
+     * (`st_dev`) and inode (`st_ino` or `d_ino`) numbers. wasi-filesystem does not expose device
+     * and inode numbers, so this function may be used instead.
+     */
+    public fun isSameObject(other: Types.Descriptor): Boolean {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        var handle0 = other.__handle.value
+        val ret: Int = __wasm_import_isSameObject(handle, handle0)
+        freeAllComponentModelReallocAllocatedMemory()
+        return (ret != 0)
+      }
+      // </editor-fold>
+    }
+    /**
+     * Return a hash of the metadata associated with a filesystem object referred to by a
+     * descriptor.
+     *
+     * This returns a hash of the last-modification timestamp and file size, and may also include
+     * the inode number, device number, birth timestamp, and other metadata fields that may change
+     * when the file is modified or replaced. It may also include a secret value chosen by the
+     * implementation and not otherwise exposed.
+     *
+     * Implementations are encouraged to provide the following properties:
+     * - If the file is not modified or replaced, the computed hash value should usually not change.
+     * - If the object is modified or replaced, the computed hash value should usually change.
+     * - The inputs to the hash should not be easily computable from the computed hash.
+     *
+     * However, none of these is required.
+     */
+    public fun metadataHash(): Result<Types.MetadataHashValue> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=24, align=8)*/ allocator.allocate(24).address.toInt()
+        __wasm_import_metadataHash(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Types.MetadataHashValue>
+                  .success(
+                      Types.MetadataHashValue(
+                          (ptr + 8).ptr.loadLong().toULong(),
+                          (ptr + 16).ptr.loadLong().toULong(),
+                      ))
+            } else {
+              Result<Types.MetadataHashValue>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Return a hash of the metadata associated with a filesystem object referred to by a directory
+     * descriptor and a relative path.
+     *
+     * This performs the same hash computation as `metadata-hash`.
+     */
+    public fun metadataHashAt(
+        pathFlags: Types.PathFlags,
+        path: String
+    ): Result<Types.MetadataHashValue> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = path.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val ptr0 = /* RETURN_ADDRESS_ALLOC(size=24, align=8)*/
+            allocator.allocate(24).address.toInt()
+        __wasm_import_metadataHashAt(handle, pathFlags._value.toInt(), ptr, len, ptr0)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr0 + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Types.MetadataHashValue>
+                  .success(
+                      Types.MetadataHashValue(
+                          (ptr0 + 8).ptr.loadLong().toULong(),
+                          (ptr0 + 16).ptr.loadLong().toULong(),
+                      ))
+            } else {
+              Result<Types.MetadataHashValue>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr0 + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+  /** A stream of directory entries. */
+
+  class DirectoryEntryStream : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_Types_DirectoryEntryStream_drop(__handle.value)
+    }
+    /** Read a single directory entry from a `directory-entry-stream`. */
+    public fun readDirectoryEntry(): Result<Types.DirectoryEntry?> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=20, align=4)*/ allocator.allocate(20).address.toInt()
+        __wasm_import_readDirectoryEntry(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              // OptionLift start
+              val option =
+                  if ((ptr + 4).ptr.loadUByte().toInt() == 1) {
+                    Types.DirectoryEntry(
+                        Types.DescriptorType.values()[(ptr + 8).ptr.loadUByte().toInt()],
+                        STRING_FROM_MEM((ptr + 12).ptr.loadInt(), (ptr + 16).ptr.loadInt()),
+                    )
+                  } else {
+                    null
+                  }
+              // OptionLift end
+
+              Result<Types.DirectoryEntry?>.success(option)
+            } else {
+              Result<Types.DirectoryEntry?>
+                  .failure(
+                      ComponentException(
+                          Types.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+  /**
+   * Attempts to extract a filesystem-related `error-code` from the stream `error` provided.
+   *
+   * Stream operations which return `stream-error::last-operation-failed` have a payload with more
+   * information about the operation that failed. This payload can be passed through to this
+   * function to see if there's filesystem-related information about the error to return.
+   *
+   * Note that this function is fallible because not all stream-related errors are
+   * filesystem-related errors.
+   */
+
+  public fun filesystemErrorCode(err_: Error.Error): Types.ErrorCode? {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      var handle = err_.__handle.value
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+      __wasm_import_filesystemErrorCode(handle, ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      // OptionLift start
+      val option =
+          if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+            Types.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]
+          } else {
+            null
+          }
+      // OptionLift end
+      return option
+    }
+    // </editor-fold>
+  }
+}
+
+object Preopens {
+  /** Return the set of preopened directories, and their paths. */
+  public fun getDirectories(): List<Pair<Types.Descriptor, String>> {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+      __wasm_import_getDirectories(ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+
+      val list = ArrayList<Pair<Types.Descriptor, String>>((ptr + 4).ptr.loadInt())
+      for (i in 0 until (ptr + 4).ptr.loadInt()) {
+        val base = ((ptr + 0).ptr.loadInt()) + (i * 12)
+        val resource = Types.Descriptor(ResourceHandle((base + 0).ptr.loadInt()))
+
+        list.add(
+            Pair<Types.Descriptor, String>(
+                resource,
+                STRING_FROM_MEM((base + 4).ptr.loadInt(), (base + 8).ptr.loadInt()),
+            ))
+      }
+      return list
+    }
+    // </editor-fold>
+  }
+}
+
+object Network {
+  /**
+   * An opaque resource that represents access to (a subset of) the network. This enables
+   * context-based security for networking. There is no need for this to map 1:1 to a physical
+   * network interface.
+   */
+  class Network : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_Network_Network_drop(__handle.value)
+    }
+
+    companion object {}
+  }
+  /**
+   * Error codes.
+   *
+   * In theory, every API can return any error code. In practice, API's typically only return the
+   * errors documented per API combined with a couple of errors that are always possible:
+   * - `unknown`
+   * - `access-denied`
+   * - `not-supported`
+   * - `out-of-memory`
+   * - `concurrency-conflict`
+   *
+   * See each individual API for what the POSIX equivalents are. They sometimes differ per API.
+   */
+  enum class ErrorCode {
+    /** Unknown error */
+    UNKNOWN,
+    /**
+     * Access denied.
+     *
+     * POSIX equivalent: EACCES, EPERM
+     */
+    ACCESS_DENIED,
+    /**
+     * The operation is not supported.
+     *
+     * POSIX equivalent: EOPNOTSUPP
+     */
+    NOT_SUPPORTED,
+    /**
+     * One of the arguments is invalid.
+     *
+     * POSIX equivalent: EINVAL
+     */
+    INVALID_ARGUMENT,
+    /**
+     * Not enough memory to complete the operation.
+     *
+     * POSIX equivalent: ENOMEM, ENOBUFS, EAI_MEMORY
+     */
+    OUT_OF_MEMORY,
+    /** The operation timed out before it could finish completely. */
+    TIMEOUT,
+    /**
+     * This operation is incompatible with another asynchronous operation that is already in
+     * progress.
+     *
+     * POSIX equivalent: EALREADY
+     */
+    CONCURRENCY_CONFLICT,
+    /**
+     * Trying to finish an asynchronous operation that:
+     * - has not been started yet, or:
+     * - was already finished by a previous `finish-*` call.
+     *
+     * Note: this is scheduled to be removed when `future`s are natively supported.
+     */
+    NOT_IN_PROGRESS,
+    /**
+     * The operation has been aborted because it could not be completed immediately.
+     *
+     * Note: this is scheduled to be removed when `future`s are natively supported.
+     */
+    WOULD_BLOCK,
+    /** The operation is not valid in the socket's current state. */
+    INVALID_STATE,
+    /** A new socket resource could not be created because of a system limit. */
+    NEW_SOCKET_LIMIT,
+    /**
+     * A bind operation failed because the provided address is not an address that the `network` can
+     * bind to.
+     */
+    ADDRESS_NOT_BINDABLE,
+    /**
+     * A bind operation failed because the provided address is already in use or because there are
+     * no ephemeral ports available.
+     */
+    ADDRESS_IN_USE,
+    /** The remote address is not reachable */
+    REMOTE_UNREACHABLE,
+    /** The TCP connection was forcefully rejected */
+    CONNECTION_REFUSED,
+    /** The TCP connection was reset. */
+    CONNECTION_RESET,
+    /** A TCP connection was aborted. */
+    CONNECTION_ABORTED,
+    /** The size of a datagram sent to a UDP socket exceeded the maximum supported size. */
+    DATAGRAM_TOO_LARGE,
+    /** Name does not exist or has no suitable associated IP addresses. */
+    NAME_UNRESOLVABLE,
+    /** A temporary failure in name resolution occurred. */
+    TEMPORARY_RESOLVER_FAILURE,
+    /** A permanent failure in name resolution occurred. */
+    PERMANENT_RESOLVER_FAILURE,
+  }
+
+  enum class IpAddressFamily {
+    /** Similar to `AF_INET` in POSIX. */
+    IPV4,
+    /** Similar to `AF_INET6` in POSIX. */
+    IPV6,
+  }
+
+  sealed interface IpAddress {
+    data class Ipv4(val value: Tuple4<UByte, UByte, UByte, UByte>) : IpAddress
+
+    data class Ipv6(
+        val value: Tuple8<UShort, UShort, UShort, UShort, UShort, UShort, UShort, UShort>
+    ) : IpAddress
+  }
+
+  data class Ipv4SocketAddress(
+      /** sin_port */
+      var port: UShort,
+      /** sin_addr */
+      var address: Tuple4<UByte, UByte, UByte, UByte>,
+  )
+
+  data class Ipv6SocketAddress(
+      /** sin6_port */
+      var port: UShort,
+      /** sin6_flowinfo */
+      var flowInfo: UInt,
+      /** sin6_addr */
+      var address: Tuple8<UShort, UShort, UShort, UShort, UShort, UShort, UShort, UShort>,
+      /** sin6_scope_id */
+      var scopeId: UInt,
+  )
+
+  sealed interface IpSocketAddress {
+    data class Ipv4(val value: Network.Ipv4SocketAddress) : IpSocketAddress
+
+    data class Ipv6(val value: Network.Ipv6SocketAddress) : IpSocketAddress
+  }
+}
+
+object InstanceNetwork {
+  /** Get a handle to the default network. */
+  public fun instanceNetwork(): Network.Network {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ret: Int = __wasm_import_instanceNetwork()
+      freeAllComponentModelReallocAllocatedMemory()
+      val resource = Network.Network(ResourceHandle(ret))
+      return resource
+    }
+    // </editor-fold>
+  }
+}
+
+object Udp {
+
+  /** A received datagram. */
+  data class IncomingDatagram(
+      /**
+       * The payload.
+       *
+       * Theoretical max size: ~64 KiB. In practice, typically less than 1500 bytes.
+       */
+      var data: List<UByte>,
+      /**
+       * The source address.
+       *
+       * This field is guaranteed to match the remote address the stream was initialized with, if
+       * any.
+       *
+       * Equivalent to the `src_addr` out parameter of `recvfrom`.
+       */
+      var remoteAddress: Network.IpSocketAddress,
+  )
+
+  /** A datagram to be sent out. */
+  data class OutgoingDatagram(
+      /** The payload. */
+      var data: List<UByte>,
+      /**
+       * The destination address.
+       *
+       * The requirements on this field depend on how the stream was initialized:
+       * - with a remote address: this field must be None or match the stream's remote address
+       *   exactly.
+       * - without a remote address: this field is required.
+       *
+       * If this value is None, the send operation is equivalent to `send` in POSIX. Otherwise it is
+       * equivalent to `sendto`.
+       */
+      var remoteAddress: Network.IpSocketAddress?,
+  )
+  /** A UDP socket handle. */
+  class UdpSocket : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_Udp_UdpSocket_drop(__handle.value)
+    }
+    /**
+     * Bind the socket to a specific network on the provided IP address and port.
+     *
+     * If the IP address is zero (`0.0.0.0` in IPv4, `::` in IPv6), it is left to the implementation
+     * to decide which network interface(s) to bind to. If the port is zero, the socket will be
+     * bound to a random free port.
+     *
+     * # Typical errors
+     * - `invalid-argument`: The `local-address` has the wrong address family. (EAFNOSUPPORT, EFAULT
+     *   on Windows)
+     * - `invalid-state`: The socket is already bound. (EINVAL)
+     * - `address-in-use`: No ephemeral ports available. (EADDRINUSE, ENOBUFS on Windows)
+     * - `address-in-use`: Address is already in use. (EADDRINUSE)
+     * - `address-not-bindable`: `local-address` is not an address that the `network` can bind to.
+     *   (EADDRNOTAVAIL)
+     * - `not-in-progress`: A `bind` operation is not in progress.
+     * - `would-block`: Can't finish the operation, it is still in progress. (EWOULDBLOCK, EAGAIN)
+     *
+     * # Implementors note
+     * Unlike in POSIX, in WASI the bind operation is async. This enables interactive WASI hosts to
+     * inject permission prompts. Runtimes that don't want to make use of this ability can simply
+     * call the native `bind` as part of either `start-bind` or `finish-bind`.
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/bind.html>
+     * - <https://man7.org/linux/man-pages/man2/bind.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-bind>
+     * - <https://man.freebsd.org/cgi/man.cgi?query=bind&sektion=2&format=html>
+     */
+    public fun startBind(
+        network: Network.Network,
+        localAddress: Network.IpSocketAddress
+    ): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        var handle0 = network.__handle.value
+        // VariantLower START
+        val variant: Int
+        val variant2: Int
+        val variant3: Int
+        val variant4: Int
+        val variant5: Int
+        val variant6: Int
+        val variant7: Int
+        val variant8: Int
+        val variant9: Int
+        val variant10: Int
+        val variant11: Int
+        val variant12: Int
+        when (val x = localAddress) {
+          is Network.IpSocketAddress.Ipv4 -> {
+            val payload = x.value
+            variant = 0
+            variant2 = payload.port.toInt()
+            variant3 = payload.address.f0.toInt()
+            variant4 = payload.address.f1.toInt()
+            variant5 = payload.address.f2.toInt()
+            variant6 = payload.address.f3.toInt()
+            variant7 = 0
+            variant8 = 0
+            variant9 = 0
+            variant10 = 0
+            variant11 = 0
+            variant12 = 0
+          }
+          is Network.IpSocketAddress.Ipv6 -> {
+            val payload1 = x.value
+            variant = 1
+            variant2 = payload1.port.toInt()
+            variant3 = payload1.flowInfo.toInt()
+            variant4 = payload1.address.f0.toInt()
+            variant5 = payload1.address.f1.toInt()
+            variant6 = payload1.address.f2.toInt()
+            variant7 = payload1.address.f3.toInt()
+            variant8 = payload1.address.f4.toInt()
+            variant9 = payload1.address.f5.toInt()
+            variant10 = payload1.address.f6.toInt()
+            variant11 = payload1.address.f7.toInt()
+            variant12 = payload1.scopeId.toInt()
+          }
+          else -> error("unreachable")
+        }
+        // VariantLower END
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_startBind(
+            handle,
+            handle0,
+            variant,
+            variant2,
+            variant3,
+            variant4,
+            variant5,
+            variant6,
+            variant7,
+            variant8,
+            variant9,
+            variant10,
+            variant11,
+            variant12,
+            ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun finishBind(): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_finishBind(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Set up inbound & outbound communication channels, optionally to a specific peer.
+     *
+     * This function only changes the local socket configuration and does not generate any network
+     * traffic. On success, the `remote-address` of the socket is updated. The `local-address` may
+     * be updated as well, based on the best network path to `remote-address`.
+     *
+     * When a `remote-address` is provided, the returned streams are limited to communicating with
+     * that specific peer:
+     * - `send` can only be used to send to this destination.
+     * - `receive` will only return datagrams sent from the provided `remote-address`.
+     *
+     * This method may be called multiple times on the same socket to change its association, but
+     * only the most recently returned pair of streams will be operational. Implementations may trap
+     * if the streams returned by a previous invocation haven't been dropped yet before calling
+     * `stream` again.
+     *
+     * The POSIX equivalent in pseudo-code is:
+     * ```text
+     * if (was previously connected) {
+     * connect(s, AF_UNSPEC)
+     * }
+     * if (remote_address is Some) {
+     * connect(s, remote_address)
+     * }
+     * ```
+     *
+     * Unlike in POSIX, the socket must already be explicitly bound.
+     *
+     * # Typical errors
+     * - `invalid-argument`: The `remote-address` has the wrong address family. (EAFNOSUPPORT)
+     * - `invalid-argument`: The IP address in `remote-address` is set to INADDR_ANY (`0.0.0.0` /
+     *   `::`). (EDESTADDRREQ, EADDRNOTAVAIL)
+     * - `invalid-argument`: The port in `remote-address` is set to 0. (EDESTADDRREQ, EADDRNOTAVAIL)
+     * - `invalid-state`: The socket is not bound.
+     * - `address-in-use`: Tried to perform an implicit bind, but there were no ephemeral ports
+     *   available. (EADDRINUSE, EADDRNOTAVAIL on Linux, EAGAIN on BSD)
+     * - `remote-unreachable`: The remote address is not reachable. (ECONNRESET, ENETRESET,
+     *   EHOSTUNREACH, EHOSTDOWN, ENETUNREACH, ENETDOWN, ENONET)
+     * - `connection-refused`: The connection was refused. (ECONNREFUSED)
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/connect.html>
+     * - <https://man7.org/linux/man-pages/man2/connect.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-connect>
+     * - <https://man.freebsd.org/cgi/man.cgi?connect>
+     */
+    public fun stream(
+        remoteAddress: Network.IpSocketAddress?
+    ): Result<Pair<Udp.IncomingDatagramStream, Udp.OutgoingDatagramStream>> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val option: Int
+        val option14: Int
+        val option15: Int
+        val option16: Int
+        val option17: Int
+        val option18: Int
+        val option19: Int
+        val option20: Int
+        val option21: Int
+        val option22: Int
+        val option23: Int
+        val option24: Int
+        val option25: Int
+        val payload0 = remoteAddress
+        if (payload0 != null) {
+          // VariantLower START
+          val variant: Int
+          val variant3: Int
+          val variant4: Int
+          val variant5: Int
+          val variant6: Int
+          val variant7: Int
+          val variant8: Int
+          val variant9: Int
+          val variant10: Int
+          val variant11: Int
+          val variant12: Int
+          val variant13: Int
+          when (val x = payload0) {
+            is Network.IpSocketAddress.Ipv4 -> {
+              val payload1 = x.value
+              variant = 0
+              variant3 = payload1.port.toInt()
+              variant4 = payload1.address.f0.toInt()
+              variant5 = payload1.address.f1.toInt()
+              variant6 = payload1.address.f2.toInt()
+              variant7 = payload1.address.f3.toInt()
+              variant8 = 0
+              variant9 = 0
+              variant10 = 0
+              variant11 = 0
+              variant12 = 0
+              variant13 = 0
+            }
+            is Network.IpSocketAddress.Ipv6 -> {
+              val payload2 = x.value
+              variant = 1
+              variant3 = payload2.port.toInt()
+              variant4 = payload2.flowInfo.toInt()
+              variant5 = payload2.address.f0.toInt()
+              variant6 = payload2.address.f1.toInt()
+              variant7 = payload2.address.f2.toInt()
+              variant8 = payload2.address.f3.toInt()
+              variant9 = payload2.address.f4.toInt()
+              variant10 = payload2.address.f5.toInt()
+              variant11 = payload2.address.f6.toInt()
+              variant12 = payload2.address.f7.toInt()
+              variant13 = payload2.scopeId.toInt()
+            }
+            else -> error("unreachable")
+          }
+          // VariantLower END
+          option = 1
+          option14 = variant
+          option15 = variant3
+          option16 = variant4
+          option17 = variant5
+          option18 = variant6
+          option19 = variant7
+          option20 = variant8
+          option21 = variant9
+          option22 = variant10
+          option23 = variant11
+          option24 = variant12
+          option25 = variant13
+        } else {
+          option = 0
+          option14 = 0
+          option15 = 0
+          option16 = 0
+          option17 = 0
+          option18 = 0
+          option19 = 0
+          option20 = 0
+          option21 = 0
+          option22 = 0
+          option23 = 0
+          option24 = 0
+          option25 = 0
+        }
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_stream(
+            handle,
+            option,
+            option14,
+            option15,
+            option16,
+            option17,
+            option18,
+            option19,
+            option20,
+            option21,
+            option22,
+            option23,
+            option24,
+            option25,
+            ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = Udp.IncomingDatagramStream(ResourceHandle((ptr + 4).ptr.loadInt()))
+              val resource27 = Udp.OutgoingDatagramStream(ResourceHandle((ptr + 8).ptr.loadInt()))
+
+              Result<Pair<Udp.IncomingDatagramStream, Udp.OutgoingDatagramStream>>
+                  .success(
+                      Pair<Udp.IncomingDatagramStream, Udp.OutgoingDatagramStream>(
+                          resource,
+                          resource27,
+                      ))
+            } else {
+              Result<Pair<Udp.IncomingDatagramStream, Udp.OutgoingDatagramStream>>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Get the current bound address.
+     *
+     * POSIX mentions:
+     * > If the socket has not been bound to a local name, the value stored in the object pointed to
+     * > by `address` is unspecified.
+     *
+     * WASI is stricter and requires `local-address` to return `invalid-state` when the socket
+     * hasn't been bound yet.
+     *
+     * # Typical errors
+     * - `invalid-state`: The socket is not bound to any local address.
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/getsockname.html>
+     * - <https://man7.org/linux/man-pages/man2/getsockname.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-getsockname>
+     * - <https://man.freebsd.org/cgi/man.cgi?getsockname>
+     */
+    public fun localAddress(): Result<Network.IpSocketAddress> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=36, align=4)*/ allocator.allocate(36).address.toInt()
+        __wasm_import_localAddress(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      Network.IpSocketAddress.Ipv4(
+                          Network.Ipv4SocketAddress(
+                              (ptr + 8).ptr.loadUShort().toInt().toUShort(),
+                              Tuple4<UByte, UByte, UByte, UByte>(
+                                  (ptr + 10).ptr.loadUByte().toInt().toUByte(),
+                                  (ptr + 11).ptr.loadUByte().toInt().toUByte(),
+                                  (ptr + 12).ptr.loadUByte().toInt().toUByte(),
+                                  (ptr + 13).ptr.loadUByte().toInt().toUByte(),
+                              ),
+                          ))
+                    }
+                    1 -> {
+                      Network.IpSocketAddress.Ipv6(
+                          Network.Ipv6SocketAddress(
+                              (ptr + 8).ptr.loadUShort().toInt().toUShort(),
+                              (ptr + 12).ptr.loadInt().toUInt(),
+                              Tuple8<
+                                  UShort, UShort, UShort, UShort, UShort, UShort, UShort, UShort>(
+                                  (ptr + 16).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 18).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 20).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 22).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 24).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 26).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 28).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 30).ptr.loadUShort().toInt().toUShort(),
+                              ),
+                              (ptr + 32).ptr.loadInt().toUInt(),
+                          ))
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Network.IpSocketAddress>.success(variant)
+            } else {
+              Result<Network.IpSocketAddress>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Get the address the socket is currently streaming to.
+     *
+     * # Typical errors
+     * - `invalid-state`: The socket is not streaming to a specific remote address. (ENOTCONN)
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/getpeername.html>
+     * - <https://man7.org/linux/man-pages/man2/getpeername.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-getpeername>
+     * - <https://man.freebsd.org/cgi/man.cgi?query=getpeername&sektion=2&n=1>
+     */
+    public fun remoteAddress(): Result<Network.IpSocketAddress> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=36, align=4)*/ allocator.allocate(36).address.toInt()
+        __wasm_import_remoteAddress(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      Network.IpSocketAddress.Ipv4(
+                          Network.Ipv4SocketAddress(
+                              (ptr + 8).ptr.loadUShort().toInt().toUShort(),
+                              Tuple4<UByte, UByte, UByte, UByte>(
+                                  (ptr + 10).ptr.loadUByte().toInt().toUByte(),
+                                  (ptr + 11).ptr.loadUByte().toInt().toUByte(),
+                                  (ptr + 12).ptr.loadUByte().toInt().toUByte(),
+                                  (ptr + 13).ptr.loadUByte().toInt().toUByte(),
+                              ),
+                          ))
+                    }
+                    1 -> {
+                      Network.IpSocketAddress.Ipv6(
+                          Network.Ipv6SocketAddress(
+                              (ptr + 8).ptr.loadUShort().toInt().toUShort(),
+                              (ptr + 12).ptr.loadInt().toUInt(),
+                              Tuple8<
+                                  UShort, UShort, UShort, UShort, UShort, UShort, UShort, UShort>(
+                                  (ptr + 16).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 18).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 20).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 22).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 24).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 26).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 28).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 30).ptr.loadUShort().toInt().toUShort(),
+                              ),
+                              (ptr + 32).ptr.loadInt().toUInt(),
+                          ))
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Network.IpSocketAddress>.success(variant)
+            } else {
+              Result<Network.IpSocketAddress>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Whether this is a IPv4 or IPv6 socket.
+     *
+     * Equivalent to the SO_DOMAIN socket option.
+     */
+    public fun addressFamily(): Network.IpAddressFamily {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_addressFamily(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        return Network.IpAddressFamily.values()[ret]
+      }
+      // </editor-fold>
+    }
+    /**
+     * Equivalent to the IP_TTL & IPV6_UNICAST_HOPS socket options.
+     *
+     * If the provided value is 0, an `invalid-argument` error is returned.
+     *
+     * # Typical errors
+     * - `invalid-argument`: (set) The TTL value must be 1 or higher.
+     */
+    public fun unicastHopLimit(): Result<UByte> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_unicastHopLimit(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<UByte>.success((ptr + 1).ptr.loadUByte().toInt().toUByte())
+            } else {
+              Result<UByte>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun setUnicastHopLimit(value: UByte): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setUnicastHopLimit(handle, value.toInt(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * The kernel buffer space reserved for sends/receives on this socket.
+     *
+     * If the provided value is 0, an `invalid-argument` error is returned. Any other value will
+     * never cause an error, but it might be silently clamped and/or rounded. I.e. after setting a
+     * value, reading the same setting back may return a different value.
+     *
+     * Equivalent to the SO_RCVBUF and SO_SNDBUF socket options.
+     *
+     * # Typical errors
+     * - `invalid-argument`: (set) The provided value was 0.
+     */
+    public fun receiveBufferSize(): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_receiveBufferSize(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              Result<ULong>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun setReceiveBufferSize(value: ULong): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setReceiveBufferSize(handle, value.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun sendBufferSize(): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_sendBufferSize(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              Result<ULong>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun setSendBufferSize(value: ULong): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setSendBufferSize(handle, value.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Create a `pollable` which will resolve once the socket is ready for I/O.
+     *
+     * Note: this function is here for WASI 0.2 only. It's planned to be removed when `future` is
+     * natively supported in Preview3.
+     */
+    public fun subscribe(): Poll.Pollable {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_subscribe5(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = Poll.Pollable(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+
+  class IncomingDatagramStream : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_Udp_IncomingDatagramStream_drop(__handle.value)
+    }
+    /**
+     * Receive messages on the socket.
+     *
+     * This function attempts to receive up to `max-results` datagrams on the socket without
+     * blocking. The returned list may contain fewer elements than requested, but never more.
+     *
+     * This function returns successfully with an empty list when either:
+     * - `max-results` is 0, or:
+     * - `max-results` is greater than 0, but no results are immediately available. This function
+     *   never returns `error(would-block)`.
+     *
+     * # Typical errors
+     * - `remote-unreachable`: The remote address is not reachable. (ECONNRESET, ENETRESET on
+     *   Windows, EHOSTUNREACH, EHOSTDOWN, ENETUNREACH, ENETDOWN, ENONET)
+     * - `connection-refused`: The connection was refused. (ECONNREFUSED)
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/recvfrom.html>
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/recvmsg.html>
+     * - <https://man7.org/linux/man-pages/man2/recv.2.html>
+     * - <https://man7.org/linux/man-pages/man2/recvmmsg.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-recv>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-recvfrom>
+     * - <https://learn.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms741687(v=vs.85)>
+     * - <https://man.freebsd.org/cgi/man.cgi?query=recv&sektion=2>
+     */
+    public fun receive(maxResults: ULong): Result<List<Udp.IncomingDatagram>> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_receive(handle, maxResults.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+
+              val list0 = ArrayList<Udp.IncomingDatagram>((ptr + 8).ptr.loadInt())
+              for (i1 in 0 until (ptr + 8).ptr.loadInt()) {
+                val base = ((ptr + 4).ptr.loadInt()) + (i1 * 40)
+
+                val list = ArrayList<UByte>((base + 4).ptr.loadInt())
+                for (i in 0 until (base + 4).ptr.loadInt()) {
+                  val base = ((base + 0).ptr.loadInt()) + (i * 1)
+
+                  list.add((base + 0).ptr.loadUByte().toInt().toUByte())
+                }
+                // VariantLift START.
+                val variant =
+                    when ((base + 8).ptr.loadUByte().toInt()) {
+                      0 -> {
+                        Network.IpSocketAddress.Ipv4(
+                            Network.Ipv4SocketAddress(
+                                (base + 12).ptr.loadUShort().toInt().toUShort(),
+                                Tuple4<UByte, UByte, UByte, UByte>(
+                                    (base + 14).ptr.loadUByte().toInt().toUByte(),
+                                    (base + 15).ptr.loadUByte().toInt().toUByte(),
+                                    (base + 16).ptr.loadUByte().toInt().toUByte(),
+                                    (base + 17).ptr.loadUByte().toInt().toUByte(),
+                                ),
+                            ))
+                      }
+                      1 -> {
+                        Network.IpSocketAddress.Ipv6(
+                            Network.Ipv6SocketAddress(
+                                (base + 12).ptr.loadUShort().toInt().toUShort(),
+                                (base + 16).ptr.loadInt().toUInt(),
+                                Tuple8<
+                                    UShort, UShort, UShort, UShort, UShort, UShort, UShort, UShort>(
+                                    (base + 20).ptr.loadUShort().toInt().toUShort(),
+                                    (base + 22).ptr.loadUShort().toInt().toUShort(),
+                                    (base + 24).ptr.loadUShort().toInt().toUShort(),
+                                    (base + 26).ptr.loadUShort().toInt().toUShort(),
+                                    (base + 28).ptr.loadUShort().toInt().toUShort(),
+                                    (base + 30).ptr.loadUShort().toInt().toUShort(),
+                                    (base + 32).ptr.loadUShort().toInt().toUShort(),
+                                    (base + 34).ptr.loadUShort().toInt().toUShort(),
+                                ),
+                                (base + 36).ptr.loadInt().toUInt(),
+                            ))
+                      }
+                      else -> error("unreachable")
+                    }
+                // VariantLift END
+
+                list0.add(
+                    Udp.IncomingDatagram(
+                        list,
+                        variant,
+                    ))
+              }
+
+              Result<List<Udp.IncomingDatagram>>.success(list0)
+            } else {
+              Result<List<Udp.IncomingDatagram>>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Create a `pollable` which will resolve once the stream is ready to receive again.
+     *
+     * Note: this function is here for WASI 0.2 only. It's planned to be removed when `future` is
+     * natively supported in Preview3.
+     */
+    public fun subscribe(): Poll.Pollable {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_subscribe6(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = Poll.Pollable(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+
+  class OutgoingDatagramStream : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_Udp_OutgoingDatagramStream_drop(__handle.value)
+    }
+    /**
+     * Check readiness for sending. This function never blocks.
+     *
+     * Returns the number of datagrams permitted for the next call to `send`, or an error. Calling
+     * `send` with more datagrams than this function has permitted will trap.
+     *
+     * When this function returns ok(0), the `subscribe` pollable will become ready when this
+     * function will report at least ok(1), or an error.
+     *
+     * Never returns `would-block`.
+     */
+    public fun checkSend(): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_checkSend(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              Result<ULong>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Send messages on the socket.
+     *
+     * This function attempts to send all provided `datagrams` on the socket without blocking and
+     * returns how many messages were actually sent (or queued for sending). This function never
+     * returns `error(would-block)`. If none of the datagrams were able to be sent, `ok(0)` is
+     * returned.
+     *
+     * This function semantically behaves the same as iterating the `datagrams` list and
+     * sequentially sending each individual datagram until either the end of the list has been
+     * reached or the first error occurred. If at least one datagram has been sent successfully,
+     * this function never returns an error.
+     *
+     * If the input list is empty, the function returns `ok(0)`.
+     *
+     * Each call to `send` must be permitted by a preceding `check-send`. Implementations must trap
+     * if either `check-send` was not called or `datagrams` contains more items than `check-send`
+     * permitted.
+     *
+     * # Typical errors
+     * - `invalid-argument`: The `remote-address` has the wrong address family. (EAFNOSUPPORT)
+     * - `invalid-argument`: The IP address in `remote-address` is set to INADDR_ANY (`0.0.0.0` /
+     *   `::`). (EDESTADDRREQ, EADDRNOTAVAIL)
+     * - `invalid-argument`: The port in `remote-address` is set to 0. (EDESTADDRREQ, EADDRNOTAVAIL)
+     * - `invalid-argument`: The socket is in "connected" mode and `remote-address` is `some` value
+     *   that does not match the address passed to `stream`. (EISCONN)
+     * - `invalid-argument`: The socket is not "connected" and no value for `remote-address` was
+     *   provided. (EDESTADDRREQ)
+     * - `remote-unreachable`: The remote address is not reachable. (ECONNRESET, ENETRESET on
+     *   Windows, EHOSTUNREACH, EHOSTDOWN, ENETUNREACH, ENETDOWN, ENONET)
+     * - `connection-refused`: The connection was refused. (ECONNREFUSED)
+     * - `datagram-too-large`: The datagram is too large. (EMSGSIZE)
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/sendto.html>
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/sendmsg.html>
+     * - <https://man7.org/linux/man-pages/man2/send.2.html>
+     * - <https://man7.org/linux/man-pages/man2/sendmmsg.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-send>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-sendto>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsasendmsg>
+     * - <https://man.freebsd.org/cgi/man.cgi?query=send&sektion=2>
+     */
+    public fun send(datagrams: List<Udp.OutgoingDatagram>): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val address3 = allocator.allocate(datagrams.size * 44 /*, align=4*/).address.toInt()
+        for ((index4, el) in datagrams.withIndex()) {
+          val base = address3 + (index4 * 44)
+
+          val address = allocator.allocate(el.data.size * 1 /*, align=1*/).address.toInt()
+          for ((index, el) in el.data.withIndex()) {
+            val base = address + (index * 1)
+            (base + 0).ptr.storeByte(el.toInt().toByte())
+          }
+          (base + 4).ptr.storeInt(el.data.size)
+          (base + 0).ptr.storeInt(address)
+          val payload0 = el.remoteAddress
+          if (payload0 != null) {
+            (base + 8).ptr.storeByte(1.toByte())
+            // VariantLower START
+            when (val x = payload0) {
+              is Network.IpSocketAddress.Ipv4 -> {
+                val payload1 = x.value
+                (base + 12).ptr.storeByte(0.toByte())
+                (base + 16).ptr.storeShort(payload1.port.toInt().toShort())
+                (base + 18).ptr.storeByte(payload1.address.f0.toInt().toByte())
+                (base + 19).ptr.storeByte(payload1.address.f1.toInt().toByte())
+                (base + 20).ptr.storeByte(payload1.address.f2.toInt().toByte())
+                (base + 21).ptr.storeByte(payload1.address.f3.toInt().toByte())
+              }
+              is Network.IpSocketAddress.Ipv6 -> {
+                val payload2 = x.value
+                (base + 12).ptr.storeByte(1.toByte())
+                (base + 16).ptr.storeShort(payload2.port.toInt().toShort())
+                (base + 20).ptr.storeInt(payload2.flowInfo.toInt())
+                (base + 24).ptr.storeShort(payload2.address.f0.toInt().toShort())
+                (base + 26).ptr.storeShort(payload2.address.f1.toInt().toShort())
+                (base + 28).ptr.storeShort(payload2.address.f2.toInt().toShort())
+                (base + 30).ptr.storeShort(payload2.address.f3.toInt().toShort())
+                (base + 32).ptr.storeShort(payload2.address.f4.toInt().toShort())
+                (base + 34).ptr.storeShort(payload2.address.f5.toInt().toShort())
+                (base + 36).ptr.storeShort(payload2.address.f6.toInt().toShort())
+                (base + 38).ptr.storeShort(payload2.address.f7.toInt().toShort())
+                (base + 40).ptr.storeInt(payload2.scopeId.toInt())
+              }
+              else -> error("unreachable")
+            }
+            // VariantLower END
+          } else {
+            (base + 8).ptr.storeByte(0.toByte())
+          }
+        }
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_send(handle, address3, datagrams.size, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              Result<ULong>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Create a `pollable` which will resolve once the stream is ready to send again.
+     *
+     * Note: this function is here for WASI 0.2 only. It's planned to be removed when `future` is
+     * natively supported in Preview3.
+     */
+    public fun subscribe(): Poll.Pollable {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_subscribe7(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = Poll.Pollable(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+}
+
+object UdpCreateSocket {
+  /**
+   * Create a new UDP socket.
+   *
+   * Similar to `socket(AF_INET or AF_INET6, SOCK_DGRAM, IPPROTO_UDP)` in POSIX. On IPv6 sockets,
+   * IPV6_V6ONLY is enabled by default and can't be configured otherwise.
+   *
+   * This function does not require a network capability handle. This is considered to be safe
+   * because at time of creation, the socket is not bound to any `network` yet. Up to the moment
+   * `bind` is called, the socket is effectively an in-memory configuration object, unable to
+   * communicate with the outside world.
+   *
+   * All sockets are non-blocking. Use the wasi-poll interface to block on asynchronous operations.
+   *
+   * # Typical errors
+   * - `not-supported`: The specified `address-family` is not supported. (EAFNOSUPPORT)
+   * - `new-socket-limit`: The new socket resource could not be created because of a system limit.
+   *   (EMFILE, ENFILE)
+   *
+   * # References:
+   * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/socket.html>
+   * - <https://man7.org/linux/man-pages/man2/socket.2.html>
+   * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsasocketw>
+   * - <https://man.freebsd.org/cgi/man.cgi?query=socket&sektion=2>
+   */
+  public fun createUdpSocket(addressFamily: Network.IpAddressFamily): Result<Udp.UdpSocket> {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+      __wasm_import_createUdpSocket(addressFamily.ordinal, ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      val result =
+          if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+            val resource = Udp.UdpSocket(ResourceHandle((ptr + 4).ptr.loadInt()))
+
+            Result<Udp.UdpSocket>.success(resource)
+          } else {
+            Result<Udp.UdpSocket>
+                .failure(
+                    ComponentException(
+                        Network.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+          }
+      return result
+    }
+    // </editor-fold>
+  }
+}
+
+object Tcp {
+
+  enum class ShutdownType {
+    /** Similar to `SHUT_RD` in POSIX. */
+    RECEIVE,
+    /** Similar to `SHUT_WR` in POSIX. */
+    SEND,
+    /** Similar to `SHUT_RDWR` in POSIX. */
+    BOTH,
+  }
+  /**
+   * A TCP socket resource.
+   *
+   * The socket can be in one of the following states:
+   * - `unbound`
+   * - `bind-in-progress`
+   * - `bound` (See note below)
+   * - `listen-in-progress`
+   * - `listening`
+   * - `connect-in-progress`
+   * - `connected`
+   * - `closed` See
+   *   <https://github.com/WebAssembly/wasi-sockets/blob/main/TcpSocketOperationalSemantics.md> for
+   *   more information.
+   *
+   * Note: Except where explicitly mentioned, whenever this documentation uses the term "bound"
+   * without backticks it actually means: in the `bound` state *or higher*. (i.e. `bound`,
+   * `listen-in-progress`, `listening`, `connect-in-progress` or `connected`)
+   *
+   * In addition to the general error codes documented on the `network::error-code` type, TCP socket
+   * methods may always return `error(invalid-state)` when in the `closed` state.
+   */
+  class TcpSocket : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_Tcp_TcpSocket_drop(__handle.value)
+    }
+    /**
+     * Bind the socket to a specific network on the provided IP address and port.
+     *
+     * If the IP address is zero (`0.0.0.0` in IPv4, `::` in IPv6), it is left to the implementation
+     * to decide which network interface(s) to bind to. If the TCP/UDP port is zero, the socket will
+     * be bound to a random free port.
+     *
+     * Bind can be attempted multiple times on the same socket, even with different arguments on
+     * each iteration. But never concurrently and only as long as the previous bind failed. Once a
+     * bind succeeds, the binding can't be changed anymore.
+     *
+     * # Typical errors
+     * - `invalid-argument`: The `local-address` has the wrong address family. (EAFNOSUPPORT, EFAULT
+     *   on Windows)
+     * - `invalid-argument`: `local-address` is not a unicast address. (EINVAL)
+     * - `invalid-argument`: `local-address` is an IPv4-mapped IPv6 address. (EINVAL)
+     * - `invalid-state`: The socket is already bound. (EINVAL)
+     * - `address-in-use`: No ephemeral ports available. (EADDRINUSE, ENOBUFS on Windows)
+     * - `address-in-use`: Address is already in use. (EADDRINUSE)
+     * - `address-not-bindable`: `local-address` is not an address that the `network` can bind to.
+     *   (EADDRNOTAVAIL)
+     * - `not-in-progress`: A `bind` operation is not in progress.
+     * - `would-block`: Can't finish the operation, it is still in progress. (EWOULDBLOCK, EAGAIN)
+     *
+     * # Implementors note
+     * When binding to a non-zero port, this bind operation shouldn't be affected by the TIME_WAIT
+     * state of a recently closed socket on the same local address. In practice this means that the
+     * SO_REUSEADDR socket option should be set implicitly on all platforms, except on Windows where
+     * this is the default behavior and SO_REUSEADDR performs something different entirely.
+     *
+     * Unlike in POSIX, in WASI the bind operation is async. This enables interactive WASI hosts to
+     * inject permission prompts. Runtimes that don't want to make use of this ability can simply
+     * call the native `bind` as part of either `start-bind` or `finish-bind`.
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/bind.html>
+     * - <https://man7.org/linux/man-pages/man2/bind.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-bind>
+     * - <https://man.freebsd.org/cgi/man.cgi?query=bind&sektion=2&format=html>
+     */
+    public fun startBind(
+        network: Network.Network,
+        localAddress: Network.IpSocketAddress
+    ): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        var handle0 = network.__handle.value
+        // VariantLower START
+        val variant: Int
+        val variant2: Int
+        val variant3: Int
+        val variant4: Int
+        val variant5: Int
+        val variant6: Int
+        val variant7: Int
+        val variant8: Int
+        val variant9: Int
+        val variant10: Int
+        val variant11: Int
+        val variant12: Int
+        when (val x = localAddress) {
+          is Network.IpSocketAddress.Ipv4 -> {
+            val payload = x.value
+            variant = 0
+            variant2 = payload.port.toInt()
+            variant3 = payload.address.f0.toInt()
+            variant4 = payload.address.f1.toInt()
+            variant5 = payload.address.f2.toInt()
+            variant6 = payload.address.f3.toInt()
+            variant7 = 0
+            variant8 = 0
+            variant9 = 0
+            variant10 = 0
+            variant11 = 0
+            variant12 = 0
+          }
+          is Network.IpSocketAddress.Ipv6 -> {
+            val payload1 = x.value
+            variant = 1
+            variant2 = payload1.port.toInt()
+            variant3 = payload1.flowInfo.toInt()
+            variant4 = payload1.address.f0.toInt()
+            variant5 = payload1.address.f1.toInt()
+            variant6 = payload1.address.f2.toInt()
+            variant7 = payload1.address.f3.toInt()
+            variant8 = payload1.address.f4.toInt()
+            variant9 = payload1.address.f5.toInt()
+            variant10 = payload1.address.f6.toInt()
+            variant11 = payload1.address.f7.toInt()
+            variant12 = payload1.scopeId.toInt()
+          }
+          else -> error("unreachable")
+        }
+        // VariantLower END
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_startBind8(
+            handle,
+            handle0,
+            variant,
+            variant2,
+            variant3,
+            variant4,
+            variant5,
+            variant6,
+            variant7,
+            variant8,
+            variant9,
+            variant10,
+            variant11,
+            variant12,
+            ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun finishBind(): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_finishBind9(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Connect to a remote endpoint.
+     *
+     * On success:
+     * - the socket is transitioned into the `connected` state.
+     * - a pair of streams is returned that can be used to read & write to the connection
+     *
+     * After a failed connection attempt, the socket will be in the `closed` state and the only
+     * valid action left is to `drop` the socket. A single socket can not be used to connect more
+     * than once.
+     *
+     * # Typical errors
+     * - `invalid-argument`: The `remote-address` has the wrong address family. (EAFNOSUPPORT)
+     * - `invalid-argument`: `remote-address` is not a unicast address. (EINVAL, ENETUNREACH on
+     *   Linux, EAFNOSUPPORT on MacOS)
+     * - `invalid-argument`: `remote-address` is an IPv4-mapped IPv6 address. (EINVAL, EADDRNOTAVAIL
+     *   on Illumos)
+     * - `invalid-argument`: The IP address in `remote-address` is set to INADDR_ANY (`0.0.0.0` /
+     *   `::`). (EADDRNOTAVAIL on Windows)
+     * - `invalid-argument`: The port in `remote-address` is set to 0. (EADDRNOTAVAIL on Windows)
+     * - `invalid-argument`: The socket is already attached to a different network. The `network`
+     *   passed to `connect` must be identical to the one passed to `bind`.
+     * - `invalid-state`: The socket is already in the `connected` state. (EISCONN)
+     * - `invalid-state`: The socket is already in the `listening` state. (EOPNOTSUPP, EINVAL on
+     *   Windows)
+     * - `timeout`: Connection timed out. (ETIMEDOUT)
+     * - `connection-refused`: The connection was forcefully rejected. (ECONNREFUSED)
+     * - `connection-reset`: The connection was reset. (ECONNRESET)
+     * - `connection-aborted`: The connection was aborted. (ECONNABORTED)
+     * - `remote-unreachable`: The remote address is not reachable. (EHOSTUNREACH, EHOSTDOWN,
+     *   ENETUNREACH, ENETDOWN, ENONET)
+     * - `address-in-use`: Tried to perform an implicit bind, but there were no ephemeral ports
+     *   available. (EADDRINUSE, EADDRNOTAVAIL on Linux, EAGAIN on BSD)
+     * - `not-in-progress`: A connect operation is not in progress.
+     * - `would-block`: Can't finish the operation, it is still in progress. (EWOULDBLOCK, EAGAIN)
+     *
+     * # Implementors note
+     * The POSIX equivalent of `start-connect` is the regular `connect` syscall. Because all WASI
+     * sockets are non-blocking this is expected to return EINPROGRESS, which should be translated
+     * to `ok()` in WASI.
+     *
+     * The POSIX equivalent of `finish-connect` is a `poll` for event `POLLOUT` with a timeout of 0
+     * on the socket descriptor. Followed by a check for the `SO_ERROR` socket option, in case the
+     * poll signaled readiness.
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/connect.html>
+     * - <https://man7.org/linux/man-pages/man2/connect.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-connect>
+     * - <https://man.freebsd.org/cgi/man.cgi?connect>
+     */
+    public fun startConnect(
+        network: Network.Network,
+        remoteAddress: Network.IpSocketAddress
+    ): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        var handle0 = network.__handle.value
+        // VariantLower START
+        val variant: Int
+        val variant2: Int
+        val variant3: Int
+        val variant4: Int
+        val variant5: Int
+        val variant6: Int
+        val variant7: Int
+        val variant8: Int
+        val variant9: Int
+        val variant10: Int
+        val variant11: Int
+        val variant12: Int
+        when (val x = remoteAddress) {
+          is Network.IpSocketAddress.Ipv4 -> {
+            val payload = x.value
+            variant = 0
+            variant2 = payload.port.toInt()
+            variant3 = payload.address.f0.toInt()
+            variant4 = payload.address.f1.toInt()
+            variant5 = payload.address.f2.toInt()
+            variant6 = payload.address.f3.toInt()
+            variant7 = 0
+            variant8 = 0
+            variant9 = 0
+            variant10 = 0
+            variant11 = 0
+            variant12 = 0
+          }
+          is Network.IpSocketAddress.Ipv6 -> {
+            val payload1 = x.value
+            variant = 1
+            variant2 = payload1.port.toInt()
+            variant3 = payload1.flowInfo.toInt()
+            variant4 = payload1.address.f0.toInt()
+            variant5 = payload1.address.f1.toInt()
+            variant6 = payload1.address.f2.toInt()
+            variant7 = payload1.address.f3.toInt()
+            variant8 = payload1.address.f4.toInt()
+            variant9 = payload1.address.f5.toInt()
+            variant10 = payload1.address.f6.toInt()
+            variant11 = payload1.address.f7.toInt()
+            variant12 = payload1.scopeId.toInt()
+          }
+          else -> error("unreachable")
+        }
+        // VariantLower END
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_startConnect(
+            handle,
+            handle0,
+            variant,
+            variant2,
+            variant3,
+            variant4,
+            variant5,
+            variant6,
+            variant7,
+            variant8,
+            variant9,
+            variant10,
+            variant11,
+            variant12,
+            ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun finishConnect(): Result<Pair<Streams.InputStream, Streams.OutputStream>> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_finishConnect(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = Streams.InputStream(ResourceHandle((ptr + 4).ptr.loadInt()))
+              val resource0 = Streams.OutputStream(ResourceHandle((ptr + 8).ptr.loadInt()))
+
+              Result<Pair<Streams.InputStream, Streams.OutputStream>>
+                  .success(
+                      Pair<Streams.InputStream, Streams.OutputStream>(
+                          resource,
+                          resource0,
+                      ))
+            } else {
+              Result<Pair<Streams.InputStream, Streams.OutputStream>>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Start listening for new connections.
+     *
+     * Transitions the socket into the `listening` state.
+     *
+     * Unlike POSIX, the socket must already be explicitly bound.
+     *
+     * # Typical errors
+     * - `invalid-state`: The socket is not bound to any local address. (EDESTADDRREQ)
+     * - `invalid-state`: The socket is already in the `connected` state. (EISCONN, EINVAL on BSD)
+     * - `invalid-state`: The socket is already in the `listening` state.
+     * - `address-in-use`: Tried to perform an implicit bind, but there were no ephemeral ports
+     *   available. (EADDRINUSE)
+     * - `not-in-progress`: A listen operation is not in progress.
+     * - `would-block`: Can't finish the operation, it is still in progress. (EWOULDBLOCK, EAGAIN)
+     *
+     * # Implementors note
+     * Unlike in POSIX, in WASI the listen operation is async. This enables interactive WASI hosts
+     * to inject permission prompts. Runtimes that don't want to make use of this ability can simply
+     * call the native `listen` as part of either `start-listen` or `finish-listen`.
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/listen.html>
+     * - <https://man7.org/linux/man-pages/man2/listen.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-listen>
+     * - <https://man.freebsd.org/cgi/man.cgi?query=listen&sektion=2>
+     */
+    public fun startListen(): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_startListen(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun finishListen(): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_finishListen(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Accept a new client socket.
+     *
+     * The returned socket is bound and in the `connected` state. The following properties are
+     * inherited from the listener socket:
+     * - `address-family`
+     * - `keep-alive-enabled`
+     * - `keep-alive-idle-time`
+     * - `keep-alive-interval`
+     * - `keep-alive-count`
+     * - `hop-limit`
+     * - `receive-buffer-size`
+     * - `send-buffer-size`
+     *
+     * On success, this function returns the newly accepted client socket along with a pair of
+     * streams that can be used to read & write to the connection.
+     *
+     * # Typical errors
+     * - `invalid-state`: Socket is not in the `listening` state. (EINVAL)
+     * - `would-block`: No pending connections at the moment. (EWOULDBLOCK, EAGAIN)
+     * - `connection-aborted`: An incoming connection was pending, but was terminated by the client
+     *   before this listener could accept it. (ECONNABORTED)
+     * - `new-socket-limit`: The new socket resource could not be created because of a system limit.
+     *   (EMFILE, ENFILE)
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/accept.html>
+     * - <https://man7.org/linux/man-pages/man2/accept.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-accept>
+     * - <https://man.freebsd.org/cgi/man.cgi?query=accept&sektion=2>
+     */
+    public fun accept(): Result<Triple<Tcp.TcpSocket, Streams.InputStream, Streams.OutputStream>> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=4)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_accept(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = Tcp.TcpSocket(ResourceHandle((ptr + 4).ptr.loadInt()))
+              val resource0 = Streams.InputStream(ResourceHandle((ptr + 8).ptr.loadInt()))
+              val resource1 = Streams.OutputStream(ResourceHandle((ptr + 12).ptr.loadInt()))
+
+              Result<Triple<Tcp.TcpSocket, Streams.InputStream, Streams.OutputStream>>
+                  .success(
+                      Triple<Tcp.TcpSocket, Streams.InputStream, Streams.OutputStream>(
+                          resource,
+                          resource0,
+                          resource1,
+                      ))
+            } else {
+              Result<Triple<Tcp.TcpSocket, Streams.InputStream, Streams.OutputStream>>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Get the bound local address.
+     *
+     * POSIX mentions:
+     * > If the socket has not been bound to a local name, the value stored in the object pointed to
+     * > by `address` is unspecified.
+     *
+     * WASI is stricter and requires `local-address` to return `invalid-state` when the socket
+     * hasn't been bound yet.
+     *
+     * # Typical errors
+     * - `invalid-state`: The socket is not bound to any local address.
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/getsockname.html>
+     * - <https://man7.org/linux/man-pages/man2/getsockname.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-getsockname>
+     * - <https://man.freebsd.org/cgi/man.cgi?getsockname>
+     */
+    public fun localAddress(): Result<Network.IpSocketAddress> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=36, align=4)*/ allocator.allocate(36).address.toInt()
+        __wasm_import_localAddress10(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      Network.IpSocketAddress.Ipv4(
+                          Network.Ipv4SocketAddress(
+                              (ptr + 8).ptr.loadUShort().toInt().toUShort(),
+                              Tuple4<UByte, UByte, UByte, UByte>(
+                                  (ptr + 10).ptr.loadUByte().toInt().toUByte(),
+                                  (ptr + 11).ptr.loadUByte().toInt().toUByte(),
+                                  (ptr + 12).ptr.loadUByte().toInt().toUByte(),
+                                  (ptr + 13).ptr.loadUByte().toInt().toUByte(),
+                              ),
+                          ))
+                    }
+                    1 -> {
+                      Network.IpSocketAddress.Ipv6(
+                          Network.Ipv6SocketAddress(
+                              (ptr + 8).ptr.loadUShort().toInt().toUShort(),
+                              (ptr + 12).ptr.loadInt().toUInt(),
+                              Tuple8<
+                                  UShort, UShort, UShort, UShort, UShort, UShort, UShort, UShort>(
+                                  (ptr + 16).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 18).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 20).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 22).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 24).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 26).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 28).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 30).ptr.loadUShort().toInt().toUShort(),
+                              ),
+                              (ptr + 32).ptr.loadInt().toUInt(),
+                          ))
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Network.IpSocketAddress>.success(variant)
+            } else {
+              Result<Network.IpSocketAddress>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Get the remote address.
+     *
+     * # Typical errors
+     * - `invalid-state`: The socket is not connected to a remote address. (ENOTCONN)
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/getpeername.html>
+     * - <https://man7.org/linux/man-pages/man2/getpeername.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-getpeername>
+     * - <https://man.freebsd.org/cgi/man.cgi?query=getpeername&sektion=2&n=1>
+     */
+    public fun remoteAddress(): Result<Network.IpSocketAddress> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=36, align=4)*/ allocator.allocate(36).address.toInt()
+        __wasm_import_remoteAddress11(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      Network.IpSocketAddress.Ipv4(
+                          Network.Ipv4SocketAddress(
+                              (ptr + 8).ptr.loadUShort().toInt().toUShort(),
+                              Tuple4<UByte, UByte, UByte, UByte>(
+                                  (ptr + 10).ptr.loadUByte().toInt().toUByte(),
+                                  (ptr + 11).ptr.loadUByte().toInt().toUByte(),
+                                  (ptr + 12).ptr.loadUByte().toInt().toUByte(),
+                                  (ptr + 13).ptr.loadUByte().toInt().toUByte(),
+                              ),
+                          ))
+                    }
+                    1 -> {
+                      Network.IpSocketAddress.Ipv6(
+                          Network.Ipv6SocketAddress(
+                              (ptr + 8).ptr.loadUShort().toInt().toUShort(),
+                              (ptr + 12).ptr.loadInt().toUInt(),
+                              Tuple8<
+                                  UShort, UShort, UShort, UShort, UShort, UShort, UShort, UShort>(
+                                  (ptr + 16).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 18).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 20).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 22).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 24).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 26).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 28).ptr.loadUShort().toInt().toUShort(),
+                                  (ptr + 30).ptr.loadUShort().toInt().toUShort(),
+                              ),
+                              (ptr + 32).ptr.loadInt().toUInt(),
+                          ))
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Network.IpSocketAddress>.success(variant)
+            } else {
+              Result<Network.IpSocketAddress>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Whether the socket is in the `listening` state.
+     *
+     * Equivalent to the SO_ACCEPTCONN socket option.
+     */
+    public fun isListening(): Boolean {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_isListening(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        return (ret != 0)
+      }
+      // </editor-fold>
+    }
+    /**
+     * Whether this is a IPv4 or IPv6 socket.
+     *
+     * Equivalent to the SO_DOMAIN socket option.
+     */
+    public fun addressFamily(): Network.IpAddressFamily {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_addressFamily12(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        return Network.IpAddressFamily.values()[ret]
+      }
+      // </editor-fold>
+    }
+    /**
+     * Hints the desired listen queue size. Implementations are free to ignore this.
+     *
+     * If the provided value is 0, an `invalid-argument` error is returned. Any other value will
+     * never cause an error, but it might be silently clamped and/or rounded.
+     *
+     * # Typical errors
+     * - `not-supported`: (set) The platform does not support changing the backlog size after the
+     *   initial listen.
+     * - `invalid-argument`: (set) The provided value was 0.
+     * - `invalid-state`: (set) The socket is in the `connect-in-progress` or `connected` state.
+     */
+    public fun setListenBacklogSize(value: ULong): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setListenBacklogSize(handle, value.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Enables or disables keepalive.
+     *
+     * The keepalive behavior can be adjusted using:
+     * - `keep-alive-idle-time`
+     * - `keep-alive-interval`
+     * - `keep-alive-count` These properties can be configured while `keep-alive-enabled` is false,
+     *   but only come into effect when `keep-alive-enabled` is true.
+     *
+     * Equivalent to the SO_KEEPALIVE socket option.
+     */
+    public fun keepAliveEnabled(): Result<Boolean> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_keepAliveEnabled(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Boolean>.success(((ptr + 1).ptr.loadUByte().toInt() != 0))
+            } else {
+              Result<Boolean>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun setKeepAliveEnabled(value: Boolean): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setKeepAliveEnabled(handle, (if (value) 1 else 0), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Amount of time the connection has to be idle before TCP starts sending keepalive packets.
+     *
+     * If the provided value is 0, an `invalid-argument` error is returned. Any other value will
+     * never cause an error, but it might be silently clamped and/or rounded. I.e. after setting a
+     * value, reading the same setting back may return a different value.
+     *
+     * Equivalent to the TCP_KEEPIDLE socket option. (TCP_KEEPALIVE on MacOS)
+     *
+     * # Typical errors
+     * - `invalid-argument`: (set) The provided value was 0.
+     */
+    public fun keepAliveIdleTime(): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_keepAliveIdleTime(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              Result<ULong>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun setKeepAliveIdleTime(value: ULong): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setKeepAliveIdleTime(handle, value.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * The time between keepalive packets.
+     *
+     * If the provided value is 0, an `invalid-argument` error is returned. Any other value will
+     * never cause an error, but it might be silently clamped and/or rounded. I.e. after setting a
+     * value, reading the same setting back may return a different value.
+     *
+     * Equivalent to the TCP_KEEPINTVL socket option.
+     *
+     * # Typical errors
+     * - `invalid-argument`: (set) The provided value was 0.
+     */
+    public fun keepAliveInterval(): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_keepAliveInterval(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              Result<ULong>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun setKeepAliveInterval(value: ULong): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setKeepAliveInterval(handle, value.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * The maximum amount of keepalive packets TCP should send before aborting the connection.
+     *
+     * If the provided value is 0, an `invalid-argument` error is returned. Any other value will
+     * never cause an error, but it might be silently clamped and/or rounded. I.e. after setting a
+     * value, reading the same setting back may return a different value.
+     *
+     * Equivalent to the TCP_KEEPCNT socket option.
+     *
+     * # Typical errors
+     * - `invalid-argument`: (set) The provided value was 0.
+     */
+    public fun keepAliveCount(): Result<UInt> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_keepAliveCount(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<UInt>.success((ptr + 4).ptr.loadInt().toUInt())
+            } else {
+              Result<UInt>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun setKeepAliveCount(value: UInt): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setKeepAliveCount(handle, value.toInt(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Equivalent to the IP_TTL & IPV6_UNICAST_HOPS socket options.
+     *
+     * If the provided value is 0, an `invalid-argument` error is returned.
+     *
+     * # Typical errors
+     * - `invalid-argument`: (set) The TTL value must be 1 or higher.
+     */
+    public fun hopLimit(): Result<UByte> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_hopLimit(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<UByte>.success((ptr + 1).ptr.loadUByte().toInt().toUByte())
+            } else {
+              Result<UByte>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun setHopLimit(value: UByte): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setHopLimit(handle, value.toInt(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * The kernel buffer space reserved for sends/receives on this socket.
+     *
+     * If the provided value is 0, an `invalid-argument` error is returned. Any other value will
+     * never cause an error, but it might be silently clamped and/or rounded. I.e. after setting a
+     * value, reading the same setting back may return a different value.
+     *
+     * Equivalent to the SO_RCVBUF and SO_SNDBUF socket options.
+     *
+     * # Typical errors
+     * - `invalid-argument`: (set) The provided value was 0.
+     */
+    public fun receiveBufferSize(): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_receiveBufferSize13(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              Result<ULong>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun setReceiveBufferSize(value: ULong): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setReceiveBufferSize14(handle, value.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun sendBufferSize(): Result<ULong> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_sendBufferSize15(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<ULong>.success((ptr + 8).ptr.loadLong().toULong())
+            } else {
+              Result<ULong>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 8).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    public fun setSendBufferSize(value: ULong): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_setSendBufferSize16(handle, value.toLong(), ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Create a `pollable` which can be used to poll for, or block on, completion of any of the
+     * asynchronous operations of this socket.
+     *
+     * When `finish-bind`, `finish-listen`, `finish-connect` or `accept` return
+     * `error(would-block)`, this pollable can be used to wait for their success or failure, after
+     * which the method can be retried.
+     *
+     * The pollable is not limited to the async operation that happens to be in progress at the time
+     * of calling `subscribe` (if any). Theoretically, `subscribe` only has to be called once per
+     * socket and can then be (re)used for the remainder of the socket's lifetime.
+     *
+     * See
+     * <https://github.com/WebAssembly/wasi-sockets/blob/main/TcpSocketOperationalSemantics.md#pollable-readiness>
+     * for more information.
+     *
+     * Note: this function is here for WASI 0.2 only. It's planned to be removed when `future` is
+     * natively supported in Preview3.
+     */
+    public fun subscribe(): Poll.Pollable {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_subscribe17(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = Poll.Pollable(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+    /**
+     * Initiate a graceful shutdown.
+     * - `receive`: The socket is not expecting to receive any data from the peer. The
+     *   `input-stream` associated with this socket will be closed. Any data still in the receive
+     *   queue at time of calling this method will be discarded.
+     * - `send`: The socket has no more data to send to the peer. The `output-stream` associated
+     *   with this socket will be closed and a FIN packet will be sent.
+     * - `both`: Same effect as `receive` & `send` combined.
+     *
+     * This function is idempotent; shutting down a direction more than once has no effect and
+     * returns `ok`.
+     *
+     * The shutdown function does not close (drop) the socket.
+     *
+     * # Typical errors
+     * - `invalid-state`: The socket is not in the `connected` state. (ENOTCONN)
+     *
+     * # References
+     * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/shutdown.html>
+     * - <https://man7.org/linux/man-pages/man2/shutdown.2.html>
+     * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-shutdown>
+     * - <https://man.freebsd.org/cgi/man.cgi?query=shutdown&sektion=2> 0shutdown:
+     *   func(shutdown-type: shutdown-type) -> result<_, error-code>;
+     */
+    public fun shutdown(shutdownType: Tcp.ShutdownType): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_shutdown(handle, shutdownType.ordinal, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 1).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+}
+
+object TcpCreateSocket {
+  /**
+   * Create a new TCP socket.
+   *
+   * Similar to `socket(AF_INET or AF_INET6, SOCK_STREAM, IPPROTO_TCP)` in POSIX. On IPv6 sockets,
+   * IPV6_V6ONLY is enabled by default and can't be configured otherwise.
+   *
+   * This function does not require a network capability handle. This is considered to be safe
+   * because at time of creation, the socket is not bound to any `network` yet. Up to the moment
+   * `bind`/`connect` is called, the socket is effectively an in-memory configuration object, unable
+   * to communicate with the outside world.
+   *
+   * All sockets are non-blocking. Use the wasi-poll interface to block on asynchronous operations.
+   *
+   * # Typical errors
+   * - `not-supported`: The specified `address-family` is not supported. (EAFNOSUPPORT)
+   * - `new-socket-limit`: The new socket resource could not be created because of a system limit.
+   *   (EMFILE, ENFILE)
+   *
+   * # References
+   * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/socket.html>
+   * - <https://man7.org/linux/man-pages/man2/socket.2.html>
+   * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsasocketw>
+   * - <https://man.freebsd.org/cgi/man.cgi?query=socket&sektion=2>
+   */
+  public fun createTcpSocket(addressFamily: Network.IpAddressFamily): Result<Tcp.TcpSocket> {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+      __wasm_import_createTcpSocket(addressFamily.ordinal, ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      val result =
+          if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+            val resource = Tcp.TcpSocket(ResourceHandle((ptr + 4).ptr.loadInt()))
+
+            Result<Tcp.TcpSocket>.success(resource)
+          } else {
+            Result<Tcp.TcpSocket>
+                .failure(
+                    ComponentException(
+                        Network.ErrorCode.values()[(ptr + 4).ptr.loadUByte().toInt()]))
+          }
+      return result
+    }
+    // </editor-fold>
+  }
+}
+
+object IpNameLookup {
+  class ResolveAddressStream : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_IpNameLookup_ResolveAddressStream_drop(__handle.value)
+    }
+    /**
+     * Returns the next address from the resolver.
+     *
+     * This function should be called multiple times. On each call, it will return the next address
+     * in connection order preference. If all addresses have been exhausted, this function returns
+     * `none`.
+     *
+     * This function never returns IPv4-mapped IPv6 addresses.
+     *
+     * # Typical errors
+     * - `name-unresolvable`: Name does not exist or has no suitable associated IP addresses.
+     *   (EAI_NONAME, EAI_NODATA, EAI_ADDRFAMILY)
+     * - `temporary-resolver-failure`: A temporary failure in name resolution occurred. (EAI_AGAIN)
+     * - `permanent-resolver-failure`: A permanent failure in name resolution occurred. (EAI_FAIL)
+     * - `would-block`: A result is not available yet. (EWOULDBLOCK, EAGAIN)
+     */
+    public fun resolveNextAddress(): Result<Network.IpAddress?> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=22, align=2)*/ allocator.allocate(22).address.toInt()
+        __wasm_import_resolveNextAddress(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              // OptionLift start
+              val option =
+                  if ((ptr + 2).ptr.loadUByte().toInt() == 1) {
+                    // VariantLift START.
+                    val variant =
+                        when ((ptr + 4).ptr.loadUByte().toInt()) {
+                          0 -> {
+                            Network.IpAddress.Ipv4(
+                                Tuple4<UByte, UByte, UByte, UByte>(
+                                    (ptr + 6).ptr.loadUByte().toInt().toUByte(),
+                                    (ptr + 7).ptr.loadUByte().toInt().toUByte(),
+                                    (ptr + 8).ptr.loadUByte().toInt().toUByte(),
+                                    (ptr + 9).ptr.loadUByte().toInt().toUByte(),
+                                ))
+                          }
+                          1 -> {
+                            Network.IpAddress.Ipv6(
+                                Tuple8<
+                                    UShort, UShort, UShort, UShort, UShort, UShort, UShort, UShort>(
+                                    (ptr + 6).ptr.loadUShort().toInt().toUShort(),
+                                    (ptr + 8).ptr.loadUShort().toInt().toUShort(),
+                                    (ptr + 10).ptr.loadUShort().toInt().toUShort(),
+                                    (ptr + 12).ptr.loadUShort().toInt().toUShort(),
+                                    (ptr + 14).ptr.loadUShort().toInt().toUShort(),
+                                    (ptr + 16).ptr.loadUShort().toInt().toUShort(),
+                                    (ptr + 18).ptr.loadUShort().toInt().toUShort(),
+                                    (ptr + 20).ptr.loadUShort().toInt().toUShort(),
+                                ))
+                          }
+                          else -> error("unreachable")
+                        }
+                    // VariantLift END
+                    variant
+                  } else {
+                    null
+                  }
+              // OptionLift end
+
+              Result<Network.IpAddress?>.success(option)
+            } else {
+              Result<Network.IpAddress?>
+                  .failure(
+                      ComponentException(
+                          Network.ErrorCode.values()[(ptr + 2).ptr.loadUByte().toInt()]))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Create a `pollable` which will resolve once the stream is ready for I/O.
+     *
+     * Note: this function is here for WASI 0.2 only. It's planned to be removed when `future` is
+     * natively supported in Preview3.
+     */
+    public fun subscribe(): Poll.Pollable {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_subscribe18(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = Poll.Pollable(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+  /**
+   * Resolve an internet host name to a list of IP addresses.
+   *
+   * Unicode domain names are automatically converted to ASCII using IDNA encoding. If the input is
+   * an IP address string, the address is parsed and returned as-is without making any external
+   * requests.
+   *
+   * See the wasi-socket proposal README.md for a comparison with getaddrinfo.
+   *
+   * This function never blocks. It either immediately fails or immediately returns successfully
+   * with a `resolve-address-stream` that can be used to (asynchronously) fetch the results.
+   *
+   * # Typical errors
+   * - `invalid-argument`: `name` is a syntactically invalid domain name or IP address.
+   *
+   * # References:
+   * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/getaddrinfo.html>
+   * - <https://man7.org/linux/man-pages/man3/getaddrinfo.3.html>
+   * - <https://learn.microsoft.com/en-us/windows/win32/api/ws2tcpip/nf-ws2tcpip-getaddrinfo>
+   * - <https://man.freebsd.org/cgi/man.cgi?query=getaddrinfo&sektion=3>
+   */
+
+  public fun resolveAddresses(
+      network: Network.Network,
+      name: String
+  ): Result<IpNameLookup.ResolveAddressStream> {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      var handle = network.__handle.value
+
+      val bytearray = name.encodeToByteArray()
+      val len = bytearray.size
+      val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+      val ptr0 = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+      __wasm_import_resolveAddresses(handle, ptr, len, ptr0)
+      freeAllComponentModelReallocAllocatedMemory()
+      val result =
+          if ((ptr0 + 0).ptr.loadUByte().toInt() == 0) {
+            val resource =
+                IpNameLookup.ResolveAddressStream(ResourceHandle((ptr0 + 4).ptr.loadInt()))
+
+            Result<IpNameLookup.ResolveAddressStream>.success(resource)
+          } else {
+            Result<IpNameLookup.ResolveAddressStream>
+                .failure(
+                    ComponentException(
+                        Network.ErrorCode.values()[(ptr0 + 4).ptr.loadUByte().toInt()]))
+          }
+      return result
+    }
+    // </editor-fold>
+  }
+}
+
+object Random {
+  /**
+   * Return `len` cryptographically-secure random or pseudo-random bytes.
+   *
+   * This function must produce data at least as cryptographically secure and fast as an adequately
+   * seeded cryptographically-secure pseudo-random number generator (CSPRNG). It must not block,
+   * from the perspective of the calling program, under any circumstances, including on the first
+   * request and on requests for numbers of bytes. The returned data must always be unpredictable.
+   *
+   * This function must always return fresh data. Deterministic environments must omit this
+   * function, rather than implementing it with deterministic data.
+   */
+  public fun getRandomBytes(len: ULong): List<UByte> {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+      __wasm_import_getRandomBytes(len.toLong(), ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+
+      val list = ArrayList<UByte>((ptr + 4).ptr.loadInt())
+      for (i in 0 until (ptr + 4).ptr.loadInt()) {
+        val base = ((ptr + 0).ptr.loadInt()) + (i * 1)
+
+        list.add((base + 0).ptr.loadUByte().toInt().toUByte())
+      }
+      return list
+    }
+    // </editor-fold>
+  }
+  /**
+   * Return a cryptographically-secure random or pseudo-random `u64` value.
+   *
+   * This function returns the same type of data as `get-random-bytes`, represented as a `u64`.
+   */
+  public fun getRandomU64(): ULong {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ret: Long = __wasm_import_getRandomU64()
+      freeAllComponentModelReallocAllocatedMemory()
+      return ret.toULong()
+    }
+    // </editor-fold>
+  }
+}
+
+object Insecure {
+  /**
+   * Return `len` insecure pseudo-random bytes.
+   *
+   * This function is not cryptographically secure. Do not use it for anything related to security.
+   *
+   * There are no requirements on the values of the returned bytes, however implementations are
+   * encouraged to return evenly distributed values with a long period.
+   */
+  public fun getInsecureRandomBytes(len: ULong): List<UByte> {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+      __wasm_import_getInsecureRandomBytes(len.toLong(), ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+
+      val list = ArrayList<UByte>((ptr + 4).ptr.loadInt())
+      for (i in 0 until (ptr + 4).ptr.loadInt()) {
+        val base = ((ptr + 0).ptr.loadInt()) + (i * 1)
+
+        list.add((base + 0).ptr.loadUByte().toInt().toUByte())
+      }
+      return list
+    }
+    // </editor-fold>
+  }
+  /**
+   * Return an insecure pseudo-random `u64` value.
+   *
+   * This function returns the same type of pseudo-random data as `get-insecure-random-bytes`,
+   * represented as a `u64`.
+   */
+  public fun getInsecureRandomU64(): ULong {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ret: Long = __wasm_import_getInsecureRandomU64()
+      freeAllComponentModelReallocAllocatedMemory()
+      return ret.toULong()
+    }
+    // </editor-fold>
+  }
+}
+
+object InsecureSeed {
+  /**
+   * Return a 128-bit value that may contain a pseudo-random value.
+   *
+   * The returned value is not required to be computed from a CSPRNG, and may even be entirely
+   * deterministic. Host implementations are encouraged to provide pseudo-random values to any
+   * program exposed to attacker-controlled content, to enable DoS protection built into many
+   * languages' hash-map implementations.
+   *
+   * This function is intended to only be called once, by a source language to initialize Denial Of
+   * Service (DoS) protection in its hash-map implementation.
+   *
+   * # Expected future evolution
+   *
+   * This will likely be changed to a value import, to prevent it from being called multiple times
+   * and potentially used for purposes other than DoS protection.
+   */
+  public fun insecureSeed(): Pair<ULong, ULong> {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+      __wasm_import_insecureSeed(ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      return Pair<ULong, ULong>(
+          (ptr + 0).ptr.loadLong().toULong(),
+          (ptr + 8).ptr.loadLong().toULong(),
+      )
+    }
+    // </editor-fold>
+  }
+}
+
+object HttpTypes {
+
+  /** This type corresponds to HTTP standard Methods. */
+  sealed interface Method {
+    data object Get : Method
+
+    data object Head : Method
+
+    data object Post : Method
+
+    data object Put : Method
+
+    data object Delete : Method
+
+    data object Connect : Method
+
+    data object Options : Method
+
+    data object Trace : Method
+
+    data object Patch : Method
+
+    data class Other(val value: String) : Method
+  }
+  /** This type corresponds to HTTP standard Related Schemes. */
+  sealed interface Scheme {
+    data object Http : Scheme
+
+    data object Https : Scheme
+
+    data class Other(val value: String) : Scheme
+  }
+  /** Defines the case payload type for `DNS-error` above: */
+  data class DnsErrorPayload(
+      var rcode: String?,
+      var infoCode: UShort?,
+  )
+
+  /** Defines the case payload type for `TLS-alert-received` above: */
+  data class TlsAlertReceivedPayload(
+      var alertId: UByte?,
+      var alertMessage: String?,
+  )
+
+  /** Defines the case payload type for `HTTP-response-{header,trailer}-size` above: */
+  data class FieldSizePayload(
+      var fieldName: String?,
+      var fieldSize: UInt?,
+  )
+
+  /**
+   * These cases are inspired by the IANA HTTP Proxy Error Types:
+   * <https://www.iana.org/assignments/http-proxy-status/http-proxy-status.xhtml#table-http-proxy-error-types>
+   */
+  sealed interface IanaErrorCode {
+    data object DnsTimeout : IanaErrorCode
+
+    data class DnsError(val value: HttpTypes.DnsErrorPayload) : IanaErrorCode
+
+    data object DestinationNotFound : IanaErrorCode
+
+    data object DestinationUnavailable : IanaErrorCode
+
+    data object DestinationIpProhibited : IanaErrorCode
+
+    data object DestinationIpUnroutable : IanaErrorCode
+
+    data object ConnectionRefused : IanaErrorCode
+
+    data object ConnectionTerminated : IanaErrorCode
+
+    data object ConnectionTimeout : IanaErrorCode
+
+    data object ConnectionReadTimeout : IanaErrorCode
+
+    data object ConnectionWriteTimeout : IanaErrorCode
+
+    data object ConnectionLimitReached : IanaErrorCode
+
+    data object TlsProtocolError : IanaErrorCode
+
+    data object TlsCertificateError : IanaErrorCode
+
+    data class TlsAlertReceived(val value: HttpTypes.TlsAlertReceivedPayload) : IanaErrorCode
+
+    data object HttpRequestDenied : IanaErrorCode
+
+    data object HttpRequestLengthRequired : IanaErrorCode
+
+    data class HttpRequestBodySize(val value: ULong?) : IanaErrorCode
+
+    data object HttpRequestMethodInvalid : IanaErrorCode
+
+    data object HttpRequestUriInvalid : IanaErrorCode
+
+    data object HttpRequestUriTooLong : IanaErrorCode
+
+    data class HttpRequestHeaderSectionSize(val value: UInt?) : IanaErrorCode
+
+    data class HttpRequestHeaderSize(val value: HttpTypes.FieldSizePayload?) : IanaErrorCode
+
+    data class HttpRequestTrailerSectionSize(val value: UInt?) : IanaErrorCode
+
+    data class HttpRequestTrailerSize(val value: HttpTypes.FieldSizePayload) : IanaErrorCode
+
+    data object HttpResponseIncomplete : IanaErrorCode
+
+    data class HttpResponseHeaderSectionSize(val value: UInt?) : IanaErrorCode
+
+    data class HttpResponseHeaderSize(val value: HttpTypes.FieldSizePayload) : IanaErrorCode
+
+    data class HttpResponseBodySize(val value: ULong?) : IanaErrorCode
+
+    data class HttpResponseTrailerSectionSize(val value: UInt?) : IanaErrorCode
+
+    data class HttpResponseTrailerSize(val value: HttpTypes.FieldSizePayload) : IanaErrorCode
+
+    data class HttpResponseTransferCoding(val value: String?) : IanaErrorCode
+
+    data class HttpResponseContentCoding(val value: String?) : IanaErrorCode
+
+    data object HttpResponseTimeout : IanaErrorCode
+
+    data object HttpUpgradeFailed : IanaErrorCode
+
+    data object HttpProtocolError : IanaErrorCode
+
+    data object LoopDetected : IanaErrorCode
+
+    data object ConfigurationError : IanaErrorCode
+
+    data class InternalError(val value: String?) : IanaErrorCode
+  }
+  /**
+   * This type enumerates the different kinds of errors that may occur when setting or appending to
+   * a `fields` resource.
+   */
+  sealed interface HeaderError {
+    data object InvalidSyntax : HeaderError
+
+    data object Forbidden : HeaderError
+
+    data object Immutable : HeaderError
+  }
+  /**
+   * This following block defines the `fields` resource which corresponds to HTTP standard Fields.
+   * Fields are a common representation used for both Headers and Trailers.
+   *
+   * A `fields` may be mutable or immutable. A `fields` created using the constructor, `from-list`,
+   * or `clone` will be mutable, but a `fields` resource given by other means (including, but not
+   * limited to, `incoming-request.headers`, `outgoing-request.headers`) might be immutable. In an
+   * immutable fields, the `set`, `append`, and `delete` operations will fail with
+   * `header-error.immutable`.
+   */
+
+  class Fields : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_HttpTypes_Fields_drop(__handle.value)
+    }
+    /**
+     * Construct an empty HTTP Fields.
+     *
+     * The resulting `fields` is mutable.
+     */
+    public constructor() :
+        this(
+            ResourceHandle(
+                run(
+                    fun(): Int {
+                      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+                      withScopedMemoryAllocator { allocator ->
+                        val ret: Int = __wasm_import_constructor()
+                        freeAllComponentModelReallocAllocatedMemory()
+                        val resource = ret
+                        return resource
+                      }
+                      // </editor-fold>
+                    })))
+    /**
+     * Get all of the values corresponding to a name. If the name is not present in this `fields` or
+     * is syntactically invalid, an empty list is returned. However, if the name is present but
+     * empty, this is represented by a list with one or more empty field-values present.
+     */
+    public fun get(name: String): List<List<UByte>> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = name.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val ptr0 = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_get(handle, ptr, len, ptr0)
+        freeAllComponentModelReallocAllocatedMemory()
+
+        val list1 = ArrayList<List<UByte>>((ptr0 + 4).ptr.loadInt())
+        for (i2 in 0 until (ptr0 + 4).ptr.loadInt()) {
+          val base = ((ptr0 + 0).ptr.loadInt()) + (i2 * 8)
+
+          val list = ArrayList<UByte>((base + 4).ptr.loadInt())
+          for (i in 0 until (base + 4).ptr.loadInt()) {
+            val base = ((base + 0).ptr.loadInt()) + (i * 1)
+
+            list.add((base + 0).ptr.loadUByte().toInt().toUByte())
+          }
+
+          list1.add(list)
+        }
+        return list1
+      }
+      // </editor-fold>
+    }
+    /**
+     * Returns `true` when the name is present in this `fields`. If the name is syntactically
+     * invalid, `false` is returned.
+     */
+    public fun has(name: String): Boolean {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = name.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val ret: Int = __wasm_import_has(handle, ptr, len)
+        freeAllComponentModelReallocAllocatedMemory()
+        return (ret != 0)
+      }
+      // </editor-fold>
+    }
+    /**
+     * Set all of the values for a name. Clears any existing values for that name, if they have been
+     * set.
+     *
+     * Fails with `header-error.immutable` if the `fields` are immutable.
+     *
+     * Fails with `header-error.invalid-syntax` if the `field-name` or any of the `field-value`s are
+     * syntactically invalid.
+     */
+    public fun set(name: String, value: List<List<UByte>>): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = name.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val address0 = allocator.allocate(value.size * 8 /*, align=4*/).address.toInt()
+        for ((index1, el) in value.withIndex()) {
+          val base = address0 + (index1 * 8)
+
+          val address = allocator.allocate(el.size * 1 /*, align=1*/).address.toInt()
+          for ((index, el) in el.withIndex()) {
+            val base = address + (index * 1)
+            (base + 0).ptr.storeByte(el.toInt().toByte())
+          }
+          (base + 4).ptr.storeInt(el.size)
+          (base + 0).ptr.storeInt(address)
+        }
+        val ptr2 = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_set(handle, ptr, len, address0, value.size, ptr2)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr2 + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr2 + 1).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      HttpTypes.HeaderError.InvalidSyntax
+                    }
+                    1 -> {
+                      HttpTypes.HeaderError.Forbidden
+                    }
+                    2 -> {
+                      HttpTypes.HeaderError.Immutable
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Unit>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Delete all values for a name. Does nothing if no values for the name exist.
+     *
+     * Fails with `header-error.immutable` if the `fields` are immutable.
+     *
+     * Fails with `header-error.invalid-syntax` if the `field-name` is syntactically invalid.
+     */
+    public fun delete(name: String): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = name.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val ptr0 = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_delete(handle, ptr, len, ptr0)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr0 + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr0 + 1).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      HttpTypes.HeaderError.InvalidSyntax
+                    }
+                    1 -> {
+                      HttpTypes.HeaderError.Forbidden
+                    }
+                    2 -> {
+                      HttpTypes.HeaderError.Immutable
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Unit>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Append a value for a name. Does not change or delete any existing values for that name.
+     *
+     * Fails with `header-error.immutable` if the `fields` are immutable.
+     *
+     * Fails with `header-error.invalid-syntax` if the `field-name` or `field-value` are
+     * syntactically invalid.
+     */
+    public fun append(name: String, value: List<UByte>): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+
+        val bytearray = name.encodeToByteArray()
+        val len = bytearray.size
+        val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+        val address = allocator.allocate(value.size * 1 /*, align=1*/).address.toInt()
+        for ((index, el) in value.withIndex()) {
+          val base = address + (index * 1)
+          (base + 0).ptr.storeByte(el.toInt().toByte())
+        }
+        val ptr0 = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
+        __wasm_import_append(handle, ptr, len, address, value.size, ptr0)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr0 + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr0 + 1).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      HttpTypes.HeaderError.InvalidSyntax
+                    }
+                    1 -> {
+                      HttpTypes.HeaderError.Forbidden
+                    }
+                    2 -> {
+                      HttpTypes.HeaderError.Immutable
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Unit>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Retrieve the full set of names and values in the Fields. Like the constructor, the list
+     * represents each name-value pair.
+     *
+     * The outer list represents each name-value pair in the Fields. Names which have multiple
+     * values are represented by multiple entries in this list with the same name.
+     *
+     * The names and values are always returned in the original casing and in the order in which
+     * they will be serialized for transport.
+     */
+    public fun entries(): List<Pair<String, List<UByte>>> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_entries(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+
+        val list0 = ArrayList<Pair<String, List<UByte>>>((ptr + 4).ptr.loadInt())
+        for (i1 in 0 until (ptr + 4).ptr.loadInt()) {
+          val base = ((ptr + 0).ptr.loadInt()) + (i1 * 16)
+
+          val list = ArrayList<UByte>((base + 12).ptr.loadInt())
+          for (i in 0 until (base + 12).ptr.loadInt()) {
+            val base = ((base + 8).ptr.loadInt()) + (i * 1)
+
+            list.add((base + 0).ptr.loadUByte().toInt().toUByte())
+          }
+
+          list0.add(
+              Pair<String, List<UByte>>(
+                  STRING_FROM_MEM((base + 0).ptr.loadInt(), (base + 4).ptr.loadInt()),
+                  list,
+              ))
+        }
+        return list0
+      }
+      // </editor-fold>
+    }
+    /**
+     * Make a deep copy of the Fields. Equivalent in behavior to calling the `fields` constructor on
+     * the return value of `entries`. The resulting `fields` is mutable.
+     */
+    public fun clone(): HttpTypes.Fields {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_clone(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = HttpTypes.Fields(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+
+    companion object {
+      /**
+       * Construct an HTTP Fields.
+       *
+       * The resulting `fields` is mutable.
+       *
+       * The list represents each name-value pair in the Fields. Names which have multiple values
+       * are represented by multiple entries in this list with the same name.
+       *
+       * The tuple is a pair of the field name, represented as a string, and Value, represented as a
+       * list of bytes.
+       *
+       * An error result will be returned if any `field-name` or `field-value` is syntactically
+       * invalid, or if a field is forbidden.
+       */
+      public fun fromList(entries: List<Pair<String, List<UByte>>>): Result<HttpTypes.Fields> {
+        // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+        withScopedMemoryAllocator { allocator ->
+          val address0 = allocator.allocate(entries.size * 16 /*, align=4*/).address.toInt()
+          for ((index1, el) in entries.withIndex()) {
+            val base = address0 + (index1 * 16)
+
+            val bytearray = el.first.encodeToByteArray()
+            val len = bytearray.size
+            val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+            (base + 4).ptr.storeInt(len)
+            (base + 0).ptr.storeInt(ptr)
+
+            val address = allocator.allocate(el.second.size * 1 /*, align=1*/).address.toInt()
+            for ((index, el) in el.second.withIndex()) {
+              val base = address + (index * 1)
+              (base + 0).ptr.storeByte(el.toInt().toByte())
+            }
+            (base + 12).ptr.storeInt(el.second.size)
+            (base + 8).ptr.storeInt(address)
+          }
+          val ptr2 = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/
+              allocator.allocate(8).address.toInt()
+          __wasm_import_fromList(address0, entries.size, ptr2)
+          freeAllComponentModelReallocAllocatedMemory()
+          val result =
+              if ((ptr2 + 0).ptr.loadUByte().toInt() == 0) {
+                val resource = HttpTypes.Fields(ResourceHandle((ptr2 + 4).ptr.loadInt()))
+
+                Result<HttpTypes.Fields>.success(resource)
+              } else {
+                // VariantLift START.
+                val variant =
+                    when ((ptr2 + 4).ptr.loadUByte().toInt()) {
+                      0 -> {
+                        HttpTypes.HeaderError.InvalidSyntax
+                      }
+                      1 -> {
+                        HttpTypes.HeaderError.Forbidden
+                      }
+                      2 -> {
+                        HttpTypes.HeaderError.Immutable
+                      }
+                      else -> error("unreachable")
+                    }
+                // VariantLift END
+
+                Result<HttpTypes.Fields>.failure(ComponentException(variant))
+              }
+          return result
+        }
+        // </editor-fold>
+      }
+    }
+  }
+  /** Represents an incoming HTTP Request. */
+
+  class IncomingRequest : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_HttpTypes_IncomingRequest_drop(__handle.value)
+    }
+    /** Returns the method of the incoming request. */
+    public fun method(): HttpTypes.Method {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_method(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // VariantLift START.
+        val variant =
+            when ((ptr + 0).ptr.loadUByte().toInt()) {
+              0 -> {
+                HttpTypes.Method.Get
+              }
+              1 -> {
+                HttpTypes.Method.Head
+              }
+              2 -> {
+                HttpTypes.Method.Post
+              }
+              3 -> {
+                HttpTypes.Method.Put
+              }
+              4 -> {
+                HttpTypes.Method.Delete
+              }
+              5 -> {
+                HttpTypes.Method.Connect
+              }
+              6 -> {
+                HttpTypes.Method.Options
+              }
+              7 -> {
+                HttpTypes.Method.Trace
+              }
+              8 -> {
+                HttpTypes.Method.Patch
+              }
+              9 -> {
+                HttpTypes.Method.Other(
+                    STRING_FROM_MEM((ptr + 4).ptr.loadInt(), (ptr + 8).ptr.loadInt()))
+              }
+              else -> error("unreachable")
+            }
+        // VariantLift END
+        return variant
+      }
+      // </editor-fold>
+    }
+    /** Returns the path with query parameters from the request, as a string. */
+    public fun pathWithQuery(): String? {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_pathWithQuery(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // OptionLift start
+        val option =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+              STRING_FROM_MEM((ptr + 4).ptr.loadInt(), (ptr + 8).ptr.loadInt())
+            } else {
+              null
+            }
+        // OptionLift end
+        return option
+      }
+      // </editor-fold>
+    }
+    /** Returns the protocol scheme from the request. */
+    public fun scheme(): HttpTypes.Scheme? {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=4)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_scheme(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // OptionLift start
+        val option =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      HttpTypes.Scheme.Http
+                    }
+                    1 -> {
+                      HttpTypes.Scheme.Https
+                    }
+                    2 -> {
+                      HttpTypes.Scheme.Other(
+                          STRING_FROM_MEM((ptr + 8).ptr.loadInt(), (ptr + 12).ptr.loadInt()))
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+              variant
+            } else {
+              null
+            }
+        // OptionLift end
+        return option
+      }
+      // </editor-fold>
+    }
+    /** Returns the authority of the Request's target URI, if present. */
+    public fun authority(): String? {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_authority(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // OptionLift start
+        val option =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+              STRING_FROM_MEM((ptr + 4).ptr.loadInt(), (ptr + 8).ptr.loadInt())
+            } else {
+              null
+            }
+        // OptionLift end
+        return option
+      }
+      // </editor-fold>
+    }
+    /**
+     * Get the `headers` associated with the request.
+     *
+     * The returned `headers` resource is immutable: `set`, `append`, and `delete` operations will
+     * fail with `header-error.immutable`.
+     *
+     * The `headers` returned are a child resource: it must be dropped before the parent
+     * `incoming-request` is dropped. Dropping this `incoming-request` before all children are
+     * dropped will trap.
+     */
+    public fun headers(): HttpTypes.Fields {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_headers(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = HttpTypes.Fields(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+    /**
+     * Gives the `incoming-body` associated with this request. Will only return success at most
+     * once, and subsequent calls will return error.
+     */
+    public fun consume(): Result<HttpTypes.IncomingBody> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_consume(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = HttpTypes.IncomingBody(ResourceHandle((ptr + 4).ptr.loadInt()))
+
+              Result<HttpTypes.IncomingBody>.success(resource)
+            } else {
+              Result<HttpTypes.IncomingBody>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+  /** Represents an outgoing HTTP Request. */
+
+  class OutgoingRequest : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_HttpTypes_OutgoingRequest_drop(__handle.value)
+    }
+    /**
+     * Construct a new `outgoing-request` with a default `method` of `GET`, and `none` values for
+     * `path-with-query`, `scheme`, and `authority`.
+     *
+     * `headers` is the HTTP Headers for the Request.
+     *
+     * It is possible to construct, or manipulate with the accessor functions below, an
+     * `outgoing-request` with an invalid combination of `scheme` and `authority`, or `headers`
+     * which are not permitted to be sent. It is the obligation of the `outgoing-handler.handle`
+     * implementation to reject invalid constructions of `outgoing-request`.
+     */
+    public constructor(
+        headers: HttpTypes.Fields
+    ) : this(
+        ResourceHandle(
+            run(
+                fun(): Int {
+                  // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+                  withScopedMemoryAllocator { allocator ->
+                    var handle = headers.__handle.value
+                    headers.__handle = ResourceHandle(0)
+                    val ret: Int = __wasm_import_constructor19(handle)
+                    freeAllComponentModelReallocAllocatedMemory()
+                    val resource = ret
+                    return resource
+                  }
+                  // </editor-fold>
+                })))
+    /**
+     * Returns the resource corresponding to the outgoing Body for this Request.
+     *
+     * Returns success on the first call: the `outgoing-body` resource for this `outgoing-request`
+     * can be retrieved at most once. Subsequent calls will return error.
+     */
+    public fun body(): Result<HttpTypes.OutgoingBody> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_body(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = HttpTypes.OutgoingBody(ResourceHandle((ptr + 4).ptr.loadInt()))
+
+              Result<HttpTypes.OutgoingBody>.success(resource)
+            } else {
+              Result<HttpTypes.OutgoingBody>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /** Get the Method for the Request. */
+    public fun method(): HttpTypes.Method {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_method20(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // VariantLift START.
+        val variant =
+            when ((ptr + 0).ptr.loadUByte().toInt()) {
+              0 -> {
+                HttpTypes.Method.Get
+              }
+              1 -> {
+                HttpTypes.Method.Head
+              }
+              2 -> {
+                HttpTypes.Method.Post
+              }
+              3 -> {
+                HttpTypes.Method.Put
+              }
+              4 -> {
+                HttpTypes.Method.Delete
+              }
+              5 -> {
+                HttpTypes.Method.Connect
+              }
+              6 -> {
+                HttpTypes.Method.Options
+              }
+              7 -> {
+                HttpTypes.Method.Trace
+              }
+              8 -> {
+                HttpTypes.Method.Patch
+              }
+              9 -> {
+                HttpTypes.Method.Other(
+                    STRING_FROM_MEM((ptr + 4).ptr.loadInt(), (ptr + 8).ptr.loadInt()))
+              }
+              else -> error("unreachable")
+            }
+        // VariantLift END
+        return variant
+      }
+      // </editor-fold>
+    }
+    /**
+     * Set the Method for the Request. Fails if the string present in a `method.other` argument is
+     * not a syntactically valid method.
+     */
+    public fun setMethod(method: HttpTypes.Method): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        // VariantLower START
+        val variant: Int
+        val variant9: Int
+        val variant10: Int
+        when (val x = method) {
+          is HttpTypes.Method.Get -> {
+            variant = 0
+            variant9 = 0
+            variant10 = 0
+          }
+          is HttpTypes.Method.Head -> {
+            variant = 1
+            variant9 = 0
+            variant10 = 0
+          }
+          is HttpTypes.Method.Post -> {
+            variant = 2
+            variant9 = 0
+            variant10 = 0
+          }
+          is HttpTypes.Method.Put -> {
+            variant = 3
+            variant9 = 0
+            variant10 = 0
+          }
+          is HttpTypes.Method.Delete -> {
+            variant = 4
+            variant9 = 0
+            variant10 = 0
+          }
+          is HttpTypes.Method.Connect -> {
+            variant = 5
+            variant9 = 0
+            variant10 = 0
+          }
+          is HttpTypes.Method.Options -> {
+            variant = 6
+            variant9 = 0
+            variant10 = 0
+          }
+          is HttpTypes.Method.Trace -> {
+            variant = 7
+            variant9 = 0
+            variant10 = 0
+          }
+          is HttpTypes.Method.Patch -> {
+            variant = 8
+            variant9 = 0
+            variant10 = 0
+          }
+          is HttpTypes.Method.Other -> {
+            val payload8 = x.value
+
+            val bytearray = payload8.encodeToByteArray()
+            val len = bytearray.size
+            val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+            variant = 9
+            variant9 = ptr
+            variant10 = len
+          }
+          else -> error("unreachable")
+        }
+        // VariantLower END
+        val ret: Int = __wasm_import_setMethod(handle, variant, variant9, variant10)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if (ret == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Get the combination of the HTTP Path and Query for the Request. When `none`, this represents
+     * an empty Path and empty Query.
+     */
+    public fun pathWithQuery(): String? {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_pathWithQuery21(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // OptionLift start
+        val option =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+              STRING_FROM_MEM((ptr + 4).ptr.loadInt(), (ptr + 8).ptr.loadInt())
+            } else {
+              null
+            }
+        // OptionLift end
+        return option
+      }
+      // </editor-fold>
+    }
+    /**
+     * Set the combination of the HTTP Path and Query for the Request. When `none`, this represents
+     * an empty Path and empty Query. Fails is the string given is not a syntactically valid path
+     * and query uri component.
+     */
+    public fun setPathWithQuery(pathWithQuery: String?): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val option: Int
+        val option1: Int
+        val option2: Int
+        val payload0 = pathWithQuery
+        if (payload0 != null) {
+
+          val bytearray = payload0.encodeToByteArray()
+          val len = bytearray.size
+          val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+          option = 1
+          option1 = ptr
+          option2 = len
+        } else {
+          option = 0
+          option1 = 0
+          option2 = 0
+        }
+        val ret: Int = __wasm_import_setPathWithQuery(handle, option, option1, option2)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if (ret == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Get the HTTP Related Scheme for the Request. When `none`, the implementation may choose an
+     * appropriate default scheme.
+     */
+    public fun scheme(): HttpTypes.Scheme? {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=4)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_scheme22(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // OptionLift start
+        val option =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      HttpTypes.Scheme.Http
+                    }
+                    1 -> {
+                      HttpTypes.Scheme.Https
+                    }
+                    2 -> {
+                      HttpTypes.Scheme.Other(
+                          STRING_FROM_MEM((ptr + 8).ptr.loadInt(), (ptr + 12).ptr.loadInt()))
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+              variant
+            } else {
+              null
+            }
+        // OptionLift end
+        return option
+      }
+      // </editor-fold>
+    }
+    /**
+     * Set the HTTP Related Scheme for the Request. When `none`, the implementation may choose an
+     * appropriate default scheme. Fails if the string given is not a syntactically valid uri
+     * scheme.
+     */
+    public fun setScheme(scheme: HttpTypes.Scheme?): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val option: Int
+        val option6: Int
+        val option7: Int
+        val option8: Int
+        val payload0 = scheme
+        if (payload0 != null) {
+          // VariantLower START
+          val variant: Int
+          val variant4: Int
+          val variant5: Int
+          when (val x = payload0) {
+            is HttpTypes.Scheme.Http -> {
+              variant = 0
+              variant4 = 0
+              variant5 = 0
+            }
+            is HttpTypes.Scheme.Https -> {
+              variant = 1
+              variant4 = 0
+              variant5 = 0
+            }
+            is HttpTypes.Scheme.Other -> {
+              val payload3 = x.value
+
+              val bytearray = payload3.encodeToByteArray()
+              val len = bytearray.size
+              val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+              variant = 2
+              variant4 = ptr
+              variant5 = len
+            }
+            else -> error("unreachable")
+          }
+          // VariantLower END
+          option = 1
+          option6 = variant
+          option7 = variant4
+          option8 = variant5
+        } else {
+          option = 0
+          option6 = 0
+          option7 = 0
+          option8 = 0
+        }
+        val ret: Int = __wasm_import_setScheme(handle, option, option6, option7, option8)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if (ret == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Get the authority of the Request's target URI. A value of `none` may be used with Related
+     * Schemes which do not require an authority. The HTTP and HTTPS schemes always require an
+     * authority.
+     */
+    public fun authority(): String? {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        __wasm_import_authority23(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // OptionLift start
+        val option =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+              STRING_FROM_MEM((ptr + 4).ptr.loadInt(), (ptr + 8).ptr.loadInt())
+            } else {
+              null
+            }
+        // OptionLift end
+        return option
+      }
+      // </editor-fold>
+    }
+    /**
+     * Set the authority of the Request's target URI. A value of `none` may be used with Related
+     * Schemes which do not require an authority. The HTTP and HTTPS schemes always require an
+     * authority. Fails if the string given is not a syntactically valid URI authority.
+     */
+    public fun setAuthority(authority: String?): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val option: Int
+        val option1: Int
+        val option2: Int
+        val payload0 = authority
+        if (payload0 != null) {
+
+          val bytearray = payload0.encodeToByteArray()
+          val len = bytearray.size
+          val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+          option = 1
+          option1 = ptr
+          option2 = len
+        } else {
+          option = 0
+          option1 = 0
+          option2 = 0
+        }
+        val ret: Int = __wasm_import_setAuthority(handle, option, option1, option2)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if (ret == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Get the headers associated with the Request.
+     *
+     * The returned `headers` resource is immutable: `set`, `append`, and `delete` operations will
+     * fail with `header-error.immutable`.
+     *
+     * This headers resource is a child: it must be dropped before the parent `outgoing-request` is
+     * dropped, or its ownership is transferred to another component by e.g.
+     * `outgoing-handler.handle`.
+     */
+    public fun headers(): HttpTypes.Fields {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_headers24(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = HttpTypes.Fields(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+  /**
+   * Parameters for making an HTTP Request. Each of these parameters is currently an optional
+   * timeout applicable to the transport layer of the HTTP protocol.
+   *
+   * These timeouts are separate from any the user may use to bound a blocking call to
+   * `wasi:io/poll.poll`.
+   */
+
+  class RequestOptions : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_HttpTypes_RequestOptions_drop(__handle.value)
+    }
+    /** Construct a default `request-options` value. */
+    public constructor() :
+        this(
+            ResourceHandle(
+                run(
+                    fun(): Int {
+                      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+                      withScopedMemoryAllocator { allocator ->
+                        val ret: Int = __wasm_import_constructor25()
+                        freeAllComponentModelReallocAllocatedMemory()
+                        val resource = ret
+                        return resource
+                      }
+                      // </editor-fold>
+                    })))
+    /** The timeout for the initial connect to the HTTP Server. */
+    public fun connectTimeout(): ULong? {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_connectTimeout(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // OptionLift start
+        val option =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+              (ptr + 8).ptr.loadLong().toULong()
+            } else {
+              null
+            }
+        // OptionLift end
+        return option
+      }
+      // </editor-fold>
+    }
+    /**
+     * Set the timeout for the initial connect to the HTTP Server. An error return value indicates
+     * that this timeout is not supported.
+     */
+    public fun setConnectTimeout(duration: ULong?): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val option: Int
+        val option1: Long
+        val payload0 = duration
+        if (payload0 != null) {
+          option = 1
+          option1 = payload0.toLong()
+        } else {
+          option = 0
+          option1 = 0L
+        }
+        val ret: Int = __wasm_import_setConnectTimeout(handle, option, option1)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if (ret == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /** The timeout for receiving the first byte of the Response body. */
+    public fun firstByteTimeout(): ULong? {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_firstByteTimeout(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // OptionLift start
+        val option =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+              (ptr + 8).ptr.loadLong().toULong()
+            } else {
+              null
+            }
+        // OptionLift end
+        return option
+      }
+      // </editor-fold>
+    }
+    /**
+     * Set the timeout for receiving the first byte of the Response body. An error return value
+     * indicates that this timeout is not supported.
+     */
+    public fun setFirstByteTimeout(duration: ULong?): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val option: Int
+        val option1: Long
+        val payload0 = duration
+        if (payload0 != null) {
+          option = 1
+          option1 = payload0.toLong()
+        } else {
+          option = 0
+          option1 = 0L
+        }
+        val ret: Int = __wasm_import_setFirstByteTimeout(handle, option, option1)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if (ret == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /** The timeout for receiving subsequent chunks of bytes in the Response body stream. */
+    public fun betweenBytesTimeout(): ULong? {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=8)*/ allocator.allocate(16).address.toInt()
+        __wasm_import_betweenBytesTimeout(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // OptionLift start
+        val option =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+              (ptr + 8).ptr.loadLong().toULong()
+            } else {
+              null
+            }
+        // OptionLift end
+        return option
+      }
+      // </editor-fold>
+    }
+    /**
+     * Set the timeout for receiving subsequent chunks of bytes in the Response body stream. An
+     * error return value indicates that this timeout is not supported.
+     */
+    public fun setBetweenBytesTimeout(duration: ULong?): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val option: Int
+        val option1: Long
+        val payload0 = duration
+        if (payload0 != null) {
+          option = 1
+          option1 = payload0.toLong()
+        } else {
+          option = 0
+          option1 = 0L
+        }
+        val ret: Int = __wasm_import_setBetweenBytesTimeout(handle, option, option1)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if (ret == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+  /**
+   * Represents the ability to send an HTTP Response.
+   *
+   * This resource is used by the `wasi:http/incoming-handler` interface to allow a Response to be
+   * sent corresponding to the Request provided as the other argument to `incoming-handler.handle`.
+   */
+
+  class ResponseOutparam : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_HttpTypes_ResponseOutparam_drop(__handle.value)
+    }
+    /**
+     * Send an HTTP 1xx response.
+     *
+     * Unlike `response-outparam.set`, this does not consume the `response-outparam`, allowing the
+     * guest to send an arbitrary number of informational responses before sending the final
+     * response using `response-outparam.set`.
+     *
+     * This will return an `HTTP-protocol-error` if `status` is not in the range [100-199], or an
+     * `internal-error` if the implementation does not support informational responses.
+     */
+    public fun sendInformational(status: UShort, headers: HttpTypes.Fields): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        var handle0 = headers.__handle.value
+        headers.__handle = ResourceHandle(0)
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=40, align=8)*/ allocator.allocate(40).address.toInt()
+        __wasm_import_sendInformational(handle, status.toInt(), handle0, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 8).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      HttpTypes.IanaErrorCode.DnsTimeout
+                    }
+                    1 -> {
+                      // OptionLift start
+                      val option =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      // OptionLift start
+                      val option1 =
+                          if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                            (ptr + 30).ptr.loadUShort().toInt().toUShort()
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.DnsError(
+                          HttpTypes.DnsErrorPayload(
+                              option,
+                              option1,
+                          ))
+                    }
+                    2 -> {
+                      HttpTypes.IanaErrorCode.DestinationNotFound
+                    }
+                    3 -> {
+                      HttpTypes.IanaErrorCode.DestinationUnavailable
+                    }
+                    4 -> {
+                      HttpTypes.IanaErrorCode.DestinationIpProhibited
+                    }
+                    5 -> {
+                      HttpTypes.IanaErrorCode.DestinationIpUnroutable
+                    }
+                    6 -> {
+                      HttpTypes.IanaErrorCode.ConnectionRefused
+                    }
+                    7 -> {
+                      HttpTypes.IanaErrorCode.ConnectionTerminated
+                    }
+                    8 -> {
+                      HttpTypes.IanaErrorCode.ConnectionTimeout
+                    }
+                    9 -> {
+                      HttpTypes.IanaErrorCode.ConnectionReadTimeout
+                    }
+                    10 -> {
+                      HttpTypes.IanaErrorCode.ConnectionWriteTimeout
+                    }
+                    11 -> {
+                      HttpTypes.IanaErrorCode.ConnectionLimitReached
+                    }
+                    12 -> {
+                      HttpTypes.IanaErrorCode.TlsProtocolError
+                    }
+                    13 -> {
+                      HttpTypes.IanaErrorCode.TlsCertificateError
+                    }
+                    14 -> {
+                      // OptionLift start
+                      val option2 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            (ptr + 17).ptr.loadUByte().toInt().toUByte()
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      // OptionLift start
+                      val option3 =
+                          if ((ptr + 20).ptr.loadUByte().toInt() == 1) {
+                            STRING_FROM_MEM((ptr + 24).ptr.loadInt(), (ptr + 28).ptr.loadInt())
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.TlsAlertReceived(
+                          HttpTypes.TlsAlertReceivedPayload(
+                              option2,
+                              option3,
+                          ))
+                    }
+                    15 -> {
+                      HttpTypes.IanaErrorCode.HttpRequestDenied
+                    }
+                    16 -> {
+                      HttpTypes.IanaErrorCode.HttpRequestLengthRequired
+                    }
+                    17 -> {
+                      // OptionLift start
+                      val option4 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            (ptr + 24).ptr.loadLong().toULong()
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.HttpRequestBodySize(option4)
+                    }
+                    18 -> {
+                      HttpTypes.IanaErrorCode.HttpRequestMethodInvalid
+                    }
+                    19 -> {
+                      HttpTypes.IanaErrorCode.HttpRequestUriInvalid
+                    }
+                    20 -> {
+                      HttpTypes.IanaErrorCode.HttpRequestUriTooLong
+                    }
+                    21 -> {
+                      // OptionLift start
+                      val option5 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            (ptr + 20).ptr.loadInt().toUInt()
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.HttpRequestHeaderSectionSize(option5)
+                    }
+                    22 -> {
+                      // OptionLift start
+                      val option8 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            // OptionLift start
+                            val option6 =
+                                if ((ptr + 20).ptr.loadUByte().toInt() == 1) {
+                                  STRING_FROM_MEM(
+                                      (ptr + 24).ptr.loadInt(), (ptr + 28).ptr.loadInt())
+                                } else {
+                                  null
+                                }
+                            // OptionLift end
+                            // OptionLift start
+                            val option7 =
+                                if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                  (ptr + 36).ptr.loadInt().toUInt()
+                                } else {
+                                  null
+                                }
+                            // OptionLift end
+                            HttpTypes.FieldSizePayload(
+                                option6,
+                                option7,
+                            )
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.HttpRequestHeaderSize(option8)
+                    }
+                    23 -> {
+                      // OptionLift start
+                      val option9 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            (ptr + 20).ptr.loadInt().toUInt()
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.HttpRequestTrailerSectionSize(option9)
+                    }
+                    24 -> {
+                      // OptionLift start
+                      val option10 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      // OptionLift start
+                      val option11 =
+                          if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                            (ptr + 32).ptr.loadInt().toUInt()
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.HttpRequestTrailerSize(
+                          HttpTypes.FieldSizePayload(
+                              option10,
+                              option11,
+                          ))
+                    }
+                    25 -> {
+                      HttpTypes.IanaErrorCode.HttpResponseIncomplete
+                    }
+                    26 -> {
+                      // OptionLift start
+                      val option12 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            (ptr + 20).ptr.loadInt().toUInt()
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.HttpResponseHeaderSectionSize(option12)
+                    }
+                    27 -> {
+                      // OptionLift start
+                      val option13 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      // OptionLift start
+                      val option14 =
+                          if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                            (ptr + 32).ptr.loadInt().toUInt()
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.HttpResponseHeaderSize(
+                          HttpTypes.FieldSizePayload(
+                              option13,
+                              option14,
+                          ))
+                    }
+                    28 -> {
+                      // OptionLift start
+                      val option15 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            (ptr + 24).ptr.loadLong().toULong()
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.HttpResponseBodySize(option15)
+                    }
+                    29 -> {
+                      // OptionLift start
+                      val option16 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            (ptr + 20).ptr.loadInt().toUInt()
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.HttpResponseTrailerSectionSize(option16)
+                    }
+                    30 -> {
+                      // OptionLift start
+                      val option17 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      // OptionLift start
+                      val option18 =
+                          if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                            (ptr + 32).ptr.loadInt().toUInt()
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.HttpResponseTrailerSize(
+                          HttpTypes.FieldSizePayload(
+                              option17,
+                              option18,
+                          ))
+                    }
+                    31 -> {
+                      // OptionLift start
+                      val option19 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.HttpResponseTransferCoding(option19)
+                    }
+                    32 -> {
+                      // OptionLift start
+                      val option20 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.HttpResponseContentCoding(option20)
+                    }
+                    33 -> {
+                      HttpTypes.IanaErrorCode.HttpResponseTimeout
+                    }
+                    34 -> {
+                      HttpTypes.IanaErrorCode.HttpUpgradeFailed
+                    }
+                    35 -> {
+                      HttpTypes.IanaErrorCode.HttpProtocolError
+                    }
+                    36 -> {
+                      HttpTypes.IanaErrorCode.LoopDetected
+                    }
+                    37 -> {
+                      HttpTypes.IanaErrorCode.ConfigurationError
+                    }
+                    38 -> {
+                      // OptionLift start
+                      val option21 =
+                          if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                            STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                          } else {
+                            null
+                          }
+                      // OptionLift end
+                      HttpTypes.IanaErrorCode.InternalError(option21)
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Unit>.failure(ComponentException(variant))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    companion object {
+      /**
+       * Set the value of the `response-outparam` to either send a response, or indicate an error.
+       *
+       * This method consumes the `response-outparam` to ensure that it is called at most once. If
+       * it is never called, the implementation will respond with an error.
+       *
+       * The user may provide an `error` to `response` to allow the implementation determine how to
+       * respond with an HTTP error response.
+       */
+      public fun set(
+          param: HttpTypes.ResponseOutparam,
+          response: Result<HttpTypes.OutgoingResponse>
+      ): Unit {
+        // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+        withScopedMemoryAllocator { allocator ->
+          var handle = param.__handle.value
+          param.__handle = ResourceHandle(0)
+          val result: Int
+          val result193: Int
+          val result194: Int
+          val result195: Long
+          val result196: Int
+          val result197: Int
+          val result198: Int
+          val result199: Int
+          if (response.isFailure) {
+            val payload1 =
+                (response.exceptionOrNull() as ComponentException).value as HttpTypes.IanaErrorCode
+            // VariantLower START
+            val variant: Int
+            val variant187: Int
+            val variant188: Long
+            val variant189: Int
+            val variant190: Int
+            val variant191: Int
+            val variant192: Int
+            when (val x = payload1) {
+              is HttpTypes.IanaErrorCode.DnsTimeout -> {
+                variant = 0
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.DnsError -> {
+                val payload3 = x.value
+                val option: Int
+                val option6: Int
+                val option7: Int
+                val payload5 = payload3.rcode
+                if (payload5 != null) {
+
+                  val bytearray = payload5.encodeToByteArray()
+                  val len = bytearray.size
+                  val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+
+                  option = 1
+                  option6 = ptr
+                  option7 = len
+                } else {
+                  option = 0
+                  option6 = 0
+                  option7 = 0
+                }
+                val option11: Int
+                val option12: Int
+                val payload10 = payload3.infoCode
+                if (payload10 != null) {
+                  option11 = 1
+                  option12 = payload10.toInt()
+                } else {
+                  option11 = 0
+                  option12 = 0
+                }
+                variant = 1
+                variant187 = option
+                variant188 = (option6).toLong()
+                variant189 = option7
+                variant190 = option11
+                variant191 = option12
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.DestinationNotFound -> {
+                variant = 2
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.DestinationUnavailable -> {
+                variant = 3
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.DestinationIpProhibited -> {
+                variant = 4
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.DestinationIpUnroutable -> {
+                variant = 5
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.ConnectionRefused -> {
+                variant = 6
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.ConnectionTerminated -> {
+                variant = 7
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.ConnectionTimeout -> {
+                variant = 8
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.ConnectionReadTimeout -> {
+                variant = 9
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.ConnectionWriteTimeout -> {
+                variant = 10
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.ConnectionLimitReached -> {
+                variant = 11
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.TlsProtocolError -> {
+                variant = 12
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.TlsCertificateError -> {
+                variant = 13
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.TlsAlertReceived -> {
+                val payload26 = x.value
+                val option29: Int
+                val option30: Int
+                val payload28 = payload26.alertId
+                if (payload28 != null) {
+                  option29 = 1
+                  option30 = payload28.toInt()
+                } else {
+                  option29 = 0
+                  option30 = 0
+                }
+                val option37: Int
+                val option38: Int
+                val option39: Int
+                val payload33 = payload26.alertMessage
+                if (payload33 != null) {
+
+                  val bytearray36 = payload33.encodeToByteArray()
+                  val len35 = bytearray36.size
+                  val ptr34 = allocator.writeToLinearMemory(bytearray36).address.toInt()
+
+                  option37 = 1
+                  option38 = ptr34
+                  option39 = len35
+                } else {
+                  option37 = 0
+                  option38 = 0
+                  option39 = 0
+                }
+                variant = 14
+                variant187 = option29
+                variant188 = option30.toLong()
+                variant189 = option37
+                variant190 = option38
+                variant191 = option39
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpRequestDenied -> {
+                variant = 15
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpRequestLengthRequired -> {
+                variant = 16
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpRequestBodySize -> {
+                val payload43 = x.value
+                val option46: Int
+                val option47: Long
+                val payload45 = payload43
+                if (payload45 != null) {
+                  option46 = 1
+                  option47 = payload45.toLong()
+                } else {
+                  option46 = 0
+                  option47 = 0L
+                }
+                variant = 17
+                variant187 = option46
+                variant188 = option47
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpRequestMethodInvalid -> {
+                variant = 18
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpRequestUriInvalid -> {
+                variant = 19
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpRequestUriTooLong -> {
+                variant = 20
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpRequestHeaderSectionSize -> {
+                val payload52 = x.value
+                val option55: Int
+                val option56: Int
+                val payload54 = payload52
+                if (payload54 != null) {
+                  option55 = 1
+                  option56 = payload54.toInt()
+                } else {
+                  option55 = 0
+                  option56 = 0
+                }
+                variant = 21
+                variant187 = option55
+                variant188 = option56.toLong()
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpRequestHeaderSize -> {
+                val payload58 = x.value
+                val option75: Int
+                val option76: Int
+                val option77: Int
+                val option78: Int
+                val option79: Int
+                val option80: Int
+                val payload60 = payload58
+                if (payload60 != null) {
+                  val option66: Int
+                  val option67: Int
+                  val option68: Int
+                  val payload62 = payload60.fieldName
+                  if (payload62 != null) {
+
+                    val bytearray65 = payload62.encodeToByteArray()
+                    val len64 = bytearray65.size
+                    val ptr63 = allocator.writeToLinearMemory(bytearray65).address.toInt()
+
+                    option66 = 1
+                    option67 = ptr63
+                    option68 = len64
+                  } else {
+                    option66 = 0
+                    option67 = 0
+                    option68 = 0
+                  }
+                  val option72: Int
+                  val option73: Int
+                  val payload71 = payload60.fieldSize
+                  if (payload71 != null) {
+                    option72 = 1
+                    option73 = payload71.toInt()
+                  } else {
+                    option72 = 0
+                    option73 = 0
+                  }
+                  option75 = 1
+                  option76 = option66
+                  option77 = option67
+                  option78 = option68
+                  option79 = option72
+                  option80 = option73
+                } else {
+                  option75 = 0
+                  option76 = 0
+                  option77 = 0
+                  option78 = 0
+                  option79 = 0
+                  option80 = 0
+                }
+                variant = 22
+                variant187 = option75
+                variant188 = option76.toLong()
+                variant189 = option77
+                variant190 = option78
+                variant191 = option79
+                variant192 = option80
+              }
+              is HttpTypes.IanaErrorCode.HttpRequestTrailerSectionSize -> {
+                val payload82 = x.value
+                val option85: Int
+                val option86: Int
+                val payload84 = payload82
+                if (payload84 != null) {
+                  option85 = 1
+                  option86 = payload84.toInt()
+                } else {
+                  option85 = 0
+                  option86 = 0
+                }
+                variant = 23
+                variant187 = option85
+                variant188 = option86.toLong()
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpRequestTrailerSize -> {
+                val payload88 = x.value
+                val option94: Int
+                val option95: Int
+                val option96: Int
+                val payload90 = payload88.fieldName
+                if (payload90 != null) {
+
+                  val bytearray93 = payload90.encodeToByteArray()
+                  val len92 = bytearray93.size
+                  val ptr91 = allocator.writeToLinearMemory(bytearray93).address.toInt()
+
+                  option94 = 1
+                  option95 = ptr91
+                  option96 = len92
+                } else {
+                  option94 = 0
+                  option95 = 0
+                  option96 = 0
+                }
+                val option100: Int
+                val option101: Int
+                val payload99 = payload88.fieldSize
+                if (payload99 != null) {
+                  option100 = 1
+                  option101 = payload99.toInt()
+                } else {
+                  option100 = 0
+                  option101 = 0
+                }
+                variant = 24
+                variant187 = option94
+                variant188 = (option95).toLong()
+                variant189 = option96
+                variant190 = option100
+                variant191 = option101
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpResponseIncomplete -> {
+                variant = 25
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpResponseHeaderSectionSize -> {
+                val payload104 = x.value
+                val option107: Int
+                val option108: Int
+                val payload106 = payload104
+                if (payload106 != null) {
+                  option107 = 1
+                  option108 = payload106.toInt()
+                } else {
+                  option107 = 0
+                  option108 = 0
+                }
+                variant = 26
+                variant187 = option107
+                variant188 = option108.toLong()
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpResponseHeaderSize -> {
+                val payload110 = x.value
+                val option116: Int
+                val option117: Int
+                val option118: Int
+                val payload112 = payload110.fieldName
+                if (payload112 != null) {
+
+                  val bytearray115 = payload112.encodeToByteArray()
+                  val len114 = bytearray115.size
+                  val ptr113 = allocator.writeToLinearMemory(bytearray115).address.toInt()
+
+                  option116 = 1
+                  option117 = ptr113
+                  option118 = len114
+                } else {
+                  option116 = 0
+                  option117 = 0
+                  option118 = 0
+                }
+                val option122: Int
+                val option123: Int
+                val payload121 = payload110.fieldSize
+                if (payload121 != null) {
+                  option122 = 1
+                  option123 = payload121.toInt()
+                } else {
+                  option122 = 0
+                  option123 = 0
+                }
+                variant = 27
+                variant187 = option116
+                variant188 = (option117).toLong()
+                variant189 = option118
+                variant190 = option122
+                variant191 = option123
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpResponseBodySize -> {
+                val payload125 = x.value
+                val option128: Int
+                val option129: Long
+                val payload127 = payload125
+                if (payload127 != null) {
+                  option128 = 1
+                  option129 = payload127.toLong()
+                } else {
+                  option128 = 0
+                  option129 = 0L
+                }
+                variant = 28
+                variant187 = option128
+                variant188 = option129
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpResponseTrailerSectionSize -> {
+                val payload131 = x.value
+                val option134: Int
+                val option135: Int
+                val payload133 = payload131
+                if (payload133 != null) {
+                  option134 = 1
+                  option135 = payload133.toInt()
+                } else {
+                  option134 = 0
+                  option135 = 0
+                }
+                variant = 29
+                variant187 = option134
+                variant188 = option135.toLong()
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpResponseTrailerSize -> {
+                val payload137 = x.value
+                val option143: Int
+                val option144: Int
+                val option145: Int
+                val payload139 = payload137.fieldName
+                if (payload139 != null) {
+
+                  val bytearray142 = payload139.encodeToByteArray()
+                  val len141 = bytearray142.size
+                  val ptr140 = allocator.writeToLinearMemory(bytearray142).address.toInt()
+
+                  option143 = 1
+                  option144 = ptr140
+                  option145 = len141
+                } else {
+                  option143 = 0
+                  option144 = 0
+                  option145 = 0
+                }
+                val option149: Int
+                val option150: Int
+                val payload148 = payload137.fieldSize
+                if (payload148 != null) {
+                  option149 = 1
+                  option150 = payload148.toInt()
+                } else {
+                  option149 = 0
+                  option150 = 0
+                }
+                variant = 30
+                variant187 = option143
+                variant188 = (option144).toLong()
+                variant189 = option145
+                variant190 = option149
+                variant191 = option150
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpResponseTransferCoding -> {
+                val payload152 = x.value
+                val option158: Int
+                val option159: Int
+                val option160: Int
+                val payload154 = payload152
+                if (payload154 != null) {
+
+                  val bytearray157 = payload154.encodeToByteArray()
+                  val len156 = bytearray157.size
+                  val ptr155 = allocator.writeToLinearMemory(bytearray157).address.toInt()
+
+                  option158 = 1
+                  option159 = ptr155
+                  option160 = len156
+                } else {
+                  option158 = 0
+                  option159 = 0
+                  option160 = 0
+                }
+                variant = 31
+                variant187 = option158
+                variant188 = (option159).toLong()
+                variant189 = option160
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpResponseContentCoding -> {
+                val payload162 = x.value
+                val option168: Int
+                val option169: Int
+                val option170: Int
+                val payload164 = payload162
+                if (payload164 != null) {
+
+                  val bytearray167 = payload164.encodeToByteArray()
+                  val len166 = bytearray167.size
+                  val ptr165 = allocator.writeToLinearMemory(bytearray167).address.toInt()
+
+                  option168 = 1
+                  option169 = ptr165
+                  option170 = len166
+                } else {
+                  option168 = 0
+                  option169 = 0
+                  option170 = 0
+                }
+                variant = 32
+                variant187 = option168
+                variant188 = (option169).toLong()
+                variant189 = option170
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpResponseTimeout -> {
+                variant = 33
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpUpgradeFailed -> {
+                variant = 34
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.HttpProtocolError -> {
+                variant = 35
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.LoopDetected -> {
+                variant = 36
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.ConfigurationError -> {
+                variant = 37
+                variant187 = 0
+                variant188 = 0L
+                variant189 = 0
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              is HttpTypes.IanaErrorCode.InternalError -> {
+                val payload177 = x.value
+                val option183: Int
+                val option184: Int
+                val option185: Int
+                val payload179 = payload177
+                if (payload179 != null) {
+
+                  val bytearray182 = payload179.encodeToByteArray()
+                  val len181 = bytearray182.size
+                  val ptr180 = allocator.writeToLinearMemory(bytearray182).address.toInt()
+
+                  option183 = 1
+                  option184 = ptr180
+                  option185 = len181
+                } else {
+                  option183 = 0
+                  option184 = 0
+                  option185 = 0
+                }
+                variant = 38
+                variant187 = option183
+                variant188 = (option184).toLong()
+                variant189 = option185
+                variant190 = 0
+                variant191 = 0
+                variant192 = 0
+              }
+              else -> error("unreachable")
+            }
+            // VariantLower END
+            result = 1
+            result193 = variant
+            result194 = variant187
+            result195 = variant188
+            result196 = variant189
+            result197 = variant190
+            result198 = variant191
+            result199 = variant192
+          } else {
+            val payload = response.getOrThrow()!!
+            var handle0 = payload.__handle.value
+            payload.__handle = ResourceHandle(0)
+            result = 0
+            result193 = handle0
+            result194 = 0
+            result195 = 0L
+            result196 = 0
+            result197 = 0
+            result198 = 0
+            result199 = 0
+          }
+          __wasm_import_set26(
+              handle,
+              result,
+              result193,
+              result194,
+              result195,
+              result196,
+              result197,
+              result198,
+              result199)
+          freeAllComponentModelReallocAllocatedMemory()
+        }
+        // </editor-fold>
+      }
+    }
+  }
+  /** Represents an incoming HTTP Response. */
+
+  class IncomingResponse : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_HttpTypes_IncomingResponse_drop(__handle.value)
+    }
+    /** Returns the status code from the incoming response. */
+    public fun status(): UShort {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_status(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        return ret.toUShort()
+      }
+      // </editor-fold>
+    }
+    /**
+     * Returns the headers from the incoming response.
+     *
+     * The returned `headers` resource is immutable: `set`, `append`, and `delete` operations will
+     * fail with `header-error.immutable`.
+     *
+     * This headers resource is a child: it must be dropped before the parent `incoming-response` is
+     * dropped.
+     */
+    public fun headers(): HttpTypes.Fields {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_headers27(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = HttpTypes.Fields(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+    /**
+     * Returns the incoming body. May be called at most once. Returns error if called additional
+     * times.
+     */
+    public fun consume(): Result<HttpTypes.IncomingBody> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_consume28(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = HttpTypes.IncomingBody(ResourceHandle((ptr + 4).ptr.loadInt()))
+
+              Result<HttpTypes.IncomingBody>.success(resource)
+            } else {
+              Result<HttpTypes.IncomingBody>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+  /**
+   * Represents an incoming HTTP Request or Response's Body.
+   *
+   * A body has both its contents - a stream of bytes - and a (possibly empty) set of trailers,
+   * indicating that the full contents of the body have been received. This resource represents the
+   * contents as an `input-stream` and the delivery of trailers as a `future-trailers`, and ensures
+   * that the user of this interface may only be consuming either the body contents or waiting on
+   * trailers at any given time.
+   */
+
+  class IncomingBody : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_HttpTypes_IncomingBody_drop(__handle.value)
+    }
+    /**
+     * Returns the contents of the body, as a stream of bytes.
+     *
+     * Returns success on first call: the stream representing the contents can be retrieved at most
+     * once. Subsequent calls will return error.
+     *
+     * The returned `input-stream` resource is a child: it must be dropped before the parent
+     * `incoming-body` is dropped, or consumed by `incoming-body.finish`.
+     *
+     * This invariant ensures that the implementation can determine whether the user is consuming
+     * the contents of the body, waiting on the `future-trailers` to be ready, or neither. This
+     * allows for network backpressure is to be applied when the user is consuming the body, and for
+     * that backpressure to not inhibit delivery of the trailers if the user does not read the
+     * entire body.
+     */
+    public fun stream(): Result<Streams.InputStream> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_stream29(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = Streams.InputStream(ResourceHandle((ptr + 4).ptr.loadInt()))
+
+              Result<Streams.InputStream>.success(resource)
+            } else {
+              Result<Streams.InputStream>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    companion object {
+      /**
+       * Takes ownership of `incoming-body`, and returns a `future-trailers`. This function will
+       * trap if the `input-stream` child is still alive.
+       */
+      public fun finish(this_: HttpTypes.IncomingBody): HttpTypes.FutureTrailers {
+        // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+        withScopedMemoryAllocator { allocator ->
+          var handle = this_.__handle.value
+          this_.__handle = ResourceHandle(0)
+          val ret: Int = __wasm_import_finish(handle)
+          freeAllComponentModelReallocAllocatedMemory()
+          val resource = HttpTypes.FutureTrailers(ResourceHandle(ret))
+          return resource
+        }
+        // </editor-fold>
+      }
+    }
+  }
+  /**
+   * Represents a future which may eventually return trailers, or an error.
+   *
+   * In the case that the incoming HTTP Request or Response did not have any trailers, this future
+   * will resolve to the empty set of trailers once the complete Request or Response body has been
+   * received.
+   */
+
+  class FutureTrailers : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_HttpTypes_FutureTrailers_drop(__handle.value)
+    }
+    /**
+     * Returns a pollable which becomes ready when either the trailers have been received, or an
+     * error has occurred. When this pollable is ready, the `get` method will return `some`.
+     */
+    public fun subscribe(): Poll.Pollable {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_subscribe30(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = Poll.Pollable(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+    /**
+     * Returns the contents of the trailers, or an error which occurred, once the future is ready.
+     *
+     * The outer `option` represents future readiness. Users can wait on this `option` to become
+     * `some` using the `subscribe` method.
+     *
+     * The outer `result` is used to retrieve the trailers or error at most once. It will be success
+     * on the first call in which the outer option is `some`, and error on subsequent calls.
+     *
+     * The inner `result` represents that either the HTTP Request or Response body, as well as any
+     * trailers, were received successfully, or that an error occurred receiving them. The optional
+     * `trailers` indicates whether or not trailers were present in the body.
+     *
+     * When some `trailers` are returned by this method, the `trailers` resource is immutable, and a
+     * child. Use of the `set`, `append`, or `delete` methods will return an error, and the resource
+     * must be dropped before the parent `future-trailers` is dropped.
+     */
+    public fun get(): Result<Result<HttpTypes.Fields?>>? {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=56, align=8)*/ allocator.allocate(56).address.toInt()
+        __wasm_import_get31(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // OptionLift start
+        val option23 =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+              val result22 =
+                  if ((ptr + 8).ptr.loadUByte().toInt() == 0) {
+                    val result =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 0) {
+                          // OptionLift start
+                          val option =
+                              if ((ptr + 24).ptr.loadUByte().toInt() == 1) {
+                                val resource =
+                                    HttpTypes.Fields(ResourceHandle((ptr + 28).ptr.loadInt()))
+                                resource
+                              } else {
+                                null
+                              }
+                          // OptionLift end
+
+                          Result<HttpTypes.Fields?>.success(option)
+                        } else {
+                          // VariantLift START.
+                          val variant =
+                              when ((ptr + 24).ptr.loadUByte().toInt()) {
+                                0 -> {
+                                  HttpTypes.IanaErrorCode.DnsTimeout
+                                }
+                                1 -> {
+                                  // OptionLift start
+                                  val option0 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  // OptionLift start
+                                  val option1 =
+                                      if ((ptr + 44).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 46).ptr.loadUShort().toInt().toUShort()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.DnsError(
+                                      HttpTypes.DnsErrorPayload(
+                                          option0,
+                                          option1,
+                                      ))
+                                }
+                                2 -> {
+                                  HttpTypes.IanaErrorCode.DestinationNotFound
+                                }
+                                3 -> {
+                                  HttpTypes.IanaErrorCode.DestinationUnavailable
+                                }
+                                4 -> {
+                                  HttpTypes.IanaErrorCode.DestinationIpProhibited
+                                }
+                                5 -> {
+                                  HttpTypes.IanaErrorCode.DestinationIpUnroutable
+                                }
+                                6 -> {
+                                  HttpTypes.IanaErrorCode.ConnectionRefused
+                                }
+                                7 -> {
+                                  HttpTypes.IanaErrorCode.ConnectionTerminated
+                                }
+                                8 -> {
+                                  HttpTypes.IanaErrorCode.ConnectionTimeout
+                                }
+                                9 -> {
+                                  HttpTypes.IanaErrorCode.ConnectionReadTimeout
+                                }
+                                10 -> {
+                                  HttpTypes.IanaErrorCode.ConnectionWriteTimeout
+                                }
+                                11 -> {
+                                  HttpTypes.IanaErrorCode.ConnectionLimitReached
+                                }
+                                12 -> {
+                                  HttpTypes.IanaErrorCode.TlsProtocolError
+                                }
+                                13 -> {
+                                  HttpTypes.IanaErrorCode.TlsCertificateError
+                                }
+                                14 -> {
+                                  // OptionLift start
+                                  val option2 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 33).ptr.loadUByte().toInt().toUByte()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  // OptionLift start
+                                  val option3 =
+                                      if ((ptr + 36).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 40).ptr.loadInt(), (ptr + 44).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.TlsAlertReceived(
+                                      HttpTypes.TlsAlertReceivedPayload(
+                                          option2,
+                                          option3,
+                                      ))
+                                }
+                                15 -> {
+                                  HttpTypes.IanaErrorCode.HttpRequestDenied
+                                }
+                                16 -> {
+                                  HttpTypes.IanaErrorCode.HttpRequestLengthRequired
+                                }
+                                17 -> {
+                                  // OptionLift start
+                                  val option4 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 40).ptr.loadLong().toULong()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpRequestBodySize(option4)
+                                }
+                                18 -> {
+                                  HttpTypes.IanaErrorCode.HttpRequestMethodInvalid
+                                }
+                                19 -> {
+                                  HttpTypes.IanaErrorCode.HttpRequestUriInvalid
+                                }
+                                20 -> {
+                                  HttpTypes.IanaErrorCode.HttpRequestUriTooLong
+                                }
+                                21 -> {
+                                  // OptionLift start
+                                  val option5 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 36).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpRequestHeaderSectionSize(option5)
+                                }
+                                22 -> {
+                                  // OptionLift start
+                                  val option8 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        // OptionLift start
+                                        val option6 =
+                                            if ((ptr + 36).ptr.loadUByte().toInt() == 1) {
+                                              STRING_FROM_MEM(
+                                                  (ptr + 40).ptr.loadInt(),
+                                                  (ptr + 44).ptr.loadInt())
+                                            } else {
+                                              null
+                                            }
+                                        // OptionLift end
+                                        // OptionLift start
+                                        val option7 =
+                                            if ((ptr + 48).ptr.loadUByte().toInt() == 1) {
+                                              (ptr + 52).ptr.loadInt().toUInt()
+                                            } else {
+                                              null
+                                            }
+                                        // OptionLift end
+                                        HttpTypes.FieldSizePayload(
+                                            option6,
+                                            option7,
+                                        )
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpRequestHeaderSize(option8)
+                                }
+                                23 -> {
+                                  // OptionLift start
+                                  val option9 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 36).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpRequestTrailerSectionSize(option9)
+                                }
+                                24 -> {
+                                  // OptionLift start
+                                  val option10 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  // OptionLift start
+                                  val option11 =
+                                      if ((ptr + 44).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 48).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpRequestTrailerSize(
+                                      HttpTypes.FieldSizePayload(
+                                          option10,
+                                          option11,
+                                      ))
+                                }
+                                25 -> {
+                                  HttpTypes.IanaErrorCode.HttpResponseIncomplete
+                                }
+                                26 -> {
+                                  // OptionLift start
+                                  val option12 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 36).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseHeaderSectionSize(option12)
+                                }
+                                27 -> {
+                                  // OptionLift start
+                                  val option13 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  // OptionLift start
+                                  val option14 =
+                                      if ((ptr + 44).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 48).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseHeaderSize(
+                                      HttpTypes.FieldSizePayload(
+                                          option13,
+                                          option14,
+                                      ))
+                                }
+                                28 -> {
+                                  // OptionLift start
+                                  val option15 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 40).ptr.loadLong().toULong()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseBodySize(option15)
+                                }
+                                29 -> {
+                                  // OptionLift start
+                                  val option16 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 36).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseTrailerSectionSize(option16)
+                                }
+                                30 -> {
+                                  // OptionLift start
+                                  val option17 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  // OptionLift start
+                                  val option18 =
+                                      if ((ptr + 44).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 48).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseTrailerSize(
+                                      HttpTypes.FieldSizePayload(
+                                          option17,
+                                          option18,
+                                      ))
+                                }
+                                31 -> {
+                                  // OptionLift start
+                                  val option19 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseTransferCoding(option19)
+                                }
+                                32 -> {
+                                  // OptionLift start
+                                  val option20 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseContentCoding(option20)
+                                }
+                                33 -> {
+                                  HttpTypes.IanaErrorCode.HttpResponseTimeout
+                                }
+                                34 -> {
+                                  HttpTypes.IanaErrorCode.HttpUpgradeFailed
+                                }
+                                35 -> {
+                                  HttpTypes.IanaErrorCode.HttpProtocolError
+                                }
+                                36 -> {
+                                  HttpTypes.IanaErrorCode.LoopDetected
+                                }
+                                37 -> {
+                                  HttpTypes.IanaErrorCode.ConfigurationError
+                                }
+                                38 -> {
+                                  // OptionLift start
+                                  val option21 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.InternalError(option21)
+                                }
+                                else -> error("unreachable")
+                              }
+                          // VariantLift END
+
+                          Result<HttpTypes.Fields?>.failure(ComponentException(variant))
+                        }
+
+                    Result<Result<HttpTypes.Fields?>>.success(result)
+                  } else {
+                    Result<Result<HttpTypes.Fields?>>.failure(ComponentException(Unit))
+                  }
+              result22
+            } else {
+              null
+            }
+        // OptionLift end
+        return option23
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+  /** Represents an outgoing HTTP Response. */
+
+  class OutgoingResponse : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_HttpTypes_OutgoingResponse_drop(__handle.value)
+    }
+    /**
+     * Construct an `outgoing-response`, with a default `status-code` of `200`. If a different
+     * `status-code` is needed, it must be set via the `set-status-code` method.
+     *
+     * `headers` is the HTTP Headers for the Response.
+     */
+    public constructor(
+        headers: HttpTypes.Fields
+    ) : this(
+        ResourceHandle(
+            run(
+                fun(): Int {
+                  // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+                  withScopedMemoryAllocator { allocator ->
+                    var handle = headers.__handle.value
+                    headers.__handle = ResourceHandle(0)
+                    val ret: Int = __wasm_import_constructor32(handle)
+                    freeAllComponentModelReallocAllocatedMemory()
+                    val resource = ret
+                    return resource
+                  }
+                  // </editor-fold>
+                })))
+    /** Get the HTTP Status Code for the Response. */
+    public fun statusCode(): UShort {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_statusCode(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        return ret.toUShort()
+      }
+      // </editor-fold>
+    }
+    /**
+     * Set the HTTP Status Code for the Response. Fails if the status-code given is not a valid http
+     * status code.
+     */
+    public fun setStatusCode(statusCode: UShort): Result<Unit> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_setStatusCode(handle, statusCode.toInt())
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if (ret == 0) {
+              Result<Unit>.success(Unit)
+            } else {
+              Result<Unit>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+    /**
+     * Get the headers associated with the Request.
+     *
+     * The returned `headers` resource is immutable: `set`, `append`, and `delete` operations will
+     * fail with `header-error.immutable`.
+     *
+     * This headers resource is a child: it must be dropped before the parent `outgoing-request` is
+     * dropped, or its ownership is transferred to another component by e.g.
+     * `outgoing-handler.handle`.
+     */
+    public fun headers(): HttpTypes.Fields {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_headers33(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = HttpTypes.Fields(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+    /**
+     * Returns the resource corresponding to the outgoing Body for this Response.
+     *
+     * Returns success on the first call: the `outgoing-body` resource for this `outgoing-response`
+     * can be retrieved at most once. Subsequent calls will return error.
+     */
+    public fun body(): Result<HttpTypes.OutgoingBody> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_body34(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = HttpTypes.OutgoingBody(ResourceHandle((ptr + 4).ptr.loadInt()))
+
+              Result<HttpTypes.OutgoingBody>.success(resource)
+            } else {
+              Result<HttpTypes.OutgoingBody>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+  /**
+   * Represents an outgoing HTTP Request or Response's Body.
+   *
+   * A body has both its contents - a stream of bytes - and a (possibly empty) set of trailers,
+   * inducating the full contents of the body have been sent. This resource represents the contents
+   * as an `output-stream` child resource, and the completion of the body (with optional trailers)
+   * with a static function that consumes the `outgoing-body` resource, and ensures that the user of
+   * this interface may not write to the body contents after the body has been finished.
+   *
+   * If the user code drops this resource, as opposed to calling the static method `finish`, the
+   * implementation should treat the body as incomplete, and that an error has occurred. The
+   * implementation should propagate this error to the HTTP protocol by whatever means it has
+   * available, including: corrupting the body on the wire, aborting the associated Request, or
+   * sending a late status code for the Response.
+   */
+
+  class OutgoingBody : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_HttpTypes_OutgoingBody_drop(__handle.value)
+    }
+    /**
+     * Returns a stream for writing the body contents.
+     *
+     * The returned `output-stream` is a child resource: it must be dropped before the parent
+     * `outgoing-body` resource is dropped (or finished), otherwise the `outgoing-body` drop or
+     * `finish` will trap.
+     *
+     * Returns success on the first call: the `output-stream` resource for this `outgoing-body` may
+     * be retrieved at most once. Subsequent calls will return error.
+     */
+    public fun write(): Result<Streams.OutputStream> {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        __wasm_import_write35(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              val resource = Streams.OutputStream(ResourceHandle((ptr + 4).ptr.loadInt()))
+
+              Result<Streams.OutputStream>.success(resource)
+            } else {
+              Result<Streams.OutputStream>.failure(ComponentException(Unit))
+            }
+        return result
+      }
+      // </editor-fold>
+    }
+
+    companion object {
+      /**
+       * Finalize an outgoing body, optionally providing trailers. This must be called to signal
+       * that the response is complete. If the `outgoing-body` is dropped without calling
+       * `outgoing-body.finalize`, the implementation should treat the body as corrupted.
+       *
+       * Fails if the body's `outgoing-request` or `outgoing-response` was constructed with a
+       * Content-Length header, and the contents written to the body (via `write`) does not match
+       * the value given in the Content-Length.
+       */
+      public fun finish(this_: HttpTypes.OutgoingBody, trailers: HttpTypes.Fields?): Result<Unit> {
+        // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+        withScopedMemoryAllocator { allocator ->
+          var handle = this_.__handle.value
+          this_.__handle = ResourceHandle(0)
+          val option: Int
+          val option2: Int
+          val payload0 = trailers
+          if (payload0 != null) {
+            var handle1 = payload0.__handle.value
+            payload0.__handle = ResourceHandle(0)
+            option = 1
+            option2 = handle1
+          } else {
+            option = 0
+            option2 = 0
+          }
+          val ptr = /* RETURN_ADDRESS_ALLOC(size=40, align=8)*/
+              allocator.allocate(40).address.toInt()
+          __wasm_import_finish36(handle, option, option2, ptr)
+          freeAllComponentModelReallocAllocatedMemory()
+          val result =
+              if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+                Result<Unit>.success(Unit)
+              } else {
+                // VariantLift START.
+                val variant =
+                    when ((ptr + 8).ptr.loadUByte().toInt()) {
+                      0 -> {
+                        HttpTypes.IanaErrorCode.DnsTimeout
+                      }
+                      1 -> {
+                        // OptionLift start
+                        val option4 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        // OptionLift start
+                        val option5 =
+                            if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                              (ptr + 30).ptr.loadUShort().toInt().toUShort()
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.DnsError(
+                            HttpTypes.DnsErrorPayload(
+                                option4,
+                                option5,
+                            ))
+                      }
+                      2 -> {
+                        HttpTypes.IanaErrorCode.DestinationNotFound
+                      }
+                      3 -> {
+                        HttpTypes.IanaErrorCode.DestinationUnavailable
+                      }
+                      4 -> {
+                        HttpTypes.IanaErrorCode.DestinationIpProhibited
+                      }
+                      5 -> {
+                        HttpTypes.IanaErrorCode.DestinationIpUnroutable
+                      }
+                      6 -> {
+                        HttpTypes.IanaErrorCode.ConnectionRefused
+                      }
+                      7 -> {
+                        HttpTypes.IanaErrorCode.ConnectionTerminated
+                      }
+                      8 -> {
+                        HttpTypes.IanaErrorCode.ConnectionTimeout
+                      }
+                      9 -> {
+                        HttpTypes.IanaErrorCode.ConnectionReadTimeout
+                      }
+                      10 -> {
+                        HttpTypes.IanaErrorCode.ConnectionWriteTimeout
+                      }
+                      11 -> {
+                        HttpTypes.IanaErrorCode.ConnectionLimitReached
+                      }
+                      12 -> {
+                        HttpTypes.IanaErrorCode.TlsProtocolError
+                      }
+                      13 -> {
+                        HttpTypes.IanaErrorCode.TlsCertificateError
+                      }
+                      14 -> {
+                        // OptionLift start
+                        val option6 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              (ptr + 17).ptr.loadUByte().toInt().toUByte()
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        // OptionLift start
+                        val option7 =
+                            if ((ptr + 20).ptr.loadUByte().toInt() == 1) {
+                              STRING_FROM_MEM((ptr + 24).ptr.loadInt(), (ptr + 28).ptr.loadInt())
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.TlsAlertReceived(
+                            HttpTypes.TlsAlertReceivedPayload(
+                                option6,
+                                option7,
+                            ))
+                      }
+                      15 -> {
+                        HttpTypes.IanaErrorCode.HttpRequestDenied
+                      }
+                      16 -> {
+                        HttpTypes.IanaErrorCode.HttpRequestLengthRequired
+                      }
+                      17 -> {
+                        // OptionLift start
+                        val option8 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              (ptr + 24).ptr.loadLong().toULong()
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.HttpRequestBodySize(option8)
+                      }
+                      18 -> {
+                        HttpTypes.IanaErrorCode.HttpRequestMethodInvalid
+                      }
+                      19 -> {
+                        HttpTypes.IanaErrorCode.HttpRequestUriInvalid
+                      }
+                      20 -> {
+                        HttpTypes.IanaErrorCode.HttpRequestUriTooLong
+                      }
+                      21 -> {
+                        // OptionLift start
+                        val option9 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              (ptr + 20).ptr.loadInt().toUInt()
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.HttpRequestHeaderSectionSize(option9)
+                      }
+                      22 -> {
+                        // OptionLift start
+                        val option12 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              // OptionLift start
+                              val option10 =
+                                  if ((ptr + 20).ptr.loadUByte().toInt() == 1) {
+                                    STRING_FROM_MEM(
+                                        (ptr + 24).ptr.loadInt(), (ptr + 28).ptr.loadInt())
+                                  } else {
+                                    null
+                                  }
+                              // OptionLift end
+                              // OptionLift start
+                              val option11 =
+                                  if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                    (ptr + 36).ptr.loadInt().toUInt()
+                                  } else {
+                                    null
+                                  }
+                              // OptionLift end
+                              HttpTypes.FieldSizePayload(
+                                  option10,
+                                  option11,
+                              )
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.HttpRequestHeaderSize(option12)
+                      }
+                      23 -> {
+                        // OptionLift start
+                        val option13 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              (ptr + 20).ptr.loadInt().toUInt()
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.HttpRequestTrailerSectionSize(option13)
+                      }
+                      24 -> {
+                        // OptionLift start
+                        val option14 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        // OptionLift start
+                        val option15 =
+                            if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                              (ptr + 32).ptr.loadInt().toUInt()
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.HttpRequestTrailerSize(
+                            HttpTypes.FieldSizePayload(
+                                option14,
+                                option15,
+                            ))
+                      }
+                      25 -> {
+                        HttpTypes.IanaErrorCode.HttpResponseIncomplete
+                      }
+                      26 -> {
+                        // OptionLift start
+                        val option16 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              (ptr + 20).ptr.loadInt().toUInt()
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.HttpResponseHeaderSectionSize(option16)
+                      }
+                      27 -> {
+                        // OptionLift start
+                        val option17 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        // OptionLift start
+                        val option18 =
+                            if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                              (ptr + 32).ptr.loadInt().toUInt()
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.HttpResponseHeaderSize(
+                            HttpTypes.FieldSizePayload(
+                                option17,
+                                option18,
+                            ))
+                      }
+                      28 -> {
+                        // OptionLift start
+                        val option19 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              (ptr + 24).ptr.loadLong().toULong()
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.HttpResponseBodySize(option19)
+                      }
+                      29 -> {
+                        // OptionLift start
+                        val option20 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              (ptr + 20).ptr.loadInt().toUInt()
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.HttpResponseTrailerSectionSize(option20)
+                      }
+                      30 -> {
+                        // OptionLift start
+                        val option21 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        // OptionLift start
+                        val option22 =
+                            if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                              (ptr + 32).ptr.loadInt().toUInt()
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.HttpResponseTrailerSize(
+                            HttpTypes.FieldSizePayload(
+                                option21,
+                                option22,
+                            ))
+                      }
+                      31 -> {
+                        // OptionLift start
+                        val option23 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.HttpResponseTransferCoding(option23)
+                      }
+                      32 -> {
+                        // OptionLift start
+                        val option24 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.HttpResponseContentCoding(option24)
+                      }
+                      33 -> {
+                        HttpTypes.IanaErrorCode.HttpResponseTimeout
+                      }
+                      34 -> {
+                        HttpTypes.IanaErrorCode.HttpUpgradeFailed
+                      }
+                      35 -> {
+                        HttpTypes.IanaErrorCode.HttpProtocolError
+                      }
+                      36 -> {
+                        HttpTypes.IanaErrorCode.LoopDetected
+                      }
+                      37 -> {
+                        HttpTypes.IanaErrorCode.ConfigurationError
+                      }
+                      38 -> {
+                        // OptionLift start
+                        val option25 =
+                            if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                              STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                            } else {
+                              null
+                            }
+                        // OptionLift end
+                        HttpTypes.IanaErrorCode.InternalError(option25)
+                      }
+                      else -> error("unreachable")
+                    }
+                // VariantLift END
+
+                Result<Unit>.failure(ComponentException(variant))
+              }
+          return result
+        }
+        // </editor-fold>
+      }
+    }
+  }
+  /**
+   * Represents a future which may eventually return an incoming HTTP Response, or an error.
+   *
+   * This resource is returned by the `wasi:http/outgoing-handler` interface to provide the HTTP
+   * Response corresponding to the sent Request.
+   */
+
+  class FutureIncomingResponse : AutoCloseable {
+    internal var __handle: ResourceHandle = ResourceHandle(0)
+
+    internal constructor(handle: ResourceHandle) {
+      __handle = handle
+    }
+
+    override fun close() {
+      __cm_resource_abi_import_HttpTypes_FutureIncomingResponse_drop(__handle.value)
+    }
+    /**
+     * Returns a pollable which becomes ready when either the Response has been received, or an
+     * error has occurred. When this pollable is ready, the `get` method will return `some`.
+     */
+    public fun subscribe(): Poll.Pollable {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ret: Int = __wasm_import_subscribe37(handle)
+        freeAllComponentModelReallocAllocatedMemory()
+        val resource = Poll.Pollable(ResourceHandle(ret))
+        return resource
+      }
+      // </editor-fold>
+    }
+    /**
+     * Returns the incoming HTTP Response, or an error, once one is ready.
+     *
+     * The outer `option` represents future readiness. Users can wait on this `option` to become
+     * `some` using the `subscribe` method.
+     *
+     * The outer `result` is used to retrieve the response or error at most once. It will be success
+     * on the first call in which the outer option is `some`, and error on subsequent calls.
+     *
+     * The inner `result` represents that either the incoming HTTP Response status and headers have
+     * received successfully, or that an error occurred. Errors may also occur while consuming the
+     * response body, but those will be reported by the `incoming-body` and its `output-stream`
+     * child.
+     */
+    public fun get(): Result<Result<HttpTypes.IncomingResponse>>? {
+      // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+      withScopedMemoryAllocator { allocator ->
+        var handle = this.__handle.value
+        val ptr = /* RETURN_ADDRESS_ALLOC(size=56, align=8)*/ allocator.allocate(56).address.toInt()
+        __wasm_import_get38(handle, ptr)
+        freeAllComponentModelReallocAllocatedMemory()
+        // OptionLift start
+        val option22 =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+              val result21 =
+                  if ((ptr + 8).ptr.loadUByte().toInt() == 0) {
+                    val result =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 0) {
+                          val resource =
+                              HttpTypes.IncomingResponse(ResourceHandle((ptr + 24).ptr.loadInt()))
+
+                          Result<HttpTypes.IncomingResponse>.success(resource)
+                        } else {
+                          // VariantLift START.
+                          val variant =
+                              when ((ptr + 24).ptr.loadUByte().toInt()) {
+                                0 -> {
+                                  HttpTypes.IanaErrorCode.DnsTimeout
+                                }
+                                1 -> {
+                                  // OptionLift start
+                                  val option =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  // OptionLift start
+                                  val option0 =
+                                      if ((ptr + 44).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 46).ptr.loadUShort().toInt().toUShort()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.DnsError(
+                                      HttpTypes.DnsErrorPayload(
+                                          option,
+                                          option0,
+                                      ))
+                                }
+                                2 -> {
+                                  HttpTypes.IanaErrorCode.DestinationNotFound
+                                }
+                                3 -> {
+                                  HttpTypes.IanaErrorCode.DestinationUnavailable
+                                }
+                                4 -> {
+                                  HttpTypes.IanaErrorCode.DestinationIpProhibited
+                                }
+                                5 -> {
+                                  HttpTypes.IanaErrorCode.DestinationIpUnroutable
+                                }
+                                6 -> {
+                                  HttpTypes.IanaErrorCode.ConnectionRefused
+                                }
+                                7 -> {
+                                  HttpTypes.IanaErrorCode.ConnectionTerminated
+                                }
+                                8 -> {
+                                  HttpTypes.IanaErrorCode.ConnectionTimeout
+                                }
+                                9 -> {
+                                  HttpTypes.IanaErrorCode.ConnectionReadTimeout
+                                }
+                                10 -> {
+                                  HttpTypes.IanaErrorCode.ConnectionWriteTimeout
+                                }
+                                11 -> {
+                                  HttpTypes.IanaErrorCode.ConnectionLimitReached
+                                }
+                                12 -> {
+                                  HttpTypes.IanaErrorCode.TlsProtocolError
+                                }
+                                13 -> {
+                                  HttpTypes.IanaErrorCode.TlsCertificateError
+                                }
+                                14 -> {
+                                  // OptionLift start
+                                  val option1 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 33).ptr.loadUByte().toInt().toUByte()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  // OptionLift start
+                                  val option2 =
+                                      if ((ptr + 36).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 40).ptr.loadInt(), (ptr + 44).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.TlsAlertReceived(
+                                      HttpTypes.TlsAlertReceivedPayload(
+                                          option1,
+                                          option2,
+                                      ))
+                                }
+                                15 -> {
+                                  HttpTypes.IanaErrorCode.HttpRequestDenied
+                                }
+                                16 -> {
+                                  HttpTypes.IanaErrorCode.HttpRequestLengthRequired
+                                }
+                                17 -> {
+                                  // OptionLift start
+                                  val option3 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 40).ptr.loadLong().toULong()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpRequestBodySize(option3)
+                                }
+                                18 -> {
+                                  HttpTypes.IanaErrorCode.HttpRequestMethodInvalid
+                                }
+                                19 -> {
+                                  HttpTypes.IanaErrorCode.HttpRequestUriInvalid
+                                }
+                                20 -> {
+                                  HttpTypes.IanaErrorCode.HttpRequestUriTooLong
+                                }
+                                21 -> {
+                                  // OptionLift start
+                                  val option4 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 36).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpRequestHeaderSectionSize(option4)
+                                }
+                                22 -> {
+                                  // OptionLift start
+                                  val option7 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        // OptionLift start
+                                        val option5 =
+                                            if ((ptr + 36).ptr.loadUByte().toInt() == 1) {
+                                              STRING_FROM_MEM(
+                                                  (ptr + 40).ptr.loadInt(),
+                                                  (ptr + 44).ptr.loadInt())
+                                            } else {
+                                              null
+                                            }
+                                        // OptionLift end
+                                        // OptionLift start
+                                        val option6 =
+                                            if ((ptr + 48).ptr.loadUByte().toInt() == 1) {
+                                              (ptr + 52).ptr.loadInt().toUInt()
+                                            } else {
+                                              null
+                                            }
+                                        // OptionLift end
+                                        HttpTypes.FieldSizePayload(
+                                            option5,
+                                            option6,
+                                        )
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpRequestHeaderSize(option7)
+                                }
+                                23 -> {
+                                  // OptionLift start
+                                  val option8 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 36).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpRequestTrailerSectionSize(option8)
+                                }
+                                24 -> {
+                                  // OptionLift start
+                                  val option9 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  // OptionLift start
+                                  val option10 =
+                                      if ((ptr + 44).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 48).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpRequestTrailerSize(
+                                      HttpTypes.FieldSizePayload(
+                                          option9,
+                                          option10,
+                                      ))
+                                }
+                                25 -> {
+                                  HttpTypes.IanaErrorCode.HttpResponseIncomplete
+                                }
+                                26 -> {
+                                  // OptionLift start
+                                  val option11 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 36).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseHeaderSectionSize(option11)
+                                }
+                                27 -> {
+                                  // OptionLift start
+                                  val option12 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  // OptionLift start
+                                  val option13 =
+                                      if ((ptr + 44).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 48).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseHeaderSize(
+                                      HttpTypes.FieldSizePayload(
+                                          option12,
+                                          option13,
+                                      ))
+                                }
+                                28 -> {
+                                  // OptionLift start
+                                  val option14 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 40).ptr.loadLong().toULong()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseBodySize(option14)
+                                }
+                                29 -> {
+                                  // OptionLift start
+                                  val option15 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 36).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseTrailerSectionSize(option15)
+                                }
+                                30 -> {
+                                  // OptionLift start
+                                  val option16 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  // OptionLift start
+                                  val option17 =
+                                      if ((ptr + 44).ptr.loadUByte().toInt() == 1) {
+                                        (ptr + 48).ptr.loadInt().toUInt()
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseTrailerSize(
+                                      HttpTypes.FieldSizePayload(
+                                          option16,
+                                          option17,
+                                      ))
+                                }
+                                31 -> {
+                                  // OptionLift start
+                                  val option18 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseTransferCoding(option18)
+                                }
+                                32 -> {
+                                  // OptionLift start
+                                  val option19 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.HttpResponseContentCoding(option19)
+                                }
+                                33 -> {
+                                  HttpTypes.IanaErrorCode.HttpResponseTimeout
+                                }
+                                34 -> {
+                                  HttpTypes.IanaErrorCode.HttpUpgradeFailed
+                                }
+                                35 -> {
+                                  HttpTypes.IanaErrorCode.HttpProtocolError
+                                }
+                                36 -> {
+                                  HttpTypes.IanaErrorCode.LoopDetected
+                                }
+                                37 -> {
+                                  HttpTypes.IanaErrorCode.ConfigurationError
+                                }
+                                38 -> {
+                                  // OptionLift start
+                                  val option20 =
+                                      if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                        STRING_FROM_MEM(
+                                            (ptr + 36).ptr.loadInt(), (ptr + 40).ptr.loadInt())
+                                      } else {
+                                        null
+                                      }
+                                  // OptionLift end
+                                  HttpTypes.IanaErrorCode.InternalError(option20)
+                                }
+                                else -> error("unreachable")
+                              }
+                          // VariantLift END
+
+                          Result<HttpTypes.IncomingResponse>.failure(ComponentException(variant))
+                        }
+
+                    Result<Result<HttpTypes.IncomingResponse>>.success(result)
+                  } else {
+                    Result<Result<HttpTypes.IncomingResponse>>.failure(ComponentException(Unit))
+                  }
+              result21
+            } else {
+              null
+            }
+        // OptionLift end
+        return option22
+      }
+      // </editor-fold>
+    }
+
+    companion object {}
+  }
+  /**
+   * Attempts to extract a http-related `error` from the wasi:io `error` provided.
+   *
+   * Stream operations which return `wasi:io/stream/stream-error::last-operation-failed` have a
+   * payload of type `wasi:io/error/error` with more information about the operation that failed.
+   * This payload can be passed through to this function to see if there's http-related information
+   * about the error to return.
+   *
+   * Note that this function is fallible because not all io-errors are http-related errors.
+   */
+
+  public fun httpErrorCode(err_: Error.Error): HttpTypes.IanaErrorCode? {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      var handle = err_.__handle.value
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=40, align=8)*/ allocator.allocate(40).address.toInt()
+      __wasm_import_httpErrorCode(handle, ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      // OptionLift start
+      val option21 =
+          if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+            // VariantLift START.
+            val variant =
+                when ((ptr + 8).ptr.loadUByte().toInt()) {
+                  0 -> {
+                    HttpTypes.IanaErrorCode.DnsTimeout
+                  }
+                  1 -> {
+                    // OptionLift start
+                    val option =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option0 =
+                        if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 30).ptr.loadUShort().toInt().toUShort()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.DnsError(
+                        HttpTypes.DnsErrorPayload(
+                            option,
+                            option0,
+                        ))
+                  }
+                  2 -> {
+                    HttpTypes.IanaErrorCode.DestinationNotFound
+                  }
+                  3 -> {
+                    HttpTypes.IanaErrorCode.DestinationUnavailable
+                  }
+                  4 -> {
+                    HttpTypes.IanaErrorCode.DestinationIpProhibited
+                  }
+                  5 -> {
+                    HttpTypes.IanaErrorCode.DestinationIpUnroutable
+                  }
+                  6 -> {
+                    HttpTypes.IanaErrorCode.ConnectionRefused
+                  }
+                  7 -> {
+                    HttpTypes.IanaErrorCode.ConnectionTerminated
+                  }
+                  8 -> {
+                    HttpTypes.IanaErrorCode.ConnectionTimeout
+                  }
+                  9 -> {
+                    HttpTypes.IanaErrorCode.ConnectionReadTimeout
+                  }
+                  10 -> {
+                    HttpTypes.IanaErrorCode.ConnectionWriteTimeout
+                  }
+                  11 -> {
+                    HttpTypes.IanaErrorCode.ConnectionLimitReached
+                  }
+                  12 -> {
+                    HttpTypes.IanaErrorCode.TlsProtocolError
+                  }
+                  13 -> {
+                    HttpTypes.IanaErrorCode.TlsCertificateError
+                  }
+                  14 -> {
+                    // OptionLift start
+                    val option1 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 17).ptr.loadUByte().toInt().toUByte()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option2 =
+                        if ((ptr + 20).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 24).ptr.loadInt(), (ptr + 28).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.TlsAlertReceived(
+                        HttpTypes.TlsAlertReceivedPayload(
+                            option1,
+                            option2,
+                        ))
+                  }
+                  15 -> {
+                    HttpTypes.IanaErrorCode.HttpRequestDenied
+                  }
+                  16 -> {
+                    HttpTypes.IanaErrorCode.HttpRequestLengthRequired
+                  }
+                  17 -> {
+                    // OptionLift start
+                    val option3 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 24).ptr.loadLong().toULong()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpRequestBodySize(option3)
+                  }
+                  18 -> {
+                    HttpTypes.IanaErrorCode.HttpRequestMethodInvalid
+                  }
+                  19 -> {
+                    HttpTypes.IanaErrorCode.HttpRequestUriInvalid
+                  }
+                  20 -> {
+                    HttpTypes.IanaErrorCode.HttpRequestUriTooLong
+                  }
+                  21 -> {
+                    // OptionLift start
+                    val option4 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 20).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpRequestHeaderSectionSize(option4)
+                  }
+                  22 -> {
+                    // OptionLift start
+                    val option7 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          // OptionLift start
+                          val option5 =
+                              if ((ptr + 20).ptr.loadUByte().toInt() == 1) {
+                                STRING_FROM_MEM((ptr + 24).ptr.loadInt(), (ptr + 28).ptr.loadInt())
+                              } else {
+                                null
+                              }
+                          // OptionLift end
+                          // OptionLift start
+                          val option6 =
+                              if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                (ptr + 36).ptr.loadInt().toUInt()
+                              } else {
+                                null
+                              }
+                          // OptionLift end
+                          HttpTypes.FieldSizePayload(
+                              option5,
+                              option6,
+                          )
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpRequestHeaderSize(option7)
+                  }
+                  23 -> {
+                    // OptionLift start
+                    val option8 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 20).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpRequestTrailerSectionSize(option8)
+                  }
+                  24 -> {
+                    // OptionLift start
+                    val option9 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option10 =
+                        if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 32).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpRequestTrailerSize(
+                        HttpTypes.FieldSizePayload(
+                            option9,
+                            option10,
+                        ))
+                  }
+                  25 -> {
+                    HttpTypes.IanaErrorCode.HttpResponseIncomplete
+                  }
+                  26 -> {
+                    // OptionLift start
+                    val option11 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 20).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseHeaderSectionSize(option11)
+                  }
+                  27 -> {
+                    // OptionLift start
+                    val option12 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option13 =
+                        if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 32).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseHeaderSize(
+                        HttpTypes.FieldSizePayload(
+                            option12,
+                            option13,
+                        ))
+                  }
+                  28 -> {
+                    // OptionLift start
+                    val option14 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 24).ptr.loadLong().toULong()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseBodySize(option14)
+                  }
+                  29 -> {
+                    // OptionLift start
+                    val option15 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 20).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseTrailerSectionSize(option15)
+                  }
+                  30 -> {
+                    // OptionLift start
+                    val option16 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option17 =
+                        if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 32).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseTrailerSize(
+                        HttpTypes.FieldSizePayload(
+                            option16,
+                            option17,
+                        ))
+                  }
+                  31 -> {
+                    // OptionLift start
+                    val option18 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseTransferCoding(option18)
+                  }
+                  32 -> {
+                    // OptionLift start
+                    val option19 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseContentCoding(option19)
+                  }
+                  33 -> {
+                    HttpTypes.IanaErrorCode.HttpResponseTimeout
+                  }
+                  34 -> {
+                    HttpTypes.IanaErrorCode.HttpUpgradeFailed
+                  }
+                  35 -> {
+                    HttpTypes.IanaErrorCode.HttpProtocolError
+                  }
+                  36 -> {
+                    HttpTypes.IanaErrorCode.LoopDetected
+                  }
+                  37 -> {
+                    HttpTypes.IanaErrorCode.ConfigurationError
+                  }
+                  38 -> {
+                    // OptionLift start
+                    val option20 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.InternalError(option20)
+                  }
+                  else -> error("unreachable")
+                }
+            // VariantLift END
+            variant
+          } else {
+            null
+          }
+      // OptionLift end
+      return option21
+    }
+    // </editor-fold>
+  }
+}
+
+object OutgoingHandler {
+  /**
+   * This function is invoked with an outgoing HTTP Request, and it returns a resource
+   * `future-incoming-response` which represents an HTTP Response which may arrive in the future.
+   *
+   * The `options` argument accepts optional parameters for the HTTP protocol's transport layer.
+   *
+   * This function may return an error if the `outgoing-request` is invalid or not allowed to be
+   * made. Otherwise, protocol errors are reported through the `future-incoming-response`.
+   */
+  public fun handle(
+      request: HttpTypes.OutgoingRequest,
+      options: HttpTypes.RequestOptions?
+  ): Result<HttpTypes.FutureIncomingResponse> {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      var handle = request.__handle.value
+      request.__handle = ResourceHandle(0)
+      val option: Int
+      val option2: Int
+      val payload0 = options
+      if (payload0 != null) {
+        var handle1 = payload0.__handle.value
+        payload0.__handle = ResourceHandle(0)
+        option = 1
+        option2 = handle1
+      } else {
+        option = 0
+        option2 = 0
+      }
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=40, align=8)*/ allocator.allocate(40).address.toInt()
+      __wasm_import_handle(handle, option, option2, ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      val result =
+          if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+            val resource = HttpTypes.FutureIncomingResponse(ResourceHandle((ptr + 8).ptr.loadInt()))
+
+            Result<HttpTypes.FutureIncomingResponse>.success(resource)
+          } else {
+            // VariantLift START.
+            val variant =
+                when ((ptr + 8).ptr.loadUByte().toInt()) {
+                  0 -> {
+                    HttpTypes.IanaErrorCode.DnsTimeout
+                  }
+                  1 -> {
+                    // OptionLift start
+                    val option4 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option5 =
+                        if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 30).ptr.loadUShort().toInt().toUShort()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.DnsError(
+                        HttpTypes.DnsErrorPayload(
+                            option4,
+                            option5,
+                        ))
+                  }
+                  2 -> {
+                    HttpTypes.IanaErrorCode.DestinationNotFound
+                  }
+                  3 -> {
+                    HttpTypes.IanaErrorCode.DestinationUnavailable
+                  }
+                  4 -> {
+                    HttpTypes.IanaErrorCode.DestinationIpProhibited
+                  }
+                  5 -> {
+                    HttpTypes.IanaErrorCode.DestinationIpUnroutable
+                  }
+                  6 -> {
+                    HttpTypes.IanaErrorCode.ConnectionRefused
+                  }
+                  7 -> {
+                    HttpTypes.IanaErrorCode.ConnectionTerminated
+                  }
+                  8 -> {
+                    HttpTypes.IanaErrorCode.ConnectionTimeout
+                  }
+                  9 -> {
+                    HttpTypes.IanaErrorCode.ConnectionReadTimeout
+                  }
+                  10 -> {
+                    HttpTypes.IanaErrorCode.ConnectionWriteTimeout
+                  }
+                  11 -> {
+                    HttpTypes.IanaErrorCode.ConnectionLimitReached
+                  }
+                  12 -> {
+                    HttpTypes.IanaErrorCode.TlsProtocolError
+                  }
+                  13 -> {
+                    HttpTypes.IanaErrorCode.TlsCertificateError
+                  }
+                  14 -> {
+                    // OptionLift start
+                    val option6 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 17).ptr.loadUByte().toInt().toUByte()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option7 =
+                        if ((ptr + 20).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 24).ptr.loadInt(), (ptr + 28).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.TlsAlertReceived(
+                        HttpTypes.TlsAlertReceivedPayload(
+                            option6,
+                            option7,
+                        ))
+                  }
+                  15 -> {
+                    HttpTypes.IanaErrorCode.HttpRequestDenied
+                  }
+                  16 -> {
+                    HttpTypes.IanaErrorCode.HttpRequestLengthRequired
+                  }
+                  17 -> {
+                    // OptionLift start
+                    val option8 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 24).ptr.loadLong().toULong()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpRequestBodySize(option8)
+                  }
+                  18 -> {
+                    HttpTypes.IanaErrorCode.HttpRequestMethodInvalid
+                  }
+                  19 -> {
+                    HttpTypes.IanaErrorCode.HttpRequestUriInvalid
+                  }
+                  20 -> {
+                    HttpTypes.IanaErrorCode.HttpRequestUriTooLong
+                  }
+                  21 -> {
+                    // OptionLift start
+                    val option9 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 20).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpRequestHeaderSectionSize(option9)
+                  }
+                  22 -> {
+                    // OptionLift start
+                    val option12 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          // OptionLift start
+                          val option10 =
+                              if ((ptr + 20).ptr.loadUByte().toInt() == 1) {
+                                STRING_FROM_MEM((ptr + 24).ptr.loadInt(), (ptr + 28).ptr.loadInt())
+                              } else {
+                                null
+                              }
+                          // OptionLift end
+                          // OptionLift start
+                          val option11 =
+                              if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                (ptr + 36).ptr.loadInt().toUInt()
+                              } else {
+                                null
+                              }
+                          // OptionLift end
+                          HttpTypes.FieldSizePayload(
+                              option10,
+                              option11,
+                          )
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpRequestHeaderSize(option12)
+                  }
+                  23 -> {
+                    // OptionLift start
+                    val option13 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 20).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpRequestTrailerSectionSize(option13)
+                  }
+                  24 -> {
+                    // OptionLift start
+                    val option14 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option15 =
+                        if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 32).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpRequestTrailerSize(
+                        HttpTypes.FieldSizePayload(
+                            option14,
+                            option15,
+                        ))
+                  }
+                  25 -> {
+                    HttpTypes.IanaErrorCode.HttpResponseIncomplete
+                  }
+                  26 -> {
+                    // OptionLift start
+                    val option16 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 20).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseHeaderSectionSize(option16)
+                  }
+                  27 -> {
+                    // OptionLift start
+                    val option17 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option18 =
+                        if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 32).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseHeaderSize(
+                        HttpTypes.FieldSizePayload(
+                            option17,
+                            option18,
+                        ))
+                  }
+                  28 -> {
+                    // OptionLift start
+                    val option19 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 24).ptr.loadLong().toULong()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseBodySize(option19)
+                  }
+                  29 -> {
+                    // OptionLift start
+                    val option20 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 20).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseTrailerSectionSize(option20)
+                  }
+                  30 -> {
+                    // OptionLift start
+                    val option21 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option22 =
+                        if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 32).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseTrailerSize(
+                        HttpTypes.FieldSizePayload(
+                            option21,
+                            option22,
+                        ))
+                  }
+                  31 -> {
+                    // OptionLift start
+                    val option23 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseTransferCoding(option23)
+                  }
+                  32 -> {
+                    // OptionLift start
+                    val option24 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.HttpResponseContentCoding(option24)
+                  }
+                  33 -> {
+                    HttpTypes.IanaErrorCode.HttpResponseTimeout
+                  }
+                  34 -> {
+                    HttpTypes.IanaErrorCode.HttpUpgradeFailed
+                  }
+                  35 -> {
+                    HttpTypes.IanaErrorCode.HttpProtocolError
+                  }
+                  36 -> {
+                    HttpTypes.IanaErrorCode.LoopDetected
+                  }
+                  37 -> {
+                    HttpTypes.IanaErrorCode.ConfigurationError
+                  }
+                  38 -> {
+                    // OptionLift start
+                    val option25 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    HttpTypes.IanaErrorCode.InternalError(option25)
+                  }
+                  else -> error("unreachable")
+                }
+            // VariantLift END
+
+            Result<HttpTypes.FutureIncomingResponse>.failure(ComponentException(variant))
+          }
+      return result
+    }
+    // </editor-fold>
+  }
+}
+
+object IncomingHandler {
+  /**
+   * This function is invoked with an incoming HTTP Request, and a resource `response-outparam`
+   * which provides the capability to reply with an HTTP Response. The response is sent by calling
+   * the `response-outparam.set` method, which allows execution to continue after the response has
+   * been sent. This enables both streaming to the response body, and performing other work.
+   *
+   * The implementor of this function must write a response to the `response-outparam` before
+   * returning, or else the caller will respond with an error on its behalf.
+   */
+  public fun handle(
+      request: HttpTypes.IncomingRequest,
+      responseOut: HttpTypes.ResponseOutparam
+  ): Unit {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      var handle = request.__handle.value
+      request.__handle = ResourceHandle(0)
+      var handle0 = responseOut.__handle.value
+      responseOut.__handle = ResourceHandle(0)
+      __wasm_import_handle39(handle, handle0)
+      freeAllComponentModelReallocAllocatedMemory()
+    }
+    // </editor-fold>
+  }
+}
+
 interface RunExports {
   abstract fun run(): Unit
 }

@@ -26,5 +26,8 @@ object RunExportsImpl : RunExports {
         val html = Markdown.convertMarkdownToHtml(markdown)
 
         createHtmlTextArea(html)
+
+        val initialCwd = Environment.initialCwd()
+        println(initialCwd)
     }
 }
