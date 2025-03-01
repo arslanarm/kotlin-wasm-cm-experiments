@@ -5,7 +5,7 @@ interface run {
 world demo {
   include wasi:cli/imports@0.2.0;
   include wasi:http/imports@0.2.0;
-  import ui;
-  import markdown;
+  // import ui;
+  // import markdown;
   export run;
 }

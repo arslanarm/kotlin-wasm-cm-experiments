@@ -1,6 +1,6 @@
 package component-model:example;
 
 world w {
-  export ui;
-  export markdown;
+  // export ui;
+  // export markdown;
 }

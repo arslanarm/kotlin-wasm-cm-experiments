@@ -4,25 +4,6 @@
 
 import kotlin.wasm.unsafe.*
 
-@WasmImport("component-model:example/ui", "create-button")
-internal external fun __wasm_import_createButton(
-    p0: Int,
-    p1: Int,
-    p2: Int,
-    p3: Int,
-    p4: Int,
-    p5: Int,
-    p6: Int,
-    p7: Int,
-    p8: Int
-): Unit
-
-@WasmImport("component-model:example/ui", "create-html-text-area")
-internal external fun __wasm_import_createHtmlTextArea(p0: Int, p1: Int): Unit
-
-@WasmImport("component-model:example/markdown", "convert-markdown-to-html")
-internal external fun __wasm_import_convertMarkdownToHtml(p0: Int, p1: Int, p2: Int): Unit
-
 @WasmImport("wasi:cli/environment@0.2.0", "get-environment")
 internal external fun __wasm_import_getEnvironment(p0: Int): Unit
 
