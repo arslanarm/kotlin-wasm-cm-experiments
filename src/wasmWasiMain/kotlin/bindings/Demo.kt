@@ -225,6 +225,24 @@ object Exit {
     }
     // </editor-fold>
   }
+  /**
+   * Exit the current instance and any linked instances, reporting the specified status code to the
+   * host.
+   *
+   * The meaning of the code depends on the context, with 0 usually meaning "success", and other
+   * values indicating various types of failure.
+   *
+   * This function does not return; the effect is analogous to a trap, but without the connotation
+   * that something bad has happened.
+   */
+  public fun exitWithCode(statusCode: UByte): Unit {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      __wasm_import_exitWithCode(statusCode.toInt())
+      freeAllComponentModelReallocAllocatedMemory()
+    }
+    // </editor-fold>
+  }
 }
 
 object Error {
@@ -237,11 +255,11 @@ object Error {
    * In the `wasi:io` package, this resource is returned through the `wasi:io/streams/stream-error`
    * type.
    *
-   * To provide more specific error information, other interfaces may provide functions to further
-   * "downcast" this error into more specific error information. For example, `error`s returned in
-   * streams derived from filesystem types to be described using the filesystem's own error-code
-   * type, using the function `wasi:filesystem/types/filesystem-error-code`, which takes a parameter
-   * `borrow<error>` and returns `option<wasi:filesystem/types/error-code>`.
+   * To provide more specific error information, other interfaces may offer functions to "downcast"
+   * this error into more specific types. For example, errors returned from streams derived from
+   * filesystem types can be described using the filesystem's own error-code type. This is done
+   * using the function `wasi:filesystem/types/filesystem-error-code`, which takes a `borrow<error>`
+   * parameter and returns an `option<wasi:filesystem/types/error-code>`.
    *
    * The set of functions which can "downcast" an `error` into a more concrete type is open.
    */
@@ -331,13 +349,15 @@ object Poll {
    * The result `list<u32>` contains one or more indices of handles in the argument list that is
    * ready for I/O.
    *
-   * If the list contains more elements than can be indexed with a `u32` value, this function traps.
+   * This function traps if either:
+   * - the list is empty, or:
+   * - the list contains more elements than can be indexed with a `u32` value.
    *
    * A timeout can be implemented by adding a pollable from the wasi-clocks API to the list.
    *
    * This function does not return a `result`; polling in itself does not do any I/O so it doesn't
    * fail. If any of the I/O sources identified by the pollables has an error, it is indicated by
-   * marking the source as being reaedy for I/O.
+   * marking the source as being ready for I/O.
    */
 
   public fun poll(in_: List<Poll.Pollable>): List<UInt> {
@@ -599,6 +619,9 @@ object Streams {
    * bytes that can be written promptly, which could even be zero. To wait for the stream to be
    * ready to accept data, the `subscribe` function to obtain a `pollable` which can be polled for
    * using `wasi:io/poll`.
+   *
+   * Dropping an `output-stream` while there's still an active write in progress may result in the
+   * data being lost. Before dropping the stream, be sure to fully flush your writes.
    */
 
   class OutputStream : AutoCloseable {
@@ -842,7 +865,7 @@ object Streams {
     }
     /**
      * Create a `pollable` which will resolve once the output-stream is ready for more writing, or
-     * an error has occured. When this pollable is ready, `check-write` will return `ok(n)` with
+     * an error has occurred. When this pollable is ready, `check-write` will return `ok(n)` with
      * n>0, or an error.
      *
      * If the stream is closed, this pollable is always ready immediately.
@@ -957,7 +980,7 @@ object Streams {
     /**
      * Read from one stream and write to another.
      *
-     * The behavior of splice is equivelant to:
+     * The behavior of splice is equivalent to:
      * 1. calling `check-write` on the `output-stream`
      * 2. calling `read` on the `input-stream` with the smaller of the `check-write` permitted
      *    length and the `len` provided to `splice`
@@ -1222,7 +1245,7 @@ object MonotonicClock {
     }
     // </editor-fold>
   }
-  /** Create a `pollable` which will resolve once the specified instant occured. */
+  /** Create a `pollable` which will resolve once the specified instant has occurred. */
   public fun subscribeInstant(when_: ULong): Poll.Pollable {
     // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
     withScopedMemoryAllocator { allocator ->
@@ -1234,8 +1257,8 @@ object MonotonicClock {
     // </editor-fold>
   }
   /**
-   * Create a `pollable` which will resolve once the given duration has elapsed, starting at the
-   * time at which this function was called. occured.
+   * Create a `pollable` that will resolve after the specified duration has elapsed from the time
+   * this function is invoked.
    */
   public fun subscribeDuration(when_: ULong): Poll.Pollable {
     // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
@@ -1299,6 +1322,75 @@ object WallClock {
           (ptr + 0).ptr.loadLong().toULong(),
           (ptr + 8).ptr.loadInt().toUInt(),
       )
+    }
+    // </editor-fold>
+  }
+}
+
+object Timezone {
+
+  /**
+   * Information useful for displaying the timezone of a specific `datetime`.
+   *
+   * This information may vary within a single `timezone` to reflect daylight saving time
+   * adjustments.
+   */
+  data class TimezoneDisplay(
+      /**
+       * The number of seconds difference between UTC time and the local time of the timezone.
+       *
+       * The returned value will always be less than 86400 which is the number of seconds in a day
+       * (24*60*60).
+       *
+       * In implementations that do not expose an actual time zone, this should return 0.
+       */
+      var utcOffset: Int,
+      /**
+       * The abbreviated name of the timezone to display to a user. The name `UTC` indicates
+       * Coordinated Universal Time. Otherwise, this should reference local standards for the name
+       * of the time zone.
+       *
+       * In implementations that do not expose an actual time zone, this should be the string `UTC`.
+       *
+       * In time zones that do not have an applicable name, a formatted representation of the UTC
+       * offset may be returned, such as `-04:00`.
+       */
+      var name: String,
+      /**
+       * Whether daylight saving time is active.
+       *
+       * In implementations that do not expose an actual time zone, this should return false.
+       */
+      var inDaylightSavingTime: Boolean,
+  )
+  /**
+   * Return information needed to display the given `datetime`. This includes the UTC offset, the
+   * time zone name, and a flag indicating whether daylight saving time is active.
+   *
+   * If the timezone cannot be determined for the given `datetime`, return a `timezone-display` for
+   * `UTC` with a `utc-offset` of 0 and no daylight saving time.
+   */
+  public fun display(when_: WallClock.Datetime): Timezone.TimezoneDisplay {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=16, align=4)*/ allocator.allocate(16).address.toInt()
+      __wasm_import_display(when_.seconds.toLong(), when_.nanoseconds.toInt(), ptr)
+      freeAllComponentModelReallocAllocatedMemory()
+      return Timezone.TimezoneDisplay(
+          (ptr + 0).ptr.loadInt(),
+          STRING_FROM_MEM((ptr + 4).ptr.loadInt(), (ptr + 8).ptr.loadInt()),
+          ((ptr + 12).ptr.loadUByte().toInt() != 0),
+      )
+    }
+    // </editor-fold>
+  }
+  /** The same as `display`, but only return the UTC offset. */
+  public fun utcOffset(when_: WallClock.Datetime): Int {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      val ret: Int = __wasm_import_utcOffset(when_.seconds.toLong(), when_.nanoseconds.toInt())
+      freeAllComponentModelReallocAllocatedMemory()
+      return ret
     }
     // </editor-fold>
   }
@@ -1657,8 +1749,7 @@ object Types {
      *
      * May fail with an error-code describing why the file cannot be appended.
      *
-     * Note: This allows using `write-stream`, which is similar to `write` with `O_APPEND` in in
-     * POSIX.
+     * Note: This allows using `write-stream`, which is similar to `write` with `O_APPEND` in POSIX.
      */
     public fun appendViaStream(): Result<Streams.OutputStream> {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
@@ -2320,6 +2411,9 @@ object Types {
     /**
      * Create a hard link.
      *
+     * Fails with `error-code::no-entry` if the old path does not exist, with `error-code::exist` if
+     * the new path already exists, and `error-code::not-permitted` if the old path is not a file.
+     *
      * Note: This is similar to `linkat` in POSIX.
      */
     public fun linkAt(
@@ -2361,11 +2455,6 @@ object Types {
     }
     /**
      * Open a file or directory.
-     *
-     * The returned descriptor is not guaranteed to be the lowest-numbered descriptor not currently
-     * open/ it is randomized to prevent applications from depending on making assumptions about
-     * indexes, since this is error-prone in multi-threaded contexts. The returned descriptor is
-     * guaranteed to be less than 2**31.
      *
      * If `flags` contains `descriptor-flags::mutate-directory`, and the base descriptor doesn't
      * have `descriptor-flags::mutate-directory` set, `open-at` fails with `error-code::read-only`.
@@ -2616,7 +2705,7 @@ object Types {
      * when the file is modified or replaced. It may also include a secret value chosen by the
      * implementation and not otherwise exposed.
      *
-     * Implementations are encourated to provide the following properties:
+     * Implementations are encouraged to provide the following properties:
      * - If the file is not modified or replaced, the computed hash value should usually not change.
      * - If the object is modified or replaced, the computed hash value should usually change.
      * - The inputs to the hash should not be easily computable from the computed hash.
@@ -2772,7 +2861,7 @@ object Types {
 }
 
 object Preopens {
-  /** Return the set of preopened directories, and their path. */
+  /** Return the set of preopened directories, and their paths. */
   public fun getDirectories(): List<Pair<Types.Descriptor, String>> {
     // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
     withScopedMemoryAllocator { allocator ->
@@ -3641,8 +3730,8 @@ object Udp {
     /**
      * Create a `pollable` which will resolve once the socket is ready for I/O.
      *
-     * Note: this function is here for WASI Preview2 only. It's planned to be removed when `future`
-     * is natively supported in Preview3.
+     * Note: this function is here for WASI 0.2 only. It's planned to be removed when `future` is
+     * natively supported in Preview3.
      */
     public fun subscribe(): Poll.Pollable {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
@@ -3774,8 +3863,8 @@ object Udp {
     /**
      * Create a `pollable` which will resolve once the stream is ready to receive again.
      *
-     * Note: this function is here for WASI Preview2 only. It's planned to be removed when `future`
-     * is natively supported in Preview3.
+     * Note: this function is here for WASI 0.2 only. It's planned to be removed when `future` is
+     * natively supported in Preview3.
      */
     public fun subscribe(): Poll.Pollable {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
@@ -3947,8 +4036,8 @@ object Udp {
     /**
      * Create a `pollable` which will resolve once the stream is ready to send again.
      *
-     * Note: this function is here for WASI Preview2 only. It's planned to be removed when `future`
-     * is natively supported in Preview3.
+     * Note: this function is here for WASI 0.2 only. It's planned to be removed when `future` is
+     * natively supported in Preview3.
      */
     public fun subscribe(): Poll.Pollable {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
@@ -4035,8 +4124,9 @@ object Tcp {
    * - `listening`
    * - `connect-in-progress`
    * - `connected`
-   * - `closed` See <https://github.com/WebAssembly/wasi-sockets/TcpSocketOperationalSemantics.md>
-   *   for a more information.
+   * - `closed` See
+   *   <https://github.com/WebAssembly/wasi-sockets/blob/main/TcpSocketOperationalSemantics.md> for
+   *   more information.
    *
    * Note: Except where explicitly mentioned, whenever this documentation uses the term "bound"
    * without backticks it actually means: in the `bound` state *or higher*. (i.e. `bound`,
@@ -4206,7 +4296,7 @@ object Tcp {
      * Connect to a remote endpoint.
      *
      * On success:
-     * - the socket is transitioned into the `connection` state.
+     * - the socket is transitioned into the `connected` state.
      * - a pair of streams is returned that can be used to read & write to the connection
      *
      * After a failed connection attempt, the socket will be in the `closed` state and the only
@@ -5074,11 +5164,11 @@ object Tcp {
      * socket and can then be (re)used for the remainder of the socket's lifetime.
      *
      * See
-     * <https://github.com/WebAssembly/wasi-sockets/TcpSocketOperationalSemantics.md#Pollable-readiness>
-     * for a more information.
+     * <https://github.com/WebAssembly/wasi-sockets/blob/main/TcpSocketOperationalSemantics.md#pollable-readiness>
+     * for more information.
      *
-     * Note: this function is here for WASI Preview2 only. It's planned to be removed when `future`
-     * is natively supported in Preview3.
+     * Note: this function is here for WASI 0.2 only. It's planned to be removed when `future` is
+     * natively supported in Preview3.
      */
     public fun subscribe(): Poll.Pollable {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
@@ -5100,7 +5190,7 @@ object Tcp {
      *   with this socket will be closed and a FIN packet will be sent.
      * - `both`: Same effect as `receive` & `send` combined.
      *
-     * This function is idempotent. Shutting a down a direction more than once has no effect and
+     * This function is idempotent; shutting down a direction more than once has no effect and
      * returns `ok`.
      *
      * The shutdown function does not close (drop) the socket.
@@ -5112,7 +5202,8 @@ object Tcp {
      * - <https://pubs.opengroup.org/onlinepubs/9699919799/functions/shutdown.html>
      * - <https://man7.org/linux/man-pages/man2/shutdown.2.html>
      * - <https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-shutdown>
-     * - <https://man.freebsd.org/cgi/man.cgi?query=shutdown&sektion=2>
+     * - <https://man.freebsd.org/cgi/man.cgi?query=shutdown&sektion=2> 0shutdown:
+     *   func(shutdown-type: shutdown-type) -> result<_, error-code>;
      */
     public fun shutdown(shutdownType: Tcp.ShutdownType): Result<Unit> {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
@@ -5275,8 +5366,8 @@ object IpNameLookup {
     /**
      * Create a `pollable` which will resolve once the stream is ready for I/O.
      *
-     * Note: this function is here for WASI Preview2 only. It's planned to be removed when `future`
-     * is natively supported in Preview3.
+     * Note: this function is here for WASI 0.2 only. It's planned to be removed when `future` is
+     * natively supported in Preview3.
      */
     public fun subscribe(): Poll.Pollable {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
@@ -5468,5 +5559,5 @@ object InsecureSeed {
 }
 
 interface RunExports {
-  abstract fun run(): Unit
+  abstract fun run(): Result<Unit>
 }

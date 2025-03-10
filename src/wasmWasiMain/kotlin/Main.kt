@@ -6,7 +6,7 @@ import Ui.createButton
 import Ui.createHtmlTextArea
 
 object RunExportsImpl : RunExports {
-    override fun run() {
+    override fun run() : Result<Unit> {
         createButton(
             label = "example",
             shape = Shape.ROUNDED,
@@ -29,5 +29,6 @@ object RunExportsImpl : RunExports {
 
         val initialCwd = Environment.initialCwd()
         println(initialCwd)
+        return Result.success(Unit)
     }
 }

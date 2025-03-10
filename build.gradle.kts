@@ -11,6 +11,7 @@ kotlin {
     wasmWasi {
         binaries.executable()
         nodejs()
+
     }
 }
 

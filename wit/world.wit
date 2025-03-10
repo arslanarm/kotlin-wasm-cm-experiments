@@ -1,10 +1,11 @@
-interface run {
-    run: func();
-}
+// interface run {
+//     run: func();
+// }
 
 world demo {
   include wasi:cli/imports@0.2.0;
+  export wasi:cli/run@0.2.0;
   import ui;
   import markdown;
-  export run;
+  // export run;
 }

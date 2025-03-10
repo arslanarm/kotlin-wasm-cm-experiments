@@ -34,6 +34,9 @@ internal external fun __wasm_import_initialCwd(p0: Int): Unit
 
 @WasmImport("wasi:cli/exit@0.2.0", "exit") internal external fun __wasm_import_exit(p0: Int): Unit
 
+@WasmImport("wasi:cli/exit@0.2.0", "exit-with-code")
+internal external fun __wasm_import_exitWithCode(p0: Int): Unit
+
 @WasmImport("wasi:io/error@0.2.0", "[resource-drop]error")
 internal external fun __cm_resource_abi_import_Error_Error_drop(handle: Int): Unit
 
@@ -143,6 +146,12 @@ internal external fun __wasm_import_now1(p0: Int): Unit
 
 @WasmImport("wasi:clocks/wall-clock@0.2.0", "resolution")
 internal external fun __wasm_import_resolution2(p0: Int): Unit
+
+@WasmImport("wasi:clocks/timezone@0.2.0", "display")
+internal external fun __wasm_import_display(p0: Long, p1: Int, p2: Int): Unit
+
+@WasmImport("wasi:clocks/timezone@0.2.0", "utc-offset")
+internal external fun __wasm_import_utcOffset(p0: Long, p1: Int): Int
 
 @WasmImport("wasi:filesystem/types@0.2.0", "[resource-drop]descriptor")
 internal external fun __cm_resource_abi_import_Types_Descriptor_drop(handle: Int): Unit
@@ -555,8 +564,18 @@ internal external fun __wasm_import_getInsecureRandomU64(): Long
 @WasmImport("wasi:random/insecure-seed@0.2.0", "insecure-seed")
 internal external fun __wasm_import_insecureSeed(p0: Int): Unit
 
-@WasmExport("component-model:example/run#run")
-fun __wasm_export_run(): Unit {
+@WasmExport("wasi:cli/run@0.2.0#run")
+fun __wasm_export_run(): Int {
   freeAllComponentModelReallocAllocatedMemory()
-  withScopedMemoryAllocator { allocator -> RunExportsImpl.run() }
+  withScopedMemoryAllocator { allocator ->
+    val result: Result<Unit> = RunExportsImpl.run()
+
+    val result1: Int
+    if (result.isFailure) {
+      result1 = 1
+    } else {
+      result1 = 0
+    }
+    return result1
+  }
 }
