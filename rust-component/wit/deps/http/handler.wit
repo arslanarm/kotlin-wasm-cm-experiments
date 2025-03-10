@@ -1,7 +1,7 @@
 /// This interface defines a handler of incoming HTTP Requests. It should
 /// be exported by components which can respond to HTTP Requests.
 interface incoming-handler {
-  use http-types.{incoming-request, response-outparam};
+  use types.{incoming-request, response-outparam};
 
   /// This function is invoked with an incoming HTTP Request, and a resource
   /// `response-outparam` which provides the capability to reply with an HTTP
@@ -22,7 +22,7 @@ interface incoming-handler {
 /// This interface defines a handler of outgoing HTTP Requests. It should be
 /// imported by components which wish to make HTTP Requests.
 interface outgoing-handler {
-  use http-types.{
+  use types.{
     outgoing-request, request-options, future-incoming-response, iana-error-code
   };
 

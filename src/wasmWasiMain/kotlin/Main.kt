@@ -27,8 +27,29 @@ object RunExportsImpl : RunExports {
 
         createHtmlTextArea(html)
 
-        val initialCwd = Environment.initialCwd()
-        println(initialCwd)
+//        val initialCwd = Environment.initialCwd()
+//        println(initialCwd)
         return Result.success(Unit)
+    }
+}
+
+object IncomingHandlerExportsImpl : IncomingHandlerExports {
+    override fun handle(request: Types.IncomingRequest, responseOut: Types.ResponseOutparam) {
+
+    }
+
+}
+
+object EnvironmentExportsImpl : EnvironmentExports {
+    override fun getEnvironment(): List<Pair<String, String>> {
+        return emptyList<Pair<String, String>>()
+    }
+
+    override fun getArguments(): List<String> {
+        return emptyList<String>()
+    }
+
+    override fun initialCwd(): String? {
+        return ""
     }
 }

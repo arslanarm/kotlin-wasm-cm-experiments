@@ -11,7 +11,7 @@ world imports {
   import wasi:cli/stderr@0.2.0;
   import wasi:cli/stdin@0.2.0;
 
-  import http-types;
+  import types;
   import outgoing-handler;
   import incoming-handler;
 }
