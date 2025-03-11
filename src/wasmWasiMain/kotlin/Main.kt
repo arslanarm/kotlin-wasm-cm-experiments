@@ -37,7 +37,7 @@ object IncomingHandlerExportsImpl : IncomingHandlerExports {
         val headers = Types.Fields()
         val message = "Hello World!"
 //        headers.set("Content-Type", listOf(listOf("plain/text".toUByte())))
-//        headers.set("Content-Length", listOf(listOf(message.length.toUByte())))
+//        headers.set("Content-Length", listOf("asdsad".encodeToByteArray()))
 
         var response = Types.OutgoingResponse(headers)
 
@@ -47,9 +47,21 @@ object IncomingHandlerExportsImpl : IncomingHandlerExports {
         var body = response.body().getOrNull()
         Types.ResponseOutparam.set(responseOut, Result.success(response))
 
-        val out = body!!.write()!!.getOrNull()
-        out!!.blockingWriteAndFlush(message.toList()!!.map { ch -> ch.code.toUByte() })
+        println("Incoming response: ${ body == null }")
 
+        val out = body!!.write()!!.getOrNull()
+        println("x3")
+        println("out: ${ out != null }")
+
+        println("message: ${ message != null }")
+
+        val contents = "asdsad".encodeToByteArray()
+        println("contents: ${ contents != null }")
+
+        out!!.blockingWriteAndFlush(contents)
+        out.close()
+
+        println("x4")
         Types.OutgoingBody.finish(body!!, null).getOrNull()
     }
 }

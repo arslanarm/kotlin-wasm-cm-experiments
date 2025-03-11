@@ -696,41 +696,59 @@ object Streams {
      * let _ = this.check-write();         // eliding error handling
      * ```
      */
-    public fun blockingWriteAndFlush(contents: List<UByte>): Result<Unit> {
+    public fun blockingWriteAndFlush(contents: ByteArray): Result<Unit> {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
       withScopedMemoryAllocator { allocator ->
+        println("blockingWriteAndFlush_0")
         var handle = this.__handle.value
 
-        val address = allocator.allocate(contents.size * 1 /*, align=1*/).address.toInt()
-//        for ((index, el) in contents.withIndex()) {
+        println("blockingWriteAndFlush_1")
+        val address = allocator.allocate(1000 /*, align=1*/).address.toInt()
+        println("blockingWriteAndFlush_2")
+//        val contentWithIndex = contents.withIndex()
+        println("blockingWriteAndFlush_2.1")
+        println("contents: " )
+        val size = contents.size
+        println("size: $size")
+        for (i in 0..contents.size - 1) {
+          println("blockingWriteAndFlush_3")
+          val base = address + (i * 1)
+          (base + 0).ptr.storeByte(contents[i].toInt().toByte())
+        }
+//        for ((index, el) in contentWithIndex) {
+//          println("blockingWriteAndFlush_3")
 //          val base = address + (index * 1)
 //          (base + 0).ptr.storeByte(el.toInt().toByte())
 //        }
+        println("blockingWriteAndFlush_4")
         val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
+        println("blockingWriteAndFlush_5")
         __wasm_import_blockingWriteAndFlush(handle, address, contents.size, ptr)
+        println("blockingWriteAndFlush_6")
         freeAllComponentModelReallocAllocatedMemory()
-//        val result =
-//            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
-//              Result<Unit>.success(Unit)
-//            }
-//            else {
-//              // VariantLift START.
-//              val variant =
-//                  when ((ptr + 4).ptr.loadUByte().toInt()) {
-//                    0 -> {
-//                      val resource = Error.Error(ResourceHandle((ptr + 8).ptr.loadInt()))
-//                      Streams.StreamError.LastOperationFailed(resource)
-//                    }
-//                    1 -> {
-//                      Streams.StreamError.Closed
-//                    }
-//                    else -> error("unreachable")
-//                  }
-//              // VariantLift END
-//
-//              Result<Unit>.failure(ComponentException(variant))
-//            }
-        return Result<Unit>.success(Unit)
+        println("blockingWriteAndFlush_7")
+        val result =
+            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+              Result<Unit>.success(Unit)
+            }
+            else {
+              // VariantLift START.
+              val variant =
+                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+                    0 -> {
+                      val resource = Error.Error(ResourceHandle((ptr + 8).ptr.loadInt()))
+                      Streams.StreamError.LastOperationFailed(resource)
+                    }
+                    1 -> {
+                      Streams.StreamError.Closed
+                    }
+                    else -> error("unreachable")
+                  }
+              // VariantLift END
+
+              Result<Unit>.failure(ComponentException(variant))
+            }
+        return result
       }
       // </editor-fold>
     }
@@ -1261,30 +1279,43 @@ object Types {
      * Fails with `header-error.invalid-syntax` if the `field-name` or any of the `field-value`s are
      * syntactically invalid.
      */
-    public fun set(name: String, value: List<List<UByte>>): Result<Unit> {
+    public fun set(name: String, value: List<ByteArray>): Result<Unit> {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
       withScopedMemoryAllocator { allocator ->
+        println("set_01")
         var handle = this.__handle.value
+        println("set_02")
 
         val bytearray = name.encodeToByteArray()
         val len = bytearray.size
         val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
+        println("set_03")
 
         val address0 = allocator.allocate(value.size * 8 /*, align=4*/).address.toInt()
+        println("set_03")
         for ((index1, el) in value.withIndex()) {
+          println("set_04")
           val base = address0 + (index1 * 8)
 
           val address = allocator.allocate(el.size * 1 /*, align=1*/).address.toInt()
+          println("set_05")
           for ((index, el) in el.withIndex()) {
+            println("set_06")
             val base = address + (index * 1)
             (base + 0).ptr.storeByte(el.toInt().toByte())
+            println("set_07")
           }
+          println("set_07")
           (base + 4).ptr.storeInt(el.size)
           (base + 0).ptr.storeInt(address)
+          println("set_08")
         }
+        println("set_09")
         val ptr2 = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
         __wasm_import_set(handle, ptr, len, address0, value.size, ptr2)
+        println("set_10")
         freeAllComponentModelReallocAllocatedMemory()
+        println("set_11")
         val result =
             if ((ptr2 + 0).ptr.loadUByte().toInt() == 0) {
               Result<Unit>.success(Unit)
@@ -4202,8 +4233,11 @@ object Types {
       withScopedMemoryAllocator { allocator ->
         var handle = this.__handle.value
         val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
+        println("x1")
         __wasm_import_write16(handle, ptr)
+        println("x2")
         freeAllComponentModelReallocAllocatedMemory()
+//        println("x3")
         val result =
             if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
               val resource = Streams.OutputStream(ResourceHandle((ptr + 4).ptr.loadInt()))
@@ -4235,23 +4269,33 @@ object Types {
           val option: Int
           val option2: Int
           val payload0 = trailers
+          println("x5")
           if (payload0 != null) {
+            println("x6")
             var handle1 = payload0.__handle.value
             payload0.__handle = ResourceHandle(0)
             option = 1
             option2 = handle1
+            println("x7")
           } else {
+            println("x8")
             option = 0
             option2 = 0
           }
+          println("x9")
           val ptr = /* RETURN_ADDRESS_ALLOC(size=40, align=8)*/
               allocator.allocate(40).address.toInt()
+          println("x10")
           __wasm_import_finish17(handle, option, option2, ptr)
+          println("x11")
           freeAllComponentModelReallocAllocatedMemory()
+          println("x12")
           val result =
               if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+                println("x13")
                 Result<Unit>.success(Unit)
               } else {
+                println("x13")
                 // VariantLift START.
                 val variant =
                     when ((ptr + 8).ptr.loadUByte().toInt()) {
