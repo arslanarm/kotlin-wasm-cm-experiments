@@ -17,8 +17,8 @@ cargo build --target wasm32-wasip1 --release -q && \
 wasm-tools component new ./target/wasm32-wasip1/release/example.wasm -o ../build/out/dependencies/example.wasm --adapt ../$WASI_ADAPTER)
 
 # Generate WIT bindings for Kotlin
-wit-bindgen kotlin ./wit --out-dir src/wasmWasiMain/kotlin/bindings && \
-java -jar ./ktfmt-0.47-jar-with-dependencies.jar ./src/wasmWasiMain/kotlin/bindings && \
+#wit-bindgen kotlin ./wit --out-dir src/wasmWasiMain/kotlin/bindings && \
+#java -jar ./ktfmt-0.47-jar-with-dependencies.jar ./src/wasmWasiMain/kotlin/bindings && \
 
 # Compile Kotlin code
 ./gradlew :compileProductionExecutableKotlinWasmWasi -Pkotlin.wasm.stability.nowarn=true && \
@@ -35,7 +35,7 @@ wasm-tools component new build/out/wasm/$MODULE_NAME.embedded.wasm -o build/out/
 # Compose Kotlin component with Rust component into a single linked component
 wasm-tools compose build/out/component/$MODULE_NAME.uncomposed.wasm  -o build/out/component/$MODULE_NAME.wasm --definitions ./build/out/dependencies/example.wasm --search-path ./build/out/dependencies && \
 
-wasmtime serve -W function-references,gc build/out/component/$MODULE_NAME.wasm
+RUST_BACKTRACE=full wasmtime serve -W function-references,gc build/out/component/$MODULE_NAME.wasm
 
 # Transpile component into JS + core Wasm
 #npx jco transpile build/out/component/$MODULE_NAME.wasm -o build/out/jco --base64-cutoff 0 -q --map "cm:example/jsiface=./../../../jsiface.mjs"

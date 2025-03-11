@@ -27,8 +27,6 @@ object RunExportsImpl : RunExports {
 
         createHtmlTextArea(html)
 
-//        val initialCwd = Environment.initialCwd()
-//        println(initialCwd)
         return Result.success(Unit)
     }
 }
@@ -36,8 +34,24 @@ object RunExportsImpl : RunExports {
 object IncomingHandlerExportsImpl : IncomingHandlerExports {
     override fun handle(request: Types.IncomingRequest, responseOut: Types.ResponseOutparam) {
 
-    }
+        val headers = Types.Fields()
+        val message = "Hello World!"
+//        headers.set("Content-Type", listOf(listOf("plain/text".toUByte())))
+//        headers.set("Content-Length", listOf(listOf(message.length.toUByte())))
 
+        var response = Types.OutgoingResponse(headers)
+
+        // Add the HTTP Response Status Code
+        response.setStatusCode(400.toUShort()).getOrNull()
+
+        var body = response.body().getOrNull()
+        Types.ResponseOutparam.set(responseOut, Result.success(response))
+
+        val out = body!!.write()!!.getOrNull()
+        out!!.blockingWriteAndFlush(message.toList()!!.map { ch -> ch.code.toUByte() })
+
+        Types.OutgoingBody.finish(body!!, null).getOrNull()
+    }
 }
 
 object EnvironmentExportsImpl : EnvironmentExports {

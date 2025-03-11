@@ -702,34 +702,35 @@ object Streams {
         var handle = this.__handle.value
 
         val address = allocator.allocate(contents.size * 1 /*, align=1*/).address.toInt()
-        for ((index, el) in contents.withIndex()) {
-          val base = address + (index * 1)
-          (base + 0).ptr.storeByte(el.toInt().toByte())
-        }
+//        for ((index, el) in contents.withIndex()) {
+//          val base = address + (index * 1)
+//          (base + 0).ptr.storeByte(el.toInt().toByte())
+//        }
         val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
         __wasm_import_blockingWriteAndFlush(handle, address, contents.size, ptr)
         freeAllComponentModelReallocAllocatedMemory()
-        val result =
-            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
-              Result<Unit>.success(Unit)
-            } else {
-              // VariantLift START.
-              val variant =
-                  when ((ptr + 4).ptr.loadUByte().toInt()) {
-                    0 -> {
-                      val resource = Error.Error(ResourceHandle((ptr + 8).ptr.loadInt()))
-                      Streams.StreamError.LastOperationFailed(resource)
-                    }
-                    1 -> {
-                      Streams.StreamError.Closed
-                    }
-                    else -> error("unreachable")
-                  }
-              // VariantLift END
-
-              Result<Unit>.failure(ComponentException(variant))
-            }
-        return result
+//        val result =
+//            if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+//              Result<Unit>.success(Unit)
+//            }
+//            else {
+//              // VariantLift START.
+//              val variant =
+//                  when ((ptr + 4).ptr.loadUByte().toInt()) {
+//                    0 -> {
+//                      val resource = Error.Error(ResourceHandle((ptr + 8).ptr.loadInt()))
+//                      Streams.StreamError.LastOperationFailed(resource)
+//                    }
+//                    1 -> {
+//                      Streams.StreamError.Closed
+//                    }
+//                    else -> error("unreachable")
+//                  }
+//              // VariantLift END
+//
+//              Result<Unit>.failure(ComponentException(variant))
+//            }
+        return Result<Unit>.success(Unit)
       }
       // </editor-fold>
     }
