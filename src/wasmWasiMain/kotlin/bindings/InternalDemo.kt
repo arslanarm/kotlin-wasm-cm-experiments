@@ -20,9 +20,6 @@ internal external fun __wasm_import_createButton(
 @WasmImport("component-model:example/ui", "create-html-text-area")
 internal external fun __wasm_import_createHtmlTextArea(p0: Int, p1: Int): Unit
 
-@WasmImport("component-model:example/markdown", "convert-markdown-to-html")
-internal external fun __wasm_import_convertMarkdownToHtml(p0: Int, p1: Int, p2: Int): Unit
-
 @WasmImport("wasi:io/poll@0.2.0", "[resource-drop]pollable")
 internal external fun __cm_resource_abi_import_Poll_Pollable_drop(handle: Int): Unit
 
@@ -309,6 +306,12 @@ internal external fun __wasm_import_get19(p0: Int, p1: Int): Unit
 
 @WasmImport("wasi:http/types@0.2.0", "http-error-code")
 internal external fun __wasm_import_httpErrorCode(p0: Int, p1: Int): Unit
+
+@WasmImport("wasi:http/outgoing-handler@0.2.0", "handle")
+internal external fun __wasm_import_handle(p0: Int, p1: Int, p2: Int, p3: Int): Unit
+
+@WasmImport("component-model:example/markdown", "convert-markdown-to-html")
+internal external fun __wasm_import_convertMarkdownToHtml(p0: Int, p1: Int, p2: Int): Unit
 
 @WasmImport("wasi:cli/environment@0.2.0", "get-environment")
 internal external fun __wasm_import_getEnvironment(p0: Int): Unit

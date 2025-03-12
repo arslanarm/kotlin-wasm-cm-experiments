@@ -427,7 +427,7 @@ object Streams {
      * Read bytes from a stream, after blocking until at least one byte can be read. Except for
      * blocking, behavior is identical to `read`.
      */
-    public fun blockingRead(len: ULong): Result<List<UByte>> {
+    public fun blockingRead(len: ULong): Result<ByteArray> {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
       withScopedMemoryAllocator { allocator ->
         var handle = this.__handle.value
@@ -437,14 +437,14 @@ object Streams {
         val result =
             if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
 
-              val list = ArrayList<UByte>((ptr + 8).ptr.loadInt())
-              for (i in 0 until (ptr + 8).ptr.loadInt()) {
+              val list = ByteArray((ptr + 8).ptr.loadInt())
+              for (i in 0 until (ptr + 8).ptr.loadInt() - 1) {
                 val base = ((ptr + 4).ptr.loadInt()) + (i * 1)
 
-                list.add((base + 0).ptr.loadUByte().toInt().toUByte())
+                list[i] = ((base + 0).ptr.loadUByte().toInt().toByte())
               }
 
-              Result<List<UByte>>.success(list)
+              Result<ByteArray>.success(list)
             } else {
               // VariantLift START.
               val variant =
@@ -460,7 +460,7 @@ object Streams {
                   }
               // VariantLift END
 
-              Result<List<UByte>>.failure(ComponentException(variant))
+              Result<ByteArray>.failure(ComponentException(variant))
             }
         return result
       }
@@ -699,19 +699,19 @@ object Streams {
     public fun blockingWriteAndFlush(contents: ByteArray): Result<Unit> {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
       withScopedMemoryAllocator { allocator ->
-        println("blockingWriteAndFlush_0")
+//        println("blockingWriteAndFlush_0")
         var handle = this.__handle.value
 
-        println("blockingWriteAndFlush_1")
-        val address = allocator.allocate(1000 /*, align=1*/).address.toInt()
-        println("blockingWriteAndFlush_2")
+//        println("blockingWriteAndFlush_1")
+        val address = allocator.allocate(contents.size /*, align=1*/).address.toInt()
+//        println("blockingWriteAndFlush_2")
 //        val contentWithIndex = contents.withIndex()
-        println("blockingWriteAndFlush_2.1")
-        println("contents: " )
+//        println("blockingWriteAndFlush_2.1")
+//        println("contents: " )
         val size = contents.size
-        println("size: $size")
+//        println("size: $size")
         for (i in 0..contents.size - 1) {
-          println("blockingWriteAndFlush_3")
+//          println("blockingWriteAndFlush_3")
           val base = address + (i * 1)
           (base + 0).ptr.storeByte(contents[i].toInt().toByte())
         }
@@ -720,13 +720,13 @@ object Streams {
 //          val base = address + (index * 1)
 //          (base + 0).ptr.storeByte(el.toInt().toByte())
 //        }
-        println("blockingWriteAndFlush_4")
+//        println("blockingWriteAndFlush_4")
         val ptr = /* RETURN_ADDRESS_ALLOC(size=12, align=4)*/ allocator.allocate(12).address.toInt()
-        println("blockingWriteAndFlush_5")
+//        println("blockingWriteAndFlush_5")
         __wasm_import_blockingWriteAndFlush(handle, address, contents.size, ptr)
-        println("blockingWriteAndFlush_6")
+//        println("blockingWriteAndFlush_6")
         freeAllComponentModelReallocAllocatedMemory()
-        println("blockingWriteAndFlush_7")
+//        println("blockingWriteAndFlush_7")
         val result =
             if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
               Result<Unit>.success(Unit)
@@ -1279,7 +1279,7 @@ object Types {
      * Fails with `header-error.invalid-syntax` if the `field-name` or any of the `field-value`s are
      * syntactically invalid.
      */
-    public fun set(name: String, value: List<ByteArray>): Result<Unit> {
+    public fun set(name: String, value: Array<ByteArray>): Result<Unit> {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
       withScopedMemoryAllocator { allocator ->
         println("set_01")
@@ -4677,13 +4677,22 @@ object Types {
     public fun get(): Result<Result<Types.IncomingResponse>>? {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
       withScopedMemoryAllocator { allocator ->
+        println("get_01")
         var handle = this.__handle.value
         val ptr = /* RETURN_ADDRESS_ALLOC(size=56, align=8)*/ allocator.allocate(56).address.toInt()
+        println("ptr: ${ptr.toString()}")
+        println("ptr.ptr: ${ptr.ptr.toString()}")
+        println("ptr.ptr.loadUByte: ${ptr.ptr.loadUByte()}")
+        println("ptr.ptr.loadUByte.toInt: ${ptr.ptr.loadUByte().toInt()}")
+
         __wasm_import_get19(handle, ptr)
+        println("get_03")
         freeAllComponentModelReallocAllocatedMemory()
+        println("get_04")
         // OptionLift start
         val option22 =
             if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
+              println("get_05")
               val result21 =
                   if ((ptr + 8).ptr.loadUByte().toInt() == 0) {
                     val result =
@@ -5035,6 +5044,7 @@ object Types {
                   }
               result21
             } else {
+              println("get_06")
               null
             }
         // OptionLift end
@@ -5394,6 +5404,396 @@ object Types {
           }
       // OptionLift end
       return option21
+    }
+    // </editor-fold>
+  }
+}
+
+object OutgoingHandler {
+  /**
+   * This function is invoked with an outgoing HTTP Request, and it returns a resource
+   * `future-incoming-response` which represents an HTTP Response which may arrive in the future.
+   *
+   * The `options` argument accepts optional parameters for the HTTP protocol's transport layer.
+   *
+   * This function may return an error if the `outgoing-request` is invalid or not allowed to be
+   * made. Otherwise, protocol errors are reported through the `future-incoming-response`.
+   */
+  public fun handle(
+      request: Types.OutgoingRequest,
+      options: Types.RequestOptions?
+  ): Result<Types.FutureIncomingResponse> {
+    // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
+    withScopedMemoryAllocator { allocator ->
+      println("handle_00")
+      var handle = request.__handle.value
+      request.__handle = ResourceHandle(0)
+      val option: Int
+      val option2: Int
+      val payload0 = options
+      println("handle_10")
+      if (payload0 != null) {
+        println("handle_12")
+        var handle1 = payload0.__handle.value
+        payload0.__handle = ResourceHandle(0)
+        option = 1
+        option2 = handle1
+        println("handle_14")
+      } else {
+        println("handle_17")
+        option = 0
+        option2 = 0
+      }
+      println("handle_20")
+      val ptr = /* RETURN_ADDRESS_ALLOC(size=40, align=8)*/ allocator.allocate(40).address.toInt()
+
+      println("handle ptr: ${ptr.toString()}")
+      println("handle ptr: ${ptr.toString()}")
+
+      __wasm_import_handle(handle, option, option2, ptr)
+      println("handle_30")
+      freeAllComponentModelReallocAllocatedMemory()
+      println("handle_40")
+      val result =
+          if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
+            println("handle_41")
+            val resource = Types.FutureIncomingResponse(ResourceHandle((ptr + 8).ptr.loadInt()))
+            println("resource: ${ resource != null }")
+
+            val get = resource.get()
+            println("get: ${ get != null }")
+
+            Result<Types.FutureIncomingResponse>.success(resource)
+//            println("handle_43")
+          } else {
+            println("handle_44")
+            // VariantLift START.
+            val variant =
+                when ((ptr + 8).ptr.loadUByte().toInt()) {
+                  0 -> {
+                    Types.IanaErrorCode.DnsTimeout
+                  }
+                  1 -> {
+                    // OptionLift start
+                    val option4 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option5 =
+                        if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 30).ptr.loadUShort().toInt().toUShort()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.DnsError(
+                        Types.DnsErrorPayload(
+                            option4,
+                            option5,
+                        ))
+                  }
+                  2 -> {
+                    Types.IanaErrorCode.DestinationNotFound
+                  }
+                  3 -> {
+                    Types.IanaErrorCode.DestinationUnavailable
+                  }
+                  4 -> {
+                    Types.IanaErrorCode.DestinationIpProhibited
+                  }
+                  5 -> {
+                    Types.IanaErrorCode.DestinationIpUnroutable
+                  }
+                  6 -> {
+                    Types.IanaErrorCode.ConnectionRefused
+                  }
+                  7 -> {
+                    Types.IanaErrorCode.ConnectionTerminated
+                  }
+                  8 -> {
+                    Types.IanaErrorCode.ConnectionTimeout
+                  }
+                  9 -> {
+                    Types.IanaErrorCode.ConnectionReadTimeout
+                  }
+                  10 -> {
+                    Types.IanaErrorCode.ConnectionWriteTimeout
+                  }
+                  11 -> {
+                    Types.IanaErrorCode.ConnectionLimitReached
+                  }
+                  12 -> {
+                    Types.IanaErrorCode.TlsProtocolError
+                  }
+                  13 -> {
+                    Types.IanaErrorCode.TlsCertificateError
+                  }
+                  14 -> {
+                    // OptionLift start
+                    val option6 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 17).ptr.loadUByte().toInt().toUByte()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option7 =
+                        if ((ptr + 20).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 24).ptr.loadInt(), (ptr + 28).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.TlsAlertReceived(
+                        Types.TlsAlertReceivedPayload(
+                            option6,
+                            option7,
+                        ))
+                  }
+                  15 -> {
+                    Types.IanaErrorCode.HttpRequestDenied
+                  }
+                  16 -> {
+                    Types.IanaErrorCode.HttpRequestLengthRequired
+                  }
+                  17 -> {
+                    // OptionLift start
+                    val option8 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 24).ptr.loadLong().toULong()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.HttpRequestBodySize(option8)
+                  }
+                  18 -> {
+                    Types.IanaErrorCode.HttpRequestMethodInvalid
+                  }
+                  19 -> {
+                    Types.IanaErrorCode.HttpRequestUriInvalid
+                  }
+                  20 -> {
+                    Types.IanaErrorCode.HttpRequestUriTooLong
+                  }
+                  21 -> {
+                    // OptionLift start
+                    val option9 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 20).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.HttpRequestHeaderSectionSize(option9)
+                  }
+                  22 -> {
+                    // OptionLift start
+                    val option12 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          // OptionLift start
+                          val option10 =
+                              if ((ptr + 20).ptr.loadUByte().toInt() == 1) {
+                                STRING_FROM_MEM((ptr + 24).ptr.loadInt(), (ptr + 28).ptr.loadInt())
+                              } else {
+                                null
+                              }
+                          // OptionLift end
+                          // OptionLift start
+                          val option11 =
+                              if ((ptr + 32).ptr.loadUByte().toInt() == 1) {
+                                (ptr + 36).ptr.loadInt().toUInt()
+                              } else {
+                                null
+                              }
+                          // OptionLift end
+                          Types.FieldSizePayload(
+                              option10,
+                              option11,
+                          )
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.HttpRequestHeaderSize(option12)
+                  }
+                  23 -> {
+                    // OptionLift start
+                    val option13 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 20).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.HttpRequestTrailerSectionSize(option13)
+                  }
+                  24 -> {
+                    // OptionLift start
+                    val option14 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option15 =
+                        if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 32).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.HttpRequestTrailerSize(
+                        Types.FieldSizePayload(
+                            option14,
+                            option15,
+                        ))
+                  }
+                  25 -> {
+                    Types.IanaErrorCode.HttpResponseIncomplete
+                  }
+                  26 -> {
+                    // OptionLift start
+                    val option16 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 20).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.HttpResponseHeaderSectionSize(option16)
+                  }
+                  27 -> {
+                    // OptionLift start
+                    val option17 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option18 =
+                        if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 32).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.HttpResponseHeaderSize(
+                        Types.FieldSizePayload(
+                            option17,
+                            option18,
+                        ))
+                  }
+                  28 -> {
+                    // OptionLift start
+                    val option19 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 24).ptr.loadLong().toULong()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.HttpResponseBodySize(option19)
+                  }
+                  29 -> {
+                    // OptionLift start
+                    val option20 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 20).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.HttpResponseTrailerSectionSize(option20)
+                  }
+                  30 -> {
+                    // OptionLift start
+                    val option21 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    // OptionLift start
+                    val option22 =
+                        if ((ptr + 28).ptr.loadUByte().toInt() == 1) {
+                          (ptr + 32).ptr.loadInt().toUInt()
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.HttpResponseTrailerSize(
+                        Types.FieldSizePayload(
+                            option21,
+                            option22,
+                        ))
+                  }
+                  31 -> {
+                    // OptionLift start
+                    val option23 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.HttpResponseTransferCoding(option23)
+                  }
+                  32 -> {
+                    // OptionLift start
+                    val option24 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.HttpResponseContentCoding(option24)
+                  }
+                  33 -> {
+                    Types.IanaErrorCode.HttpResponseTimeout
+                  }
+                  34 -> {
+                    Types.IanaErrorCode.HttpUpgradeFailed
+                  }
+                  35 -> {
+                    Types.IanaErrorCode.HttpProtocolError
+                  }
+                  36 -> {
+                    Types.IanaErrorCode.LoopDetected
+                  }
+                  37 -> {
+                    Types.IanaErrorCode.ConfigurationError
+                  }
+                  38 -> {
+                    // OptionLift start
+                    val option25 =
+                        if ((ptr + 16).ptr.loadUByte().toInt() == 1) {
+                          STRING_FROM_MEM((ptr + 20).ptr.loadInt(), (ptr + 24).ptr.loadInt())
+                        } else {
+                          null
+                        }
+                    // OptionLift end
+                    Types.IanaErrorCode.InternalError(option25)
+                  }
+                  else -> error("unreachable")
+                }
+            // VariantLift END
+
+            Result<Types.FutureIncomingResponse>.failure(ComponentException(variant))
+          }
+
+      return result
     }
     // </editor-fold>
   }
