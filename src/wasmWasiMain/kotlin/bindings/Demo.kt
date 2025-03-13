@@ -438,7 +438,7 @@ object Streams {
             if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
 
               val list = ByteArray((ptr + 8).ptr.loadInt())
-              for (i in 0 until (ptr + 8).ptr.loadInt() - 1) {
+              for (i in 0 until (ptr + 8).ptr.loadInt()) {
                 val base = ((ptr + 4).ptr.loadInt()) + (i * 1)
 
                 list[i] = ((base + 0).ptr.loadUByte().toInt().toByte())
@@ -1282,40 +1282,27 @@ object Types {
     public fun set(name: String, value: Array<ByteArray>): Result<Unit> {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
       withScopedMemoryAllocator { allocator ->
-        println("set_01")
         var handle = this.__handle.value
-        println("set_02")
 
         val bytearray = name.encodeToByteArray()
         val len = bytearray.size
         val ptr = allocator.writeToLinearMemory(bytearray).address.toInt()
-        println("set_03")
 
         val address0 = allocator.allocate(value.size * 8 /*, align=4*/).address.toInt()
-        println("set_03")
         for ((index1, el) in value.withIndex()) {
-          println("set_04")
           val base = address0 + (index1 * 8)
 
           val address = allocator.allocate(el.size * 1 /*, align=1*/).address.toInt()
-          println("set_05")
           for ((index, el) in el.withIndex()) {
-            println("set_06")
             val base = address + (index * 1)
             (base + 0).ptr.storeByte(el.toInt().toByte())
-            println("set_07")
           }
-          println("set_07")
           (base + 4).ptr.storeInt(el.size)
           (base + 0).ptr.storeInt(address)
-          println("set_08")
         }
-        println("set_09")
         val ptr2 = /* RETURN_ADDRESS_ALLOC(size=2, align=1)*/ allocator.allocate(2).address.toInt()
         __wasm_import_set(handle, ptr, len, address0, value.size, ptr2)
-        println("set_10")
         freeAllComponentModelReallocAllocatedMemory()
-        println("set_11")
         val result =
             if ((ptr2 + 0).ptr.loadUByte().toInt() == 0) {
               Result<Unit>.success(Unit)
@@ -4233,11 +4220,8 @@ object Types {
       withScopedMemoryAllocator { allocator ->
         var handle = this.__handle.value
         val ptr = /* RETURN_ADDRESS_ALLOC(size=8, align=4)*/ allocator.allocate(8).address.toInt()
-        println("x1")
         __wasm_import_write16(handle, ptr)
-        println("x2")
         freeAllComponentModelReallocAllocatedMemory()
-//        println("x3")
         val result =
             if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
               val resource = Streams.OutputStream(ResourceHandle((ptr + 4).ptr.loadInt()))
@@ -4269,33 +4253,23 @@ object Types {
           val option: Int
           val option2: Int
           val payload0 = trailers
-          println("x5")
           if (payload0 != null) {
-            println("x6")
             var handle1 = payload0.__handle.value
             payload0.__handle = ResourceHandle(0)
             option = 1
             option2 = handle1
-            println("x7")
           } else {
-            println("x8")
             option = 0
             option2 = 0
           }
-          println("x9")
           val ptr = /* RETURN_ADDRESS_ALLOC(size=40, align=8)*/
               allocator.allocate(40).address.toInt()
-          println("x10")
           __wasm_import_finish17(handle, option, option2, ptr)
-          println("x11")
           freeAllComponentModelReallocAllocatedMemory()
-          println("x12")
           val result =
               if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
-                println("x13")
                 Result<Unit>.success(Unit)
               } else {
-                println("x13")
                 // VariantLift START.
                 val variant =
                     when ((ptr + 8).ptr.loadUByte().toInt()) {
@@ -4677,22 +4651,14 @@ object Types {
     public fun get(): Result<Result<Types.IncomingResponse>>? {
       // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
       withScopedMemoryAllocator { allocator ->
-        println("get_01")
         var handle = this.__handle.value
         val ptr = /* RETURN_ADDRESS_ALLOC(size=56, align=8)*/ allocator.allocate(56).address.toInt()
-        println("ptr: ${ptr.toString()}")
-        println("ptr.ptr: ${ptr.ptr.toString()}")
-        println("ptr.ptr.loadUByte: ${ptr.ptr.loadUByte()}")
-        println("ptr.ptr.loadUByte.toInt: ${ptr.ptr.loadUByte().toInt()}")
 
         __wasm_import_get19(handle, ptr)
-        println("get_03")
         freeAllComponentModelReallocAllocatedMemory()
-        println("get_04")
         // OptionLift start
         val option22 =
             if ((ptr + 0).ptr.loadUByte().toInt() == 1) {
-              println("get_05")
               val result21 =
                   if ((ptr + 8).ptr.loadUByte().toInt() == 0) {
                     val result =
@@ -5044,7 +5010,6 @@ object Types {
                   }
               result21
             } else {
-              println("get_06")
               null
             }
         // OptionLift end
@@ -5425,48 +5390,32 @@ object OutgoingHandler {
   ): Result<Types.FutureIncomingResponse> {
     // <editor-fold defaultstate="collapsed" desc="Generated Bindings Code">
     withScopedMemoryAllocator { allocator ->
-      println("handle_00")
       var handle = request.__handle.value
       request.__handle = ResourceHandle(0)
       val option: Int
       val option2: Int
       val payload0 = options
-      println("handle_10")
       if (payload0 != null) {
-        println("handle_12")
         var handle1 = payload0.__handle.value
         payload0.__handle = ResourceHandle(0)
         option = 1
         option2 = handle1
-        println("handle_14")
       } else {
-        println("handle_17")
         option = 0
         option2 = 0
       }
-      println("handle_20")
       val ptr = /* RETURN_ADDRESS_ALLOC(size=40, align=8)*/ allocator.allocate(40).address.toInt()
 
-      println("handle ptr: ${ptr.toString()}")
-      println("handle ptr: ${ptr.toString()}")
-
       __wasm_import_handle(handle, option, option2, ptr)
-      println("handle_30")
       freeAllComponentModelReallocAllocatedMemory()
-      println("handle_40")
       val result =
           if ((ptr + 0).ptr.loadUByte().toInt() == 0) {
-            println("handle_41")
             val resource = Types.FutureIncomingResponse(ResourceHandle((ptr + 8).ptr.loadInt()))
-            println("resource: ${ resource != null }")
 
             val get = resource.get()
-            println("get: ${ get != null }")
 
             Result<Types.FutureIncomingResponse>.success(resource)
-//            println("handle_43")
           } else {
-            println("handle_44")
             // VariantLift START.
             val variant =
                 when ((ptr + 8).ptr.loadUByte().toInt()) {
