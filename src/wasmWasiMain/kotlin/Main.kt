@@ -35,34 +35,25 @@ object IncomingHandlerExportsImpl : IncomingHandlerExports {
     override fun handle(request: Types.IncomingRequest, responseOut: Types.ResponseOutparam) {
 
         val headers = Types.Fields()
-        val message = "Hello World!"
-//        headers.set("Content-Type", listOf(listOf("plain/text".toUByte())))
-//        headers.set("Content-Length", listOf("asdsad".encodeToByteArray()))
+        val message = """
+            --------------------
+            |   Hello World!   |
+            --------------------
+        """.trimIndent()
 
-        var response = Types.OutgoingResponse(headers)
+        val response = Types.OutgoingResponse(headers)
 
         // Add the HTTP Response Status Code
-        response.setStatusCode(400.toUShort()).getOrNull()
+        response.setStatusCode(200.toUShort()).getOrNull()
 
-        var body = response.body().getOrNull()
+        val body = response.body().getOrThrow()
         Types.ResponseOutparam.set(responseOut, Result.success(response))
 
-        println("Incoming response: ${ body == null }")
-
-        val out = body!!.write()!!.getOrNull()
-        println("x3")
-        println("out: ${ out != null }")
-
-        println("message: ${ message != null }")
-
-        val contents = "asdsad".encodeToByteArray()
-        println("contents: ${ contents != null }")
-
-        out!!.blockingWriteAndFlush(contents)
+        val out = body.write().getOrThrow()
+        out.blockingWriteAndFlush(message.encodeToByteArray())
         out.close()
 
-        println("x4")
-        Types.OutgoingBody.finish(body!!, null).getOrNull()
+        Types.OutgoingBody.finish(body, null).getOrNull()
     }
 }
 

@@ -35,7 +35,8 @@ wasm-tools component new build/out/wasm/$MODULE_NAME.embedded.wasm -o build/out/
 # Compose Kotlin component with Rust component into a single linked component
 wasm-tools compose build/out/component/$MODULE_NAME.uncomposed.wasm  -o build/out/component/$MODULE_NAME.wasm --definitions ./build/out/dependencies/example.wasm --search-path ./build/out/dependencies && \
 
-RUST_BACKTRACE=full wasmtime serve -W function-references,gc build/out/component/$MODULE_NAME.wasm
+wasmtime serve -W function-references,gc build/out/component/$MODULE_NAME.wasm
+#RUST_BACKTRACE=full wasmtime serve -W function-references,gc build/out/component/$MODULE_NAME.wasm
 
 # Transpile component into JS + core Wasm
 #npx jco transpile build/out/component/$MODULE_NAME.wasm -o build/out/jco --base64-cutoff 0 -q --map "cm:example/jsiface=./../../../jsiface.mjs"
