@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 COMPILED_WASM=./build/compileSync/wasmWasi/main/productionExecutable/kotlin
-MODULE_NAME=kco-wasm-wasi
+MODULE_NAME=kco
 WASI_ADAPTER=wasi_snapshot_preview1.proxy.wasm
 
 set -e
@@ -17,24 +17,11 @@ cargo build --target wasm32-wasip1 --release -q && \
 wasm-tools component new ./target/wasm32-wasip1/release/example.wasm -o ../build/out/dependencies/example.wasm --adapt ../$WASI_ADAPTER)
 
 # Generate WIT bindings for Kotlin
-wit-bindgen kotlin ./wit --out-dir src/wasmWasiMain/kotlin/bindings && \
-java -jar ./ktfmt-0.47-jar-with-dependencies.jar ./src/wasmWasiMain/kotlin/bindings && \
-
 # Compile Kotlin code
+./gradlew :witBindgen
 ./gradlew :compileProductionExecutableKotlinWasmWasi -Pkotlin.wasm.stability.nowarn=true && \
 
-# Embed wit interface to core wasm file (wasm-tools convention)
-mkdir -p ./build/out/wasm && \
-wasm-tools component embed wit/ $COMPILED_WASM/$MODULE_NAME.wasm -o build/out/wasm/$MODULE_NAME.embedded.wasm && \
-
-mkdir -p ./build/out/component && \
-
-# Create a component from core Wasm
-wasm-tools component new build/out/wasm/$MODULE_NAME.embedded.wasm -o build/out/component/$MODULE_NAME.uncomposed.wasm --adapt $WASI_ADAPTER --realloc-via-memory-grow && \
-
-# Compose Kotlin component with Rust component into a single linked component
-wasm-tools compose build/out/component/$MODULE_NAME.uncomposed.wasm  -o build/out/component/$MODULE_NAME.wasm --definitions ./build/out/dependencies/example.wasm --search-path ./build/out/dependencies && \
-
+./gradlew composeWasmComponent
 wasmtime serve -W function-references,gc build/out/component/$MODULE_NAME.wasm
 
 # Transpile component into JS + core Wasm
